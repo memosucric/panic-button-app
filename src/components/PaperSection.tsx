@@ -1,0 +1,42 @@
+import CustomTypography from 'src/components/CustomTypography'
+import Paper from 'src/components/Paper'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
+import * as React from 'react'
+
+interface PaperSectionProps {
+  title?: string
+  subTitle?: string
+  children: React.ReactNode
+}
+
+const PaperSection = (props: PaperSectionProps) => {
+  const { title, subTitle, children } = props
+  return (
+    <Paper>
+      <BoxWrapperColumn sx={{ marginX: '48px', marginY: '48px' }} gap={3}>
+        {title ? (
+          <BoxWrapperRow gap={2} sx={{ justifyContent: 'flex-start', alignItems: 'flex-end' }}>
+            <CustomTypography variant="paperSectionTitle" textAlign="left">
+              {title}
+            </CustomTypography>
+          </BoxWrapperRow>
+        ) : null}
+        {subTitle ? (
+          <BoxWrapperRow
+            sx={{
+              ...(subTitle ? { justifyContent: 'space-between' } : { justifyContent: 'flex-end' })
+            }}
+          >
+            {subTitle ? (
+              <CustomTypography variant="paperSectionSubtitle">{subTitle}</CustomTypography>
+            ) : null}
+          </BoxWrapperRow>
+        ) : null}
+        {children}
+      </BoxWrapperColumn>
+    </Paper>
+  )
+}
+
+export default PaperSection

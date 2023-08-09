@@ -1,0 +1,72 @@
+{
+  "name": "panic-button-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint:staged": "lint-staged",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "lint": "yarn lint:eslint && yarn lint:tsc",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:eslint:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc -p tsconfig.json",
+    "prepare": "husky install",
+    "commit": "git-cz",
+    "generate:cache": "ts-node --project ./tsconfig.json ./src/scripts/generateCache.ts --report-name getFinancialMetricAndVarDetail"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.14.3",
+    "@google-cloud/bigquery": "^7.1.1",
+    "commander": "^11.0.0",
+    "clsx": "^2.0.0",
+    "dotenv": "^16.3.1",
+    "framer-motion": "^10.15.0",
+    "next": "^13.4.13",
+    "numbro": "^2.3.6",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "react-error-boundary": "^4.0.10",
+    "react-hook-form": "^7.45.4",
+    "react-intersection-observer": "^9.5.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@types/node": "20.4.8",
+    "@types/react": "18.2.18",
+    "@types/react-dom": "18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "8.46.0",
+    "eslint-config-next": "13.4.13",
+    "eslint-config-prettier": "^9.0.0",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.1",
+    "tsc-files": "^1.1.4",
+    "typescript": "5.1.6",
+    "husky": "^8.0.3"
+  },
+  "lint-staged": {
+    "src/**/*.+(js,ts,tsx)": [
+      "eslint -c ./dapps/panic-button/.eslintrc.json -cache --fix",
+      "tsc-files --noEmit"
+    ],
+    "src/**/*.{js,ts,tsx,css,md,json}": [
+      "prettier --config ./.prettierrc --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
