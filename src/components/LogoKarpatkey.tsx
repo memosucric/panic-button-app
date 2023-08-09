@@ -5,7 +5,7 @@ import NextImage from 'next/image'
 const LogoKarpatkey = () => (
   <Box
     onClick={() => {
-      window.open('https://www.karpatkey.com/', '_self')
+      window.open('/', '_self')
     }}
     alignItems="center"
     display="flex"

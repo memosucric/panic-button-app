@@ -1,15 +1,17 @@
 import CustomTypography from 'src/components/CustomTypography'
 import * as React from 'react'
 
-const Loading = () => (
+const TextLoading = () => (
   <CustomTypography
     color="textSecondary"
     variant="body1"
     justifyContent="center"
-    textAlign="center"
+    minHeight="75%"
+    alignItems="center"
+    display="flex"
   >
     Loading...
   </CustomTypography>
 )
 
-export default Loading
+export default TextLoading

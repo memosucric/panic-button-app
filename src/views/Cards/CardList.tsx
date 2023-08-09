@@ -2,15 +2,16 @@ import { Box } from '@mui/material'
 import { Variants, motion, useAnimation } from 'framer-motion'
 import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
-
-import Card from './Card/Card'
+import Card from 'src/views/Cards/Card/Card'
+import { PositionType } from 'src/contexts/types'
+import Link from 'next/link'
 
 interface CardListProps {
-  tokenDetailByPosition: any[]
+  positions: PositionType[]
 }
 
 const CardList = (props: CardListProps) => {
-  const { tokenDetailByPosition } = props
+  const { positions } = props
 
   const [ref, inView] = useInView()
   const controls = useAnimation()
@@ -21,7 +22,7 @@ const CardList = (props: CardListProps) => {
     } else {
       controls.stop()
     }
-  }, [inView, controls, tokenDetailByPosition])
+  }, [inView, controls, positions])
 
   const containerVariants: Variants = {
     hidden: {},
@@ -62,7 +63,7 @@ const CardList = (props: CardListProps) => {
         gap: '20px 20px'
       }}
     >
-      {tokenDetailByPosition.map((card: any, index: number) => {
+      {positions.map((card: any, index: number) => {
         return (
           <Box
             component={motion.div}
@@ -78,7 +79,9 @@ const CardList = (props: CardListProps) => {
               background: 'background.paper'
             }}
           >
-            <Card id={index} key={index} card={card} />
+            <Link href={`/positions/${card.id}`} style={{ textDecoration: 'none' }}>
+              <Card id={index} key={index} card={card} />
+            </Link>
           </Box>
         )
       })}

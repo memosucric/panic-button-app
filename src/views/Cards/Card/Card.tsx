@@ -14,12 +14,15 @@ interface CardItemProps {
 
 const Card = (props: CardItemProps) => {
   const { card } = props
-  const { blockchain, protocol, position, totalUsdValue } = card
+  const { blockchain, dao, protocol, position, totalUsdValue } = card
 
   return (
-    <BoxWrapperColumn gap={4} sx={{ padding: '10px' }}>
+    <BoxWrapperColumn gap={4} sx={{ padding: '10px', cursor: 'pointer' }}>
       <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-        <Title title={blockchain} />
+        <BoxWrapperColumn gap={1}>
+          <Title title={dao} />
+          <Title title={blockchain} />
+        </BoxWrapperColumn>
         <BoxWrapperRow gap={1}>
           <ProtocolIcon protocol={protocol} />
           <Title title={protocol} />

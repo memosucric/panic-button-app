@@ -3,13 +3,12 @@ import React, { ReactElement } from 'react'
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 import Header, { HEADER_HEIGHT } from 'src/components/Layout/Header'
-import Body from 'src/components/Layout/Body'
 
 interface LayoutProps {
   children: React.ReactElement
 }
 
-const LayoutWithoutSidebarWrapper = styled(Box)(() => ({
+const LayoutWrapper = styled(Box)(() => ({
   display: 'grid',
   gap: '0px 0px',
   minHeight: '100vh',
@@ -22,7 +21,7 @@ const LayoutWithoutSidebarWrapper = styled(Box)(() => ({
 
 const Layout = ({ children }: LayoutProps): ReactElement => {
   return (
-    <LayoutWithoutSidebarWrapper>
+    <LayoutWrapper>
       <Box
         sx={{
           gridArea: 'header',
@@ -40,18 +39,18 @@ const Layout = ({ children }: LayoutProps): ReactElement => {
         sx={{
           gridArea: 'body',
           width: '100%',
-          top: HEADER_HEIGHT,
+          minHeight: '100%',
           zIndex: 900,
           overflowX: 'hidden',
           overflowY: 'hidden'
         }}
       >
-        <Body>{children}</Body>
+        {children}
       </Box>
       <Box sx={{ gridArea: 'footer', width: '100%' }}>
         <Footer />
       </Box>
-    </LayoutWithoutSidebarWrapper>
+    </LayoutWrapper>
   )
 }
 

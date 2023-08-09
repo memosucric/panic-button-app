@@ -1,22 +1,23 @@
 import ErrorBoundaryWrapper from 'src/components/ErrorBoundary/ErrorBoundaryWrapper'
-import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import React from 'react'
+import PaperSection from 'src/components/PaperSection'
+import { useApp } from 'src/contexts/app.context'
+import TextLoading from 'src/components/TextLoading'
 import CardList from 'src/views/Cards/CardList'
 import EmptyData from 'src/components/EmptyData'
-import PaperSection from 'src/components/PaperSection'
 
-interface PositionsProps {
-  positions: any[]
-}
+const Positions = () => {
+  const { state } = useApp()
+  const { positions } = state
+  const { values, status } = positions
 
-const Positions = ({ positions }: PositionsProps) => {
   return (
     <ErrorBoundaryWrapper>
-      <BoxContainerWrapper>
-        <PaperSection title="Positions">
-          {positions?.length > 0 ? <CardList tokenDetailByPosition={positions} /> : <EmptyData />}
-        </PaperSection>
-      </BoxContainerWrapper>
+      <PaperSection title="Positions">
+        {values?.length > 0 && status === 'idle' ? <CardList positions={values} /> : null}
+        {values?.length === 0 && status === 'idle' ? <EmptyData /> : null}
+        {status === 'loading' ? <TextLoading /> : null}
+      </PaperSection>
     </ErrorBoundaryWrapper>
   )
 }

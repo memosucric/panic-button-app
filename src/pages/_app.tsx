@@ -12,6 +12,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import Router from 'next/router'
 import * as React from 'react'
+import { AppProvider } from 'src/contexts/app.context'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -52,24 +53,26 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <NoSsr>
-          <CssBaseline />
-          <Layout>
-            {loading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                flexDirection="column"
-                alignItems="center"
-                sx={{ minHeight: 'calc(100vh - 160px)' }}
-              >
-                <CircularProgress color="primary" />
-              </Box>
-            ) : (
-              <Component {...pageProps} />
-            )}
-          </Layout>
-        </NoSsr>
+        <AppProvider>
+          <NoSsr>
+            <CssBaseline />
+            <Layout {...pageProps}>
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  flexDirection="column"
+                  alignItems="center"
+                  sx={{ minHeight: 'calc(100vh - 160px)' }}
+                >
+                  <CircularProgress color="primary" />
+                </Box>
+              ) : (
+                <Component {...pageProps} />
+              )}
+            </Layout>
+          </NoSsr>
+        </AppProvider>
       </ThemeProvider>
     </CacheProvider>
   )

@@ -13,8 +13,8 @@ interface PaperSectionProps {
 const PaperSection = (props: PaperSectionProps) => {
   const { title, subTitle, children } = props
   return (
-    <Paper>
-      <BoxWrapperColumn sx={{ marginX: '48px', marginY: '48px' }} gap={3}>
+    <Paper sx={{ height: '100%' }}>
+      <BoxWrapperColumn sx={{ marginX: '48px', marginY: '48px', height: '100%' }} gap={3}>
         {title ? (
           <BoxWrapperRow gap={2} sx={{ justifyContent: 'flex-start', alignItems: 'flex-end' }}>
             <CustomTypography variant="paperSectionTitle" textAlign="left">
