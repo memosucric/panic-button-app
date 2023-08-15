@@ -12,51 +12,13 @@ updates:
       - "mariano-aguero"
     reviewers:
       - "mariano-aguero"
-  # Configuration for npm, reports
+  # Configuration for npm
   - package-ecosystem: "npm"
-    directory: '/dapps/reports'
+    directory: '/'
     schedule:
       interval: 'daily'
     assignees:
         - "mariano-aguero"
-    reviewers:
-      - "mariano-aguero"
-    versioning-strategy: 'increase'
-    labels:
-      - 'dependencies'
-    pull-request-branch-name:
-      separator: '-'
-    commit-message:
-      # cause a release for non-dev-deps
-      prefix: fix(deps)
-      # no release for dev-deps
-      prefix-development: chore(dev-deps)
-  # Configuration for npm, panic-button
-  - package-ecosystem: "npm"
-    directory: '/dapps/panic-button'
-    schedule:
-      interval: 'daily'
-    assignees:
-      - "mariano-aguero"
-    reviewers:
-      - "mariano-aguero"
-    versioning-strategy: 'increase'
-    labels:
-      - 'dependencies'
-    pull-request-branch-name:
-      separator: '-'
-    commit-message:
-      # cause a release for non-dev-deps
-      prefix: fix(deps)
-      # no release for dev-deps
-      prefix-development: chore(dev-deps)
-  # Configuration for npm, shared
-  - package-ecosystem: "npm"
-    directory: '/shared'
-    schedule:
-      interval: 'daily'
-    assignees:
-      - "mariano-aguero"
     reviewers:
       - "mariano-aguero"
     versioning-strategy: 'increase'
