@@ -38,7 +38,7 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.4.4",
+    "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.4.4",
     "@types/node": "20.4.8",
     "@types/react": "18.2.18",
