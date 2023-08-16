@@ -71,7 +71,6 @@ const Detail = (props: DetailProps) => {
           <ItemText itemText={'Information'} />
           <Divider sx={{ borderBottomWidth: 5 }} />
         </BoxWrapperColumn>
-
         <TitleRow title={`Blockchain:`} subtitle={blockchain} />
         <TitleRow title={`Protocol:`} subtitle={protocol} />
         <TitleRow title={`Position:`} subtitle={positionName} />
