@@ -1,11 +1,10 @@
 import PageLayout from 'src/components/Layout/Layout'
 import * as React from 'react'
 import { ReactElement } from 'react'
-import Cache from 'src/services/classes/cache.class'
-import Positions from 'src/views/Positions'
-import { getTokenDetailByPosition } from 'src/utils/dataWareHouse'
+import WrapperPositions from 'src/views/Positions/WrapperPositions'
 import { useApp } from 'src/contexts/app.context'
 import { PositionType, Types } from 'src/contexts/types'
+import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 
 interface HomepageProps {
   positions: PositionType[]
@@ -32,7 +31,7 @@ const Homepage = (props: HomepageProps): ReactElement => {
     })
   }, [positions, dispatch])
 
-  return <Positions />
+  return <WrapperPositions />
 }
 
 Homepage.getTitle = 'Home'
@@ -42,18 +41,10 @@ Homepage.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
 export default Homepage
 
 export async function getServerSideProps() {
-  const cache = Cache.getInstance()
-  const dataPositions = await cache.getReport('getFinancialMetricAndVarDetail' as unknown as Report)
+  const dataWarehouse = DataWarehouse.getInstance()
 
-  const YEAR = '2023'
-  const MONTH = '7'
-  const DATE_TYPE = 'month'
-
-  const dataPositionsFiltered = dataPositions.filter((row: any) => {
-    return row.date_type === DATE_TYPE && row.year_month === `${YEAR}_${MONTH}`
-  })
-
-  const positions = getTokenDetailByPosition(dataPositionsFiltered)
+  // Step 2: Query the data
+  const positions = await dataWarehouse.getPositions()
 
   return { props: { positions } }
 }

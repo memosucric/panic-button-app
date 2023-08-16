@@ -1,24 +1,14 @@
 import { BigQuery } from '@google-cloud/bigquery'
-import { GOOGLE_CREDS, GOOGLE_PROJECT_ID, DATA_WAREHOUSE_ENV } from '../../config/constants'
+import { GOOGLE_CREDS, GOOGLE_PROJECT_ID, DATA_WAREHOUSE_ENV } from 'src/config/constants'
 
 type DataWarehouseEnvironment = 'production' | 'development'
 
 const REPORTS_DATASET = {
   development: {
-    getTreasuryFinancialMetrics: 'reports.vw_treasury_financial_metrics',
-    getTokens: 'reports.lk_tokens',
-    getTreasuryVariationMetricsDetail: 'reports.mvw_treasury_variation_metrics_detail',
-    getTreasuryFinancialPositions: 'reports.vw_treasury_financial_positions',
-    getTreasuryHistoricVariation: 'reports.dm_treasury_historic_variation',
-    getFinancialMetricAndVarDetail: 'reports.vw_financial_metric_and_var_detail'
+    getPositions: 'reports_production.prod_position_list'
   },
   production: {
-    getTreasuryFinancialMetrics: 'reports_production.prod_treasury_financial_metrics',
-    getTokens: 'reports_production.prod_tokens',
-    getTreasuryVariationMetricsDetail: 'reports_production.prod_treasury_variation_metrics_detail',
-    getTreasuryFinancialPositions: 'reports_production.prod_treasury_financial_positions',
-    getTreasuryHistoricVariation: 'reports_production.prod_treasury_historic_variation',
-    getFinancialMetricAndVarDetail: 'reports_production.vw_financial_metric_and_var_detail'
+    getPositions: 'reports_production.prod_position_list'
   }
 }
 
@@ -41,66 +31,18 @@ export class DataWarehouse {
     return DataWarehouse.instance
   }
 
-  // DONE
-  async getTreasuryFinancialMetrics() {
+  async getPositions() {
     const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment][
-        'getTreasuryFinancialMetrics'
-      ]
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
-
-    return this.executeCommonJobQuery(viewQuery)
-  }
-
-  // DONE
-  async getTokens() {
-    const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment]['getTokens']
+      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment]['getPositions']
     const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
 
     return await this.executeCommonJobQuery(viewQuery)
   }
 
-  // DONE
-  async getTreasuryVariationMetricsDetail() {
+  async getPositionById(id: string) {
     const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment][
-        'getTreasuryVariationMetricsDetail'
-      ]
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
-
-    return await this.executeCommonJobQuery(viewQuery)
-  }
-
-  // DONE
-  async getTreasuryFinancialPositions() {
-    const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment][
-        'getTreasuryFinancialPositions'
-      ]
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
-
-    return this.executeCommonJobQuery(viewQuery)
-  }
-
-  // DONE
-  async getTreasuryHistoricVariation() {
-    const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment][
-        'getTreasuryHistoricVariation'
-      ]
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
-
-    return await this.executeCommonJobQuery(viewQuery)
-  }
-
-  // DONE
-  async getFinancialMetricAndVarDetail() {
-    const table =
-      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment][
-        'getFinancialMetricAndVarDetail'
-      ]
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
+      REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment]['getPositions']
+    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\` where position_id = '${id}'`
 
     return await this.executeCommonJobQuery(viewQuery)
   }

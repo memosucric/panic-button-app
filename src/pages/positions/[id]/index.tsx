@@ -1,40 +1,43 @@
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
 import * as React from 'react'
 import { ReactElement } from 'react'
 import PageLayout from 'src/components/Layout/Layout'
 import { useApp } from 'src/contexts/app.context'
-import ExtractAction from 'src/components/ButtonActions/Extract'
+import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
+import { PositionType, Types } from 'src/contexts/types'
+import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
+import PositionDetail from 'src/views/Position/WrappedPosition'
 
-interface PositionProps {
-  cardId: string
+interface PositionIndexProps {
+  positionId: string
+  position: PositionType
 }
 
-const Index = (props: PositionProps): ReactElement => {
-  const { cardId } = props
+const Index = (props: PositionIndexProps): ReactElement => {
+  const { position } = props
 
-  const { state } = useApp()
+  const { dispatch } = useApp()
 
-  const { positions } = state
-  const { values } = positions
-  const card = values.find((position) => position?.id?.toLowerCase() === cardId?.toLowerCase())
+  React.useEffect(() => {
+    dispatch({
+      type: Types.UpdateStatus,
+      payload: 'loading'
+    })
+
+    dispatch({
+      type: Types.UpdatePositionSelected,
+      payload: position
+    })
+
+    dispatch({
+      type: Types.UpdateStatus,
+      payload: 'idle'
+    })
+  }, [position, dispatch])
 
   return (
-    <Container maxWidth="lg">
-      <Box
-        sx={{
-          my: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-        gap={2}
-      >
-        {card?.position}
-        <ExtractAction />
-      </Box>
-    </Container>
+    <BoxContainerWrapper>
+      <PositionDetail />
+    </BoxContainerWrapper>
   )
 }
 
@@ -46,10 +49,14 @@ export default Index
 
 export async function getServerSideProps(ctx: any) {
   const { params: { id = '' } = {} } = ctx
+  const dataWarehouse = DataWarehouse.getInstance()
+
+  const position = (await dataWarehouse.getPositionById(id))?.[0]
 
   return {
     props: {
-      cardId: id
+      positionId: id,
+      position
     }
   }
 }
