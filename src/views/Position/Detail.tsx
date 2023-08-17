@@ -1,57 +1,23 @@
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
-import CustomTypography from 'src/components/CustomTypography'
-import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { Divider } from '@mui/material'
-import ItemText from 'src/views/Common/ItemText'
+import { getStrategies, DAO } from 'src/config/strategies'
+import Form from 'src/views/Position/Form'
+import Primary from 'src/views/Position/Title/Primary'
+import Secondary from 'src/views/Position/Title/Secondary'
+import NoStrategies from 'src/views/Position/NoStrategies'
 
 interface DetailProps {
   selectedValue: PositionType
-}
-
-interface TitleRowProps {
-  title: string
-  subtitle?: string
-}
-
-const TitleRow = ({ title, subtitle }: TitleRowProps) => {
-  return (
-    <BoxWrapperRow gap={2} sx={{ justifyContent: 'flex-start' }}>
-      <CustomTypography
-        sx={{
-          fontFamily: 'IBM Plex Sans',
-          fontStyle: 'normal',
-          fontWeight: 500,
-          fontSize: 20,
-          lineHeight: '18px',
-          color: 'custom.grey.dark'
-        }}
-      >
-        {title}
-      </CustomTypography>
-      {subtitle ? (
-        <CustomTypography
-          sx={{
-            fontFamily: 'IBM Plex Sans',
-            fontStyle: 'normal',
-            fontWeight: 700,
-            fontSize: 20,
-            lineHeight: '18px',
-            color: 'custom.grey.dark'
-          }}
-        >
-          {subtitle}
-        </CustomTypography>
-      ) : null}
-    </BoxWrapperRow>
-  )
 }
 
 const Detail = (props: DetailProps) => {
   const { selectedValue } = props
 
   const { protocol, blockchain, lptoken_name: positionName } = selectedValue
+
+  const strategies = getStrategies(selectedValue.dao as DAO)
 
   return (
     <BoxWrapperColumn
@@ -66,20 +32,19 @@ const Detail = (props: DetailProps) => {
         width: '400px'
       }}
     >
-      <BoxWrapperColumn gap={4}>
+      <BoxWrapperColumn gap={2}>
         <BoxWrapperColumn gap={1}>
-          <ItemText itemText={'Information'} />
+          <Primary title={'Information'} />
           <Divider sx={{ borderBottomWidth: 5 }} />
         </BoxWrapperColumn>
-        <TitleRow title={`Blockchain:`} subtitle={blockchain} />
-        <TitleRow title={`Protocol:`} subtitle={protocol} />
-        <TitleRow title={`Position:`} subtitle={positionName} />
+        <BoxWrapperColumn gap={2}>
+          <Secondary title={`Blockchain:`} subtitle={blockchain} />
+          <Secondary title={`Protocol:`} subtitle={protocol} />
+          <Secondary title={`Position:`} subtitle={positionName} />
+        </BoxWrapperColumn>
       </BoxWrapperColumn>
-      <BoxWrapperColumn gap={4}>
-        <BoxWrapperColumn gap={1}>
-          <ItemText itemText={'Strategies'} />
-          <Divider sx={{ borderBottomWidth: 5 }} />
-        </BoxWrapperColumn>
+      <BoxWrapperColumn gap={2}>
+        {strategies ? <Form strategies={strategies} /> : <NoStrategies />}
       </BoxWrapperColumn>
     </BoxWrapperColumn>
   )

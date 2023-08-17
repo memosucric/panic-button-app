@@ -1,44 +1,60 @@
-enum DAO {
-  Gnosis = 'Gnosis',
-  Balancer = 'Balancer',
-  karpatkey = 'karpatkey',
-  ENS = 'ENS',
-  CoW = 'CoW'
-}
+export type DAO = 'Gnosis DAO' | 'Balancer DAO' | 'karpatkey DAO' | 'ENS DAO' | 'CoW DAO'
 
 enum Strategy {
   Withdraw = 'Withdraw',
   Move = 'Move'
 }
 
-type StrategyContent = {
+export type StrategyContent = {
   name: Strategy
   filePath: string
   parameters: [
     {
       name: string
-      type: 'number' | 'string'
+      label: string
+      type: 'number' | 'text'
     }
   ]
 }
 
-type StrategyList = {
-  [key in keyof typeof DAO]: StrategyContent[]
+export type StrategyList = {
+  [key in DAO]: StrategyContent[]
 }
 
 const strategies = {
-  Gnosis: [
+  'Gnosis DAO': [
     {
       name: Strategy.Withdraw,
       filePath: 'src/scripts/main.py',
       parameters: [
         {
           name: 'percentage',
+          label: 'Percentage',
           type: 'number'
+        }
+      ]
+    },
+    {
+      name: Strategy.Move,
+      filePath: 'src/scripts/main.py',
+      parameters: [
+        {
+          name: 'percentage',
+          label: 'Percentage',
+          type: 'number'
+        },
+        {
+          name: 'address',
+          label: 'Address',
+          type: 'string'
         }
       ]
     }
   ]
 } as StrategyList
 
-export { strategies }
+const getStrategies = (dao: DAO) => {
+  return strategies[dao]
+}
+
+export { strategies, getStrategies }
