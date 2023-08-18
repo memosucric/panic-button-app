@@ -6,6 +6,7 @@ import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { PositionType, Types } from 'src/contexts/types'
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import PositionDetail from 'src/views/Position/WrappedPosition'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 
 interface PositionIndexProps {
   positionId: string
@@ -45,7 +46,7 @@ Index.getTitle = 'Position'
 
 Index.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
 
-export default Index
+export default withPageAuthRequired(Index)
 
 export async function getServerSideProps(ctx: any) {
   const { params: { id = '' } = {} } = ctx

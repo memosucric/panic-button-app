@@ -1,37 +1,40 @@
 import PageLayout from 'src/components/Layout/Layout'
 import * as React from 'react'
 import { ReactElement } from 'react'
-import WrapperPositions from 'src/views/Positions/WrapperPositions'
-import { useApp } from 'src/contexts/app.context'
-import { PositionType, Types } from 'src/contexts/types'
-import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
+import { useUser } from '@auth0/nextjs-auth0/client'
+import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
+import CustomTypography from 'src/components/CustomTypography'
+import Loading from 'src/components/Loading'
+import { useRouter } from 'next/navigation'
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 
-interface HomepageProps {
-  positions: PositionType[]
-}
+const Homepage = (): ReactElement => {
+  const { user, error, isLoading } = useUser()
+  const { push } = useRouter()
 
-const Homepage = (props: HomepageProps): ReactElement => {
-  const { positions } = props
-  const { dispatch } = useApp()
+  if (isLoading) return <Loading />
+  if (error) push('/500')
+  if (!user) {
+    return (
+      <BoxContainerWrapper>
+        <CustomTypography
+          variant="h3"
+          sx={{
+            display: 'flex',
+            minHeight: `calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          To view the positions you need to Login
+        </CustomTypography>
+      </BoxContainerWrapper>
+    )
+  }
 
-  React.useEffect(() => {
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'loading'
-    })
-
-    dispatch({
-      type: Types.BulkPositions,
-      payload: positions
-    })
-
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'idle'
-    })
-  }, [positions, dispatch])
-
-  return <WrapperPositions />
+  push('/positions')
+  return <></>
 }
 
 Homepage.getTitle = 'Home'
@@ -39,12 +42,3 @@ Homepage.getTitle = 'Home'
 Homepage.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
 
 export default Homepage
-
-export async function getServerSideProps() {
-  const dataWarehouse = DataWarehouse.getInstance()
-
-  // Step 2: Query the data
-  const positions = await dataWarehouse.getPositions()
-
-  return { props: { positions } }
-}
