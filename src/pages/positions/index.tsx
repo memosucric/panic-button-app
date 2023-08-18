@@ -5,6 +5,7 @@ import WrapperPositions from 'src/views/Positions/WrapperPositions'
 import { useApp } from 'src/contexts/app.context'
 import { PositionType, Types } from 'src/contexts/types'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 
 interface PositionsPageProps {
   positions: PositionType[]
@@ -41,7 +42,7 @@ PositionsPage.getTitle = 'Home'
 
 PositionsPage.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
 
-export default PositionsPage
+export default withPageAuthRequired(PositionsPage)
 
 export async function getServerSideProps() {
   const dataWarehouse = DataWarehouse.getInstance()

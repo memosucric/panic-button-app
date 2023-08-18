@@ -13,7 +13,7 @@ interface PositionIndexProps {
   position: PositionType
 }
 
-const Index = (props: PositionIndexProps): ReactElement => {
+const PositionIndex = (props: PositionIndexProps): ReactElement => {
   const { position } = props
 
   const { dispatch } = useApp()
@@ -42,13 +42,13 @@ const Index = (props: PositionIndexProps): ReactElement => {
   )
 }
 
-Index.getTitle = 'Position'
+PositionIndex.getTitle = 'Position'
 
-Index.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
+PositionIndex.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout>
 
-export default withPageAuthRequired(Index)
+export default withPageAuthRequired(PositionIndex)
 
-export async function getServerSideProps(ctx: any) {
+const getServerSideProps = async (ctx: any) => {
   const { params: { id = '' } = {} } = ctx
   const dataWarehouse = DataWarehouse.getInstance()
 
@@ -61,3 +61,5 @@ export async function getServerSideProps(ctx: any) {
     }
   }
 }
+
+export { getServerSideProps }
