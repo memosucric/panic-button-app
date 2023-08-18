@@ -2,15 +2,14 @@ import { Box } from '@mui/material'
 import { Variants, motion, useAnimation } from 'framer-motion'
 import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
-import Card from 'src/views/Cards/Card/Card'
+import Position from 'src/views/Common/Position'
 import { PositionType } from 'src/contexts/types'
-import Link from 'next/link'
 
-interface CardListProps {
+interface ListProps {
   positions: PositionType[]
 }
 
-const CardList = (props: CardListProps) => {
+const List = (props: ListProps) => {
   const { positions } = props
 
   const [ref, inView] = useInView()
@@ -59,11 +58,11 @@ const CardList = (props: CardListProps) => {
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
-        alignContent: 'center',
+        justifyContent: 'center',
         gap: '20px 20px'
       }}
     >
-      {positions.map((card: any, index: number) => {
+      {positions.map((position: PositionType, index: number) => {
         return (
           <Box
             component={motion.div}
@@ -71,17 +70,16 @@ const CardList = (props: CardListProps) => {
             variants={itemVariants}
             custom={{ index }}
             sx={{
-              width: '340px',
+              width: '280px',
               minHeight: '140px',
-              maxHeight: '340px',
-              padding: '8px 8px',
+              maxHeight: '200px',
+              padding: '12px 12px',
               border: '1px solid #B6B6B6',
-              background: 'background.paper'
+              background: 'background.paper',
+              borderRadius: '8px'
             }}
           >
-            <Link href={`/positions/${card.id}`} style={{ textDecoration: 'none' }}>
-              <Card id={index} key={index} card={card} />
-            </Link>
+            <Position id={index} key={index} position={position} />
           </Box>
         )
       })}
@@ -89,4 +87,4 @@ const CardList = (props: CardListProps) => {
   )
 }
 
-export default CardList
+export default List

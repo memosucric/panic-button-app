@@ -14,7 +14,11 @@ export const positionReducer = (state: PositionType[], action: PositionActionsTy
     case Types.BulkPositions:
       return [...state, ...action.payload]
     case Types.DeletePosition:
-      return [...state.filter((card) => card.id.toLowerCase() !== action.payload.id.toLowerCase())]
+      return [
+        ...state.filter(
+          (position) => position.position_id.toLowerCase() !== action.payload.toLowerCase()
+        )
+      ]
     default:
       return state
   }
@@ -27,14 +31,7 @@ export const selectedPositionReducer = (
   switch (action.type) {
     case Types.UpdatePositionSelected:
       return {
-        id: action.payload.id,
-        blockchain: action.payload.blockchain,
-        cardType: action.payload.cardType,
-        dao: action.payload.dao,
-        position: action.payload.position,
-        protocol: action.payload.protocol,
-        totalUsdValue: action.payload.totalUsdValue,
-        categories: action.payload.categories
+        ...action.payload
       }
     case Types.ClearPositionSelected:
       return null

@@ -1,10 +1,9 @@
+import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { CacheProvider, EmotionCache } from '@emotion/react'
 import Layout from 'src/components/Layout/Layout'
 import { TITLE } from 'src/config/constants'
 import createEmotionCache from 'src/config/createEmotionCache'
 import theme from 'src/config/theme'
-import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
 import CssBaseline from '@mui/material/CssBaseline'
 import NoSsr from '@mui/material/NoSsr'
 import { ThemeProvider } from '@mui/material/styles'
@@ -13,6 +12,7 @@ import Head from 'next/head'
 import Router from 'next/router'
 import * as React from 'react'
 import { AppProvider } from 'src/contexts/app.context'
+import Loading from 'src/components/Loading'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -46,34 +46,22 @@ export default function MyApp(props: MyAppProps) {
   }, [])
 
   return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <title>{TITLE}</title>
-      </Head>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <AppProvider>
-          <NoSsr>
-            <CssBaseline />
-            <Layout {...pageProps}>
-              {loading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  flexDirection="column"
-                  alignItems="center"
-                  sx={{ minHeight: 'calc(100vh - 160px)' }}
-                >
-                  <CircularProgress color="primary" />
-                </Box>
-              ) : (
-                <Component {...pageProps} />
-              )}
-            </Layout>
-          </NoSsr>
-        </AppProvider>
-      </ThemeProvider>
-    </CacheProvider>
+    <UserProvider>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+          <title>{TITLE}</title>
+        </Head>
+        <ThemeProvider theme={theme}>
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <AppProvider>
+            <NoSsr>
+              <CssBaseline />
+              <Layout>{loading ? <Loading /> : <Component {...pageProps} />}</Layout>
+            </NoSsr>
+          </AppProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </UserProvider>
   )
 }

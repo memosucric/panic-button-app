@@ -9,7 +9,7 @@ interface PositionProps {
   helpText?: ReactElement
 }
 
-const Position = ({ position, url, helpText }: PositionProps) => {
+const PositionName = ({ position, url, helpText }: PositionProps) => {
   return (
     <CustomTypography
       sx={{
@@ -32,4 +32,4 @@ const Position = ({ position, url, helpText }: PositionProps) => {
   )
 }
 
-export default Position
+export default PositionName

@@ -13,10 +13,10 @@
     "lint:eslint:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
     "lint:tsc": "tsc -p tsconfig.json",
     "prepare": "husky install",
-    "commit": "git-cz",
-    "generate:cache": "ts-node --project ./tsconfig.json ./src/scripts/generateCache.ts --report-name getFinancialMetricAndVarDetail"
+    "commit": "git-cz"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^3.1.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
