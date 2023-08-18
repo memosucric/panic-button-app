@@ -1,29 +1,10 @@
-export type TokenType = {
-  balance: number
-  symbol: string
-  usdValue: number
-}
-
-export type RatioType = {
-  name: string
-  value: number
-}
-
-export type CategoryType = {
-  name: string
-  tokens?: TokenType[]
-  ratios?: RatioType[]
-}
-
 export type PositionType = {
-  id: string
-  blockchain: string
-  cardType: string
+  position_id: string
   dao: string
-  position: string
   protocol: string
-  totalUsdValue: number
-  categories: CategoryType[]
+  blockchain: string
+  lptoken_address: string
+  lptoken_name: string
 }
 
 export type StatusType = 'idle' | 'loading' | 'error'
@@ -39,9 +20,7 @@ export type InitialStateType = {
 export type PositionPayloadType = {
   [Types.CreatePosition]: PositionType
   [Types.BulkPositions]: PositionType[]
-  [Types.DeletePosition]: {
-    id: string
-  }
+  [Types.DeletePosition]: string
 }
 
 export type SelectedPositionPayloadType = {

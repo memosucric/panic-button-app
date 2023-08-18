@@ -11,13 +11,6 @@ export const TITLE = 'karpatkey'
 
 export const NONE = 'None'
 
-export const ALLOWED_REPORTS: { reportName: Report; fileName: string }[] = [
-  {
-    reportName: 'getFinancialMetricAndVarDetail' as unknown as Report,
-    fileName: 'financial-metric-and-var-detail'
-  }
-]
-
 export type CHAIN = {
   id: number
   name: string

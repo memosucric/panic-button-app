@@ -3,16 +3,17 @@ import * as React from 'react'
 
 interface TitleProps {
   title: string
+  fontSize?: number
 }
 
-const Title = ({ title }: TitleProps) => {
+const Title = ({ title, fontSize = 14 }: TitleProps) => {
   return (
     <CustomTypography
       sx={{
         fontFamily: 'IBM Plex Sans',
         fontStyle: 'normal',
         fontWeight: 700,
-        fontSize: '14px',
+        fontSize,
         lineHeight: '18px',
         color: 'custom.grey.dark'
       }}
