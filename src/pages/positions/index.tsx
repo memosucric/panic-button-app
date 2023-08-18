@@ -6,6 +6,8 @@ import { useApp } from 'src/contexts/app.context'
 import { PositionType, Types } from 'src/contexts/types'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
+import { getSession, Session } from '@auth0/nextjs-auth0'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 interface PositionsPageProps {
   positions: PositionType[]
@@ -44,10 +46,28 @@ PositionsPage.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout
 
 export default withPageAuthRequired(PositionsPage)
 
-export async function getServerSideProps() {
+export const getServerSideProps = async (context: {
+  req: NextApiRequest
+  res: NextApiResponse
+}) => {
+  const { req, res } = context
+  const { user } = (await getSession(req as any, res as any)) as Session
+
+  if (!user) {
+    return {
+      props: {
+        positions: []
+      }
+    }
+  }
+
   const dataWarehouse = DataWarehouse.getInstance()
 
-  const positions = await dataWarehouse.getPositions()
+  const allPositions: PositionType[] = await dataWarehouse.getPositions()
+
+  const [role] = user['http://localhost:3000/roles']
+
+  const positions = allPositions.filter((position) => role && position.dao === role)
 
   return { props: { positions } }
 }
