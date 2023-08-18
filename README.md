@@ -15,9 +15,34 @@ This repository contains the source code for the karpatkey panic button app.
 
 TODO: Complete
 
+## About
+
+This project exists to make it easier for the treasury management team to manage positions.  
+Contributions to improve this project are welcome.
+
 ## How to use
 
-TODO: Complete
+To get started, just clone the repository and run `yarn install && yarn dev`:
+
+    git clone git@github.com:KarpatkeyDAO/panic-button-app.git
+    yarn install
+    yarn dev
+
+## Building and deploying in production
+
+If you wanted to run this site in production, you should install modules then build the site with `yarn build` and run it with `yarn start`:
+
+    yarn install
+    yarn build
+    yarn start
+
+You should run `yarn build` again any time you make changes to the site.
+
+Note: If you are already running a webserver on port 80 (e.g. Macs usually have the Apache webserver running on port 80) you can still start the example in production mode by passing a different port as an Environment Variable when starting (e.g. `PORT=3000 yarn start`).
+
+## Configuring
+
+If you configure a .env file (just copy [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) over to '.env' and fill in the options) you can configure a range of options.
 
 ## Docker
 
