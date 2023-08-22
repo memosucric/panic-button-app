@@ -1,0 +1,31 @@
+{
+  "Gnosis DAO": [
+    {
+      "name": "Withdraw",
+      "filePath": "src/scripts/main.py",
+      "parameters": [
+        {
+          "name": "percentage",
+          "label": "Percentage",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "Move",
+      "filePath": "src/scripts/main.py",
+      "parameters": [
+        {
+          "name": "percentage",
+          "label": "Percentage",
+          "type": "number"
+        },
+        {
+          "name": "address",
+          "label": "Address",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
