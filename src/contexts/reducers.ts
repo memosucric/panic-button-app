@@ -12,7 +12,7 @@ export const positionReducer = (state: PositionType[], action: PositionActionsTy
     case Types.CreatePosition:
       return [...state, action.payload]
     case Types.BulkPositions:
-      return [...state, ...action.payload]
+      return [...action.payload]
     case Types.ClearPositions:
       return []
     case Types.DeletePosition:

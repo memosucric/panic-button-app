@@ -71,7 +71,9 @@ export const getServerSideProps = async (context: {
 
   const allPositions: PositionType[] = await dataWarehouse.getPositions()
 
-  const positions = allPositions.filter((position) => dao && position.dao === dao)
+  const positions = allPositions
+    .filter((position) => dao && position.dao === dao)
+    .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
 
   return { props: { positions } }
 }
