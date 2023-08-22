@@ -20,6 +20,7 @@ export type InitialStateType = {
 export type PositionPayloadType = {
   [Types.CreatePosition]: PositionType
   [Types.BulkPositions]: PositionType[]
+  [Types.ClearPositions]: []
   [Types.DeletePosition]: string
 }
 
@@ -35,6 +36,7 @@ export type StatusPayloadType = {
 export enum Types {
   CreatePosition = 'CREATE_POSITION',
   BulkPositions = 'BULK_POSITIONS',
+  ClearPositions = 'CLEAR_POSITIONS',
   DeletePosition = 'DELETE_POSITION',
   UpdatePositionSelected = 'UPDATE_POSITION_SELECTED',
   ClearPositionSelected = 'CLEAR_POSITION_SELECTED',
