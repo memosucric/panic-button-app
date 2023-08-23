@@ -2,7 +2,7 @@
   "Gnosis DAO": [
     {
       "name": "Withdraw",
-      "filePath": "src/scripts/main.py",
+      "filePath": "/Users/marianoaguero/Projects/karpatkey/panic-button-app/src/scripts/main.py",
       "parameters": [
         {
           "name": "percentage",
@@ -15,7 +15,7 @@
     },
     {
       "name": "Move",
-      "filePath": "src/scripts/main.py",
+      "filePath": "/Users/marianoaguero/Projects/karpatkey/panic-button-app/src/scripts/main.py",
       "parameters": [
         {
           "name": "percentage",
