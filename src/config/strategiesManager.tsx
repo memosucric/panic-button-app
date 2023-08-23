@@ -7,16 +7,18 @@ enum Strategy {
   Move = 'Move'
 }
 
+export type Parameter = {
+  name: string
+  label: string
+  type: 'number' | 'text'
+  placeholder: string
+  default: Maybe<string | number>
+}
+
 export type StrategyContent = {
   name: Strategy
   filePath: string
-  parameters: [
-    {
-      name: string
-      label: string
-      type: 'number' | 'text'
-    }
-  ]
+  parameters: Parameter[]
 }
 
 export type StrategyList = {
