@@ -1,6 +1,8 @@
 import { withApiAuthRequired } from '@auth0/nextjs-auth0'
 import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getSession, Session } from '@auth0/nextjs-auth0'
+import { DAO, getStrategies } from 'src/config/strategiesManager'
 
 type Status = {
   data: {
@@ -10,15 +12,51 @@ type Status = {
   }
 }
 
-export default withApiAuthRequired(function handler(
+export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Status>
 ) {
+  // Should be a post request
+  if (req.method !== 'POST') {
+    res.status(405).json({ data: { status: false, error: new Error('Method not allowed') } })
+    return
+  }
+
+  const session = await getSession(req as any, res as any)
+
+  // Validate session here
+  if (!session) {
+    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    return
+  }
+
+  // Get User role, if not found, return an error
+  const user = (session as Session).user
+  const roles = user?.['http://localhost:3000/roles']
+    ? (user?.['http://localhost:3000/roles'] as unknown as string[])
+    : ['']
+  const dao = roles?.[0] ?? ''
+
+  if (!dao) {
+    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    return
+  }
+
+  // Get the strategy from the body, if not found, return an error
+  const { strategy, ...others } = req.body
+  const strategies = getStrategies(dao as DAO)
+  const strategyObject = strategies.find((s) => s.name === strategy)
+
+  if (!strategyObject || !strategyObject?.filePath || !others?.percentage) {
+    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    return
+  }
+
   return new Promise<void>((resolve, reject) => {
     try {
       let message: string
       // spawn new child process to call the python script
-      const python = spawn('python3', [`./../../shared/scripts/main.py`, '-p', '20'])
+      const python = spawn('python3', [strategyObject.filePath, '-p', others.percentage])
 
       // collect data from script
       python.stdout.on('data', (data) => {

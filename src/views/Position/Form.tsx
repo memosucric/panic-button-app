@@ -47,9 +47,17 @@ const Form = (props: FormProps) => {
 
   const watchStrategy = watch('strategy')
 
-  const onSubmit: SubmitHandler<any> = (data: any) => {
+  const onSubmit: SubmitHandler<any> = async (data: any) => {
     // Do something here
     console.log('data', data)
+
+    await fetch('/api/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
   }
 
   return (
