@@ -43,6 +43,7 @@ Note: If you are already running a webserver on port 80 (e.g. Macs usually have 
 ## Configuring
 
 If you configure a .env file (just copy [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) over to '.env' and fill in the options) you can configure a range of options.
+We also have to configure the file of the strategies to be used.
 
 ## Docker
 

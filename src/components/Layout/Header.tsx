@@ -60,7 +60,7 @@ const LoggedComponent = (props: LoggedComponentProps) => {
               display: 'flex'
             }}
           >
-            {dao}
+            {dao || 'No DAO assigned'}
           </CustomTypography>
         </BoxWrapperColumn>
       </BoxWrapperRow>

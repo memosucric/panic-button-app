@@ -10,6 +10,12 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 interface TitleProps {
   title: string
@@ -40,6 +46,9 @@ const Form = (props: FormProps) => {
   const { strategies } = props
 
   const [open, setOpen] = React.useState(false)
+
+  const [openSuccess, setOpenSuccess] = React.useState(false)
+  const [openError, setOpenError] = React.useState(false)
 
   const {
     formState: { errors },
@@ -75,16 +84,39 @@ const Form = (props: FormProps) => {
 
   const onSubmit: SubmitHandler<any> = async (data: any) => {
     try {
-      await fetch('/api/execute', {
+      const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       })
+
+      const result = await response.json()
+      if (response.status === 200 && result.data.status) {
+        setOpenSuccess(true)
+      } else {
+        setOpenError(true)
+      }
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const handleCloseSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpenSuccess(false)
+  }
+
+  const handleCloseError = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpenError(false)
   }
 
   return (
@@ -210,6 +242,16 @@ const Form = (props: FormProps) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
+        <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+          Strategy executed successfully!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          Error executing strategy!
+        </Alert>
+      </Snackbar>
     </>
   )
 }
