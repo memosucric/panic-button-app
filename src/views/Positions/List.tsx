@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { Variants, motion, useAnimation } from 'framer-motion'
 import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
-import Position from 'src/views/Common/Position'
+import Position from 'src/views/Positions/Position'
 import { PositionType } from 'src/contexts/types'
 
 interface ListProps {

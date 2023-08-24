@@ -5,6 +5,7 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 import { Avatar, Button } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import CustomTypography from 'src/components/CustomTypography'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 
 export const HEADER_HEIGHT = 100
 
@@ -24,10 +25,11 @@ const NotLoggedComponent = () => {
 interface LoggedComponentProps {
   name: string
   image: string
+  dao: string
 }
 
 const LoggedComponent = (props: LoggedComponentProps) => {
-  const { name, image } = props
+  const { name, image, dao } = props
   const { push } = useRouter()
 
   const onLogout = () => {
@@ -37,17 +39,30 @@ const LoggedComponent = (props: LoggedComponentProps) => {
     <BoxWrapperRow gap={4}>
       <BoxWrapperRow>
         <Avatar alt={name} src={image} />
-        <CustomTypography
-          sx={{
-            gap: 2,
-            height: '48px',
-            padding: '6px 14px',
-            alignItems: 'center',
-            display: 'flex'
-          }}
-        >
-          {name}
-        </CustomTypography>
+        <BoxWrapperColumn>
+          <CustomTypography
+            sx={{
+              gap: 2,
+              height: '20px',
+              padding: '6px 14px',
+              alignItems: 'center',
+              display: 'flex'
+            }}
+          >
+            {name}
+          </CustomTypography>
+          <CustomTypography
+            sx={{
+              gap: 2,
+              height: '20px',
+              padding: '6px 14px',
+              alignItems: 'center',
+              display: 'flex'
+            }}
+          >
+            {dao || 'No DAO assigned'}
+          </CustomTypography>
+        </BoxWrapperColumn>
       </BoxWrapperRow>
       <Button onClick={onLogout} sx={{ gap: 2, height: '48px', padding: '6px 14px' }}>
         Logout
@@ -58,6 +73,19 @@ const LoggedComponent = (props: LoggedComponentProps) => {
 
 const Header = () => {
   const { user, isLoading } = useUser()
+
+  const roles = user?.['http://localhost:3000/roles']
+    ? (user?.['http://localhost:3000/roles'] as unknown as string[])
+    : ['']
+  const dao = roles?.[0] ?? ''
+  const name = user?.name ?? ''
+  const image = user?.picture ?? ''
+
+  const loggedComponentProps = {
+    name,
+    image,
+    dao
+  }
 
   return (
     <BoxWrapperRow
@@ -76,7 +104,7 @@ const Header = () => {
           !user ? (
             <NotLoggedComponent />
           ) : (
-            <LoggedComponent name={user?.name ?? ''} image={user?.picture ?? ''} />
+            <LoggedComponent {...loggedComponentProps} />
           )
         ) : null}
       </BoxWrapperRow>

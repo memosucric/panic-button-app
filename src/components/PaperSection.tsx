@@ -16,7 +16,7 @@ const PaperSection = (props: PaperSectionProps) => {
     <Paper sx={{ height: '100%' }}>
       <BoxWrapperColumn
         sx={{ marginX: '48px', marginY: '48px', height: '100%', alignItems: 'center' }}
-        gap={3}
+        gap={5}
       >
         {title ? (
           <BoxWrapperRow gap={2} sx={{ justifyContent: 'flex-start', alignItems: 'flex-end' }}>

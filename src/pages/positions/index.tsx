@@ -6,15 +6,17 @@ import { useApp } from 'src/contexts/app.context'
 import { PositionType, Types } from 'src/contexts/types'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
+import { getSession, Session } from '@auth0/nextjs-auth0'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 interface PositionsPageProps {
   positions: PositionType[]
 }
 
 const PositionsPage = (props: PositionsPageProps): ReactElement => {
-  const { positions } = props
+  const { positions = [] } = props
   const { dispatch, state } = useApp()
-  const { values } = state.positions
+  const values = state.positions.values
 
   React.useEffect(() => {
     if (values.length > 0) return
@@ -33,7 +35,7 @@ const PositionsPage = (props: PositionsPageProps): ReactElement => {
       type: Types.UpdateStatus,
       payload: 'idle'
     })
-  }, [positions, dispatch, status])
+  }, [dispatch, positions])
 
   return <WrapperPositions />
 }
@@ -44,10 +46,34 @@ PositionsPage.getLayout = (page: ReactElement) => <PageLayout>{page}</PageLayout
 
 export default withPageAuthRequired(PositionsPage)
 
-export async function getServerSideProps() {
+export const getServerSideProps = async (context: {
+  req: NextApiRequest
+  res: NextApiResponse
+}) => {
+  const { req, res } = context
+  const session = await getSession(req as any, res as any)
+
+  if (!session) {
+    return {
+      props: {
+        positions: []
+      }
+    }
+  }
+
+  const user = (session as Session).user
+  const roles = user?.['http://localhost:3000/roles']
+    ? (user?.['http://localhost:3000/roles'] as unknown as string[])
+    : ['']
+  const dao = roles?.[0] ?? ''
+
   const dataWarehouse = DataWarehouse.getInstance()
 
-  const positions = await dataWarehouse.getPositions()
+  const allPositions: PositionType[] = await dataWarehouse.getPositions()
+
+  const positions = allPositions
+    .filter((position) => dao && position.dao === dao)
+    .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
 
   return { props: { positions } }
 }
