@@ -16,6 +16,13 @@ from dissa_aura import exit_aura_withdraw_and_unwrap
 
 load_dotenv()
 
+def start_local_blockchain():
+    ETH_FORK_NODE_URL = os.getenv("ETHEREUM_PW")
+    LOCAL_NODE_DEFAULT_BLOCK = 17565000
+    cmd = f"anvil --accounts 15 -f {ETH_FORK_NODE_URL} --fork-block-number {LOCAL_NODE_DEFAULT_BLOCK} --port 8546"
+    subprocess.Popen(shlex.split(cmd))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Dummy testing script", epilog='This is the epilog',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -24,15 +31,20 @@ def main():
     args = parser.parse_args()
     config = vars(args)
 
-    ETH_FORK_NODE_URL = os.getenv("ETHEREUM_PW")
-    LOCAL_NODE_DEFAULT_BLOCK = 17612540
-    cmd=f"anvil --accounts 15 -f {ETH_FORK_NODE_URL} --fork-block-number {LOCAL_NODE_DEFAULT_BLOCK} --port 8546"
-    subprocess.Popen(shlex.split(cmd))
+    start_local = os.getenv("START_LOCAL_BLOCKCHAIN", "").lower() == "yes"
+
+    if start_local:
+        start_local_blockchain()
 
     roles = 4
     roles_mod = "0x1cFB0CD7B1111bf2054615C7C491a15C4A3303cc"
     safe_address = "0x849D52316331967b6fF1198e5E32A0eB168D039d"
-    private_key = "blabla"
+    private_key = os.getenv("PRIVATE_KEY")
+    
+    if not private_key:
+        print("Private key is not set!")
+        return
+
     blockchain = "fork"
 
     if blockchain == "fork":
