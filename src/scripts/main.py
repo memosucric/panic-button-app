@@ -18,7 +18,7 @@ load_dotenv()
 
 def start_local_blockchain():
     ETH_FORK_NODE_URL = os.getenv("ETHEREUM_PW")
-    LOCAL_NODE_DEFAULT_BLOCK = 17565000
+    LOCAL_NODE_DEFAULT_BLOCK = 17612540
     cmd = f"anvil --accounts 15 -f {ETH_FORK_NODE_URL} --fork-block-number {LOCAL_NODE_DEFAULT_BLOCK} --port 8546"
     subprocess.Popen(shlex.split(cmd))
 
