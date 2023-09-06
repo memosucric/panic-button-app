@@ -48,7 +48,7 @@ def main():
         return
 
     blockchain = "fork"
-
+    
     if blockchain == "fork":
         w3 = Web3(HTTPProvider(f"http://localhost:8546"))
         w3.eth.send_transaction({"to": EOA_address, "value": Web3.to_wei(0.01, "ether")})
@@ -57,11 +57,19 @@ def main():
 
         tx = exit_aura_withdraw_and_unwrap(w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
                                        role=roles, roles_mod=roles_mod, private_key=private_key, blockchain=blockchain)
-        if tx.status == 1:
-            txns_message = '*Txn hash (Success):* <https://gnosisscan.io/tx/%s|%s>\n' % (tx.hex(), tx.hex())
-        else:
-            txns_message = '*Txn hash (Fail):* <https://gnosisscan.io/tx/%s|%s>\n' % (tx.hex(), tx.hex())
+        
+        # print("=====================")
+        # print(tx.transactionHash.hex())
+        # print("=====================")
 
-# print(txns_message)
+
+        if tx.status == 1:
+            # txns_message = '*Txn hash (Success):* <https://gnosisscan.io/tx/{}|{}>\n'.format(tx.transactionHash.hex(), tx.transactionHash.hex())
+            txns_message = 'Txn hash (Success): https://gnosisscan.io/tx/{}\n'.format(tx.transactionHash.hex())
+        else:
+            txns_message = 'Txn hash (Fail): https://gnosisscan.io/tx/{}|{}\n'.format(tx.transactionHash.hex(), tx.transactionHash.hex())
+
+        print(txns_message)
+
 if __name__ == "__main__":
     main()
