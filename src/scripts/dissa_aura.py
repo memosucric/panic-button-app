@@ -20,7 +20,7 @@ def exit_aura_withdraw_and_unwrap(simulate=bool, w3=None, safe_address=AvatarAdd
         withdraw_tx = build([withdraw_aura], role=role, account=EOA_account,
                            roles_mod_address=roles_mod,
                            web3=w3)
-        sim_data = simulate_tx(withdraw_tx, block=17994590, account_id=os.getenv("TENDERLY"), project="project",
+        sim_data = simulate_tx(withdraw_tx, block=17000000, account_id=os.getenv("TENDERLY_ID"), project="project",
                             api_token=os.getenv("TENDERLY_API"),
                             sim_type='quick')
         print(sim_data)
