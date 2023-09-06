@@ -1,7 +1,7 @@
 from roles_royce.protocols.eth import balancer, aura
 from roles_royce.roles import send, check, build
 from roles_royce.protocols.base import AvatarAddress, Address
-from roles_royce.utils import tenderly_simulate, simulate_tx
+from roles_royce.utils import tenderly_simulate, simulate_tx, tenderly_share_simulation
 
 from dotenv import load_dotenv
 import os
@@ -23,8 +23,9 @@ def exit_aura_withdraw_and_unwrap(simulate=bool, w3=None, safe_address=AvatarAdd
         sim_data = simulate_tx(withdraw_tx, block=17000000, account_id=os.getenv("TENDERLY_ID"), project="project",
                             api_token=os.getenv("TENDERLY_API"),
                             sim_type='quick')
-        print(sim_data)
-        return sim_data
+        simulate_link = tenderly_share_simulation(account_id=os.getenv("TENDERLY_ID"), project="project", api_token=os.getenv("TENDERLY_API"),
+                                    simulation_id=sim_data['simulation']['id'])
+        return simulate_link
     else:
         tx = send([withdraw_aura], role=role, private_key=private_key, roles_mod_address=roles_mod, web3=w3)
         if tx.status == 1:
