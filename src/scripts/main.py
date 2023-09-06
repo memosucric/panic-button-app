@@ -13,7 +13,6 @@ from web3.exceptions import TransactionNotFound
 
 from dissa_aura import exit_aura_withdraw_and_unwrap
 
-
 load_dotenv()
 
 def start_local_blockchain():
@@ -21,8 +20,6 @@ def start_local_blockchain():
     LOCAL_NODE_DEFAULT_BLOCK = 17612540
     cmd = f"anvil --accounts 15 -f {ETH_FORK_NODE_URL} --fork-block-number {LOCAL_NODE_DEFAULT_BLOCK} --port 8546"
     subprocess.Popen(shlex.split(cmd))
-
-
 
 def main():
     parser = argparse.ArgumentParser(description="Dummy testing script", epilog='This is the epilog',
@@ -48,28 +45,17 @@ def main():
         return
 
     blockchain = "fork"
-    
+
     if blockchain == "fork":
         w3 = Web3(HTTPProvider(f"http://localhost:8546"))
         w3.eth.send_transaction({"to": EOA_address, "value": Web3.to_wei(0.01, "ether")})
         print(w3.eth.get_balance(EOA_address))
         aura_rewards_addr = "0x6c3f6C327DE4aE51a2DfAaF3431b3c508ec8D3EB"
 
-        tx = exit_aura_withdraw_and_unwrap(w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
+        tx = exit_aura_withdraw_and_unwrap(simulate= True, w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
                                        role=roles, roles_mod=roles_mod, private_key=private_key, blockchain=blockchain)
-        
-        # print("=====================")
-        # print(tx.transactionHash.hex())
-        # print("=====================")
-
-
-        if tx.status == 1:
-            # txns_message = '*Txn hash (Success):* <https://gnosisscan.io/tx/{}|{}>\n'.format(tx.transactionHash.hex(), tx.transactionHash.hex())
-            txns_message = 'Txn hash (Success): https://gnosisscan.io/tx/{}\n'.format(tx.transactionHash.hex())
-        else:
-            txns_message = 'Txn hash (Fail): https://gnosisscan.io/tx/{}|{}\n'.format(tx.transactionHash.hex(), tx.transactionHash.hex())
-
-        print(txns_message)
-
+        print(tx)
+ 
+# print(txns_message)
 if __name__ == "__main__":
     main()
