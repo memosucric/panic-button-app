@@ -20,15 +20,15 @@ def exit_aura_withdraw_and_unwrap(simulate=bool, w3=None, safe_address=AvatarAdd
         withdraw_tx = build([withdraw_aura], role=role, account=EOA_account,
                            roles_mod_address=roles_mod,
                            web3=w3)
-        sim_data = simulate_tx(withdraw_tx, block=17000000, account_id=os.getenv("TENDERLY_ID"), project="project",
+        sim_data = simulate_tx(withdraw_tx, block=17000000, account_id=os.getenv("TENDERLY_ID"), project=os.getenv("TENDERLY_PROJECT"),
                             api_token=os.getenv("TENDERLY_API"),
                             sim_type='quick')
-        simulate_link = tenderly_share_simulation(account_id=os.getenv("TENDERLY_ID"), project="project", api_token=os.getenv("TENDERLY_API"),
+        simulate_link = tenderly_share_simulation(account_id=os.getenv("TENDERLY_ID"), project=os.getenv("TENDERLY_PROJECT"), api_token=os.getenv("TENDERLY_API"),
                                     simulation_id=sim_data['simulation']['id'])
         return simulate_link
     else:
         tx = send([withdraw_aura], role=role, private_key=private_key, roles_mod_address=roles_mod, web3=w3)
         if tx.status == 1:
-            return '*Txn hash (Success):* <https://gnosisscan.io/tx/%s|%s>\n' % (tx.hex(), tx.hex())
+            return '*Txn hash (Success):* https://gnosisscan.io/tx/{}\n'.format(tx.transactionHash.hex())
         else:
-            return '*Txn hash (Fail):* <https://gnosisscan.io/tx/%s|%s>\n' % (tx.hex(), tx.hex())
+            return '*Txn hash (Fail):* https://gnosisscan.io/tx/{}\n'.format(tx.transactionHash.hex())

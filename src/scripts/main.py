@@ -26,6 +26,8 @@ def main():
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-p", "--percentage", type=int, default=100, help="percentage of liquidity to be removed")
     parser.add_argument("-e", "--execute", action='store_true', help="execute transaction")
+    parser.add_argument("--simulate", action='store_true', default=os.getenv("SIMULATE", "False").lower() == "true", 
+                        help="simulate transaction (default: False, or value of SIMULATE environment variable)")
     args = parser.parse_args()
     config = vars(args)
 
@@ -39,7 +41,7 @@ def main():
     safe_address = "0x849D52316331967b6fF1198e5E32A0eB168D039d"
     private_key = os.getenv("PRIVATE_KEY")
     EOA_address = "0xb11ea45e2d787323dFCF50cb52b4B3126b94810d"
-    
+    simulate = args.simulate
     if not private_key:
         print("Private key is not set!")
         return
@@ -52,10 +54,9 @@ def main():
         print(w3.eth.get_balance(EOA_address))
         aura_rewards_addr = "0x6c3f6C327DE4aE51a2DfAaF3431b3c508ec8D3EB"
 
-        tx = exit_aura_withdraw_and_unwrap(simulate= True, w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
+        tx = exit_aura_withdraw_and_unwrap(simulate=simulate, w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
                                        role=roles, roles_mod=roles_mod, private_key=private_key, blockchain=blockchain)
         print(tx)
  
-# print(txns_message)
 if __name__ == "__main__":
     main()
