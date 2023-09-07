@@ -14,9 +14,9 @@ interface PositionsPageProps {
 }
 
 const PositionsPage = (props: PositionsPageProps): ReactElement => {
-  const { positions } = props
+  const { positions = [] } = props
   const { dispatch, state } = useApp()
-  const { values } = state.positions
+  const values = state.positions.values
 
   React.useEffect(() => {
     if (values.length > 0) return
@@ -35,7 +35,7 @@ const PositionsPage = (props: PositionsPageProps): ReactElement => {
       type: Types.UpdateStatus,
       payload: 'idle'
     })
-  }, [positions, dispatch, status])
+  }, [dispatch, positions])
 
   return <WrapperPositions />
 }
@@ -51,9 +51,9 @@ export const getServerSideProps = async (context: {
   res: NextApiResponse
 }) => {
   const { req, res } = context
-  const { user } = (await getSession(req as any, res as any)) as Session
+  const session = await getSession(req as any, res as any)
 
-  if (!user) {
+  if (!session) {
     return {
       props: {
         positions: []
@@ -61,13 +61,19 @@ export const getServerSideProps = async (context: {
     }
   }
 
+  const user = (session as Session).user
+  const roles = user?.['http://localhost:3000/roles']
+    ? (user?.['http://localhost:3000/roles'] as unknown as string[])
+    : ['']
+  const dao = roles?.[0] ?? ''
+
   const dataWarehouse = DataWarehouse.getInstance()
 
   const allPositions: PositionType[] = await dataWarehouse.getPositions()
 
-  const [role] = user['http://localhost:3000/roles']
-
-  const positions = allPositions.filter((position) => role && position.dao === role)
+  const positions = allPositions
+    .filter((position) => dao && position.dao === dao)
+    .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
 
   return { props: { positions } }
 }
