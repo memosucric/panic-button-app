@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { Button, RadioGroup, FormControlLabel, Radio, TextField, Divider } from '@mui/material'
+import { Button, RadioGroup, FormControlLabel, Radio, Divider } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
-import { Parameter, StrategyContent } from 'src/config/strategiesManager'
+import { ExecConfig } from 'src/config/strategiesManager'
 import CustomTypography from 'src/components/CustomTypography'
 import * as React from 'react'
 import Primary from 'src/views/Position/Title/Primary'
@@ -39,7 +39,7 @@ const Title = ({ title }: TitleProps) => {
 }
 
 interface FormProps {
-  strategies: StrategyContent[]
+  strategies: ExecConfig[]
 }
 
 const Form = (props: FormProps) => {
@@ -84,12 +84,21 @@ const Form = (props: FormProps) => {
 
   const onSubmit: SubmitHandler<any> = async (data: any) => {
     try {
+      // python /app/src/scripts/main_GnosisDAO.py --strategy "Exit_1" --simulate --percentage 98 --parameter1 6578 --parameter2 '0x62376'
+      // python /app/src/scripts/main_GnosisDAO.py --strategy "Exit_1" --execute --percentage 98 --parameter1 6578
+
+      // TODO: remove this, we need to do it in another way, simulate should come from another submit button
+      const bodyParams = {
+        ...data,
+        simulate: true
+      }
+
       const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(bodyParams)
       })
 
       const result = await response.json()
@@ -137,7 +146,7 @@ const Form = (props: FormProps) => {
                   rules={{ required: 'Strategy is required' }}
                   render={({ field }) => (
                     <RadioGroup {...field}>
-                      {strategies.map((strategy: StrategyContent, index: number) => {
+                      {strategies.map((strategy: ExecConfig, index: number) => {
                         return (
                           <FormControlLabel
                             key={index}
@@ -154,47 +163,48 @@ const Form = (props: FormProps) => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
-              <BoxWrapperColumn gap={1}>
-                <Primary title={'Parameters'} />
-                <Divider sx={{ borderBottomWidth: 5 }} />
-              </BoxWrapperColumn>
-              <BoxWrapperColumn gap={2}>
-                <Title title={'Fill in inputs'} />
-                {strategies
-                  .find((strategy: StrategyContent) => strategy.name === watchStrategy)
-                  ?.parameters.map((parameter: Parameter, index: number) => {
-                    const { name, type, label, placeholder, default: defaultValue = '' } = parameter
-                    return (
-                      <Controller
-                        name={name}
-                        control={control}
-                        key={index}
-                        rules={{ required: `${label} is required` }}
-                        defaultValue={defaultValue}
-                        render={({ field }) => (
-                          <TextField
-                            type={type}
-                            label={label}
-                            placeholder={placeholder}
-                            onChange={field.onChange}
-                            value={field.value || ''}
-                            error={!!errors[name]}
-                            helperText={errors[name]?.message?.toString()}
-                            sx={{
-                              fontFamily: 'IBM Plex Sans',
-                              fontStyle: 'normal',
-                              fontWeight: 500,
-                              fontSize: 18,
-                              lineHeight: '18px',
-                              color: 'custom.grey.dark',
-                              width: '100%'
-                            }}
-                          />
-                        )}
-                      />
-                    )
-                  })}
-              </BoxWrapperColumn>
+              {/*<BoxWrapperColumn gap={1}>*/}
+              {/*  <Primary title={'Parameters'} />*/}
+              {/*  <Divider sx={{ borderBottomWidth: 5 }} />*/}
+              {/*</BoxWrapperColumn>*/}
+              {/*TODO: we only should implement percentage*/}
+              {/*<BoxWrapperColumn gap={2}>*/}
+              {/*  <Title title={'Fill in inputs'} />*/}
+              {/*  {strategies*/}
+              {/*    .find((strategy: StrategyContent) => strategy.name === watchStrategy)*/}
+              {/*    ?.parameters.map((parameter: Parameter, index: number) => {*/}
+              {/*      const { name, type, label, placeholder, default: defaultValue = '' } = parameter*/}
+              {/*      return (*/}
+              {/*        <Controller*/}
+              {/*          name={name}*/}
+              {/*          control={control}*/}
+              {/*          key={index}*/}
+              {/*          rules={{ required: `${label} is required` }}*/}
+              {/*          defaultValue={defaultValue}*/}
+              {/*          render={({ field }) => (*/}
+              {/*            <TextField*/}
+              {/*              type={type}*/}
+              {/*              label={label}*/}
+              {/*              placeholder={placeholder}*/}
+              {/*              onChange={field.onChange}*/}
+              {/*              value={field.value || ''}*/}
+              {/*              error={!!errors[name]}*/}
+              {/*              helperText={errors[name]?.message?.toString()}*/}
+              {/*              sx={{*/}
+              {/*                fontFamily: 'IBM Plex Sans',*/}
+              {/*                fontStyle: 'normal',*/}
+              {/*                fontWeight: 500,*/}
+              {/*                fontSize: 18,*/}
+              {/*                lineHeight: '18px',*/}
+              {/*                color: 'custom.grey.dark',*/}
+              {/*                width: '100%'*/}
+              {/*              }}*/}
+              {/*            />*/}
+              {/*          )}*/}
+              {/*        />*/}
+              {/*      )*/}
+              {/*    })}*/}
+              {/*</BoxWrapperColumn>*/}
             </BoxWrapperColumn>
           </BoxWrapperColumn>
           <Button
