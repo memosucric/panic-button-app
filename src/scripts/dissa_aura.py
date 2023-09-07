@@ -11,7 +11,7 @@ from abis import aura_rewards_contract_abi, balancer_pool_token_abi,balancer_vau
 
 load_dotenv()
 
-def exit_aura_withdraw_and_unwrap(simulate=bool, w3=None, safe_address=AvatarAddress, aura_rewards_addr=Address, role=int, roles_mod=Address, private_key=None, blockchain=None):
+def exit_1(simulate=bool, w3=None, safe_address=AvatarAddress, aura_rewards_addr=Address, role=int, roles_mod=Address, private_key=None, blockchain=None):
     aura_rewards_contract = w3.eth.contract(address=aura_rewards_addr,abi=aura_rewards_contract_abi)
     aura_rewards_amount = aura_rewards_contract.functions.balanceOf(safe_address).call()
     withdraw_aura = aura.WithdrawAndUndwrapStakedBPT(reward_address=aura_rewards_addr, amount=int(aura_rewards_amount * 1))

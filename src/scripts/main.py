@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from web3 import Web3, HTTPProvider
 from web3.exceptions import TransactionNotFound
 
-from dissa_aura import exit_aura_withdraw_and_unwrap
+from dissa_aura import exit_1
 
 load_dotenv()
 
@@ -54,7 +54,7 @@ def main():
         print(w3.eth.get_balance(EOA_address))
         aura_rewards_addr = "0x6c3f6C327DE4aE51a2DfAaF3431b3c508ec8D3EB"
 
-        tx = exit_aura_withdraw_and_unwrap(simulate=simulate, w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
+        tx = exit_1(simulate=simulate, w3=w3, safe_address=safe_address, aura_rewards_addr=aura_rewards_addr,
                                        role=roles, roles_mod=roles_mod, private_key=private_key, blockchain=blockchain)
         print(tx)
  
