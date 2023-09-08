@@ -103,17 +103,18 @@ export default withApiAuthRequired(async function handler(
         )
         const trx = match ? match[0].substring(0, match[0].indexOf('|')) : null
 
-        const data = {
-          status,
-          trx
-        }
-
         // send data to browser
-        res.status(200).json({ data })
+        res.status(200).json({ data: { status, trx } } as Status)
+        resolve()
+      })
+
+      python.on('error', (error) => {
+        console.log('ERROR: DETAILS: ' + error)
+        res.status(500).json({ data: { status: false, error: error as Error } } as Status)
         resolve()
       })
     } catch (error) {
-      console.error('Error: ', error)
+      console.error('ERROR: ', error)
       res.status(500).json({ data: { status: false, error: error as Error } })
       reject()
     }

@@ -6,6 +6,7 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
+import { DAO, ExecConfig, getStrategies, StrategyContent } from 'src/config/strategiesManager'
 
 interface PositionProps {
   id: number
@@ -16,16 +17,26 @@ const Position = (props: PositionProps) => {
   const { position } = props
   const { position_id, protocol, blockchain, lptoken_name: positionName } = position
 
-  return (
-    <Link href={`/positions/${position_id}`} style={{ textDecoration: 'none' }}>
+  const strategyContent: StrategyContent = getStrategies(position.dao as DAO)
+
+  const positionId = `${positionName}_${position_id}`
+  const positionFound = strategyContent?.positions.find(
+    (position) => position.position_id === positionId
+  )
+
+  const strategies: ExecConfig[] = positionFound?.exec_config ?? []
+
+  const PositionWrapper = () => {
+    return (
       <BoxWrapperColumn
         gap={4}
         sx={{
           padding: '10px',
-          cursor: 'pointer',
+          ...(strategies.length > 0 ? { cursor: 'pointer' } : {}),
           width: '100%',
           height: '100%',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          ...(strategies.length === 0 ? { opacity: '0.2 !important' } : {})
         }}
       >
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
@@ -39,7 +50,15 @@ const Position = (props: PositionProps) => {
           <PositionName position={positionName} />
         </BoxWrapperColumn>
       </BoxWrapperColumn>
+    )
+  }
+
+  return strategies.length > 0 ? (
+    <Link href={`/positions/${position_id}`} style={{ textDecoration: 'none' }}>
+      <PositionWrapper />
     </Link>
+  ) : (
+    <PositionWrapper />
   )
 }
 
