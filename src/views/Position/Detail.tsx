@@ -2,7 +2,7 @@ import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import { Divider } from '@mui/material'
-import { getStrategies, DAO } from 'src/config/strategiesManager'
+import { getStrategies, DAO, StrategyContent, ExecConfig } from 'src/config/strategiesManager'
 import Form from 'src/views/Position/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
@@ -17,7 +17,14 @@ const Detail = (props: DetailProps) => {
 
   const { protocol, blockchain, lptoken_name: positionName } = selectedValue
 
-  const strategies = getStrategies(selectedValue.dao as DAO)
+  const strategyContent: StrategyContent = getStrategies(selectedValue.dao as DAO)
+
+  const positionId = `${selectedValue.lptoken_name}_${selectedValue.position_id}`
+  const position = strategyContent?.positions.find(
+    (position) => position.position_id === positionId
+  )
+
+  const strategies: ExecConfig[] = position?.exec_config ?? []
 
   return (
     <BoxWrapperColumn

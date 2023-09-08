@@ -2,7 +2,13 @@ import { withApiAuthRequired } from '@auth0/nextjs-auth0'
 import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
-import { DAO, getStrategies } from 'src/config/strategiesManager'
+import {
+  DAO,
+  ExecConfig,
+  getStrategies,
+  Parameter,
+  StrategyContent
+} from 'src/config/strategiesManager'
 
 type Status = {
   data: {
@@ -43,20 +49,43 @@ export default withApiAuthRequired(async function handler(
   }
 
   // Get the strategy from the body, if not found, return an error
-  const { strategy, ...others } = req.body
-  const strategies = getStrategies(dao as DAO)
+  const { strategy, simulate } = req.body
+
+  const daoContent: StrategyContent = getStrategies(dao as DAO)
+
+  const position = daoContent?.positions.find((position) => {
+    return position?.exec_config?.find((exec) => exec.name === strategy)
+  })
+
+  const strategies: ExecConfig[] = position?.exec_config ?? []
   const strategyObject = strategies.find((s) => s.name === strategy)
 
-  if (!strategyObject || !strategyObject?.filePath || !others?.percentage) {
+  if (!strategyObject || !strategyObject?.parameters.length) {
     res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
     return
   }
+
+  // Build parameters to add as a parameters to the python script
+  const parameters = strategyObject.parameters.reduce((acc: string[], parameter: Parameter) => {
+    acc.push(`--${parameter.name}`)
+    acc.push(`${parameter.value}`)
+    return acc
+  }, [])
+
+  // Add the simulate flag if needed
+  if (simulate) {
+    parameters.push('--simulate')
+  }
+
+  // TODO remove this, we should get this from the form
+  parameters.push('-p')
+  parameters.push('100')
 
   return new Promise<void>((resolve, reject) => {
     try {
       let message: string
       // spawn new child process to call the python script
-      const python = spawn('python3', [strategyObject.filePath, '-p', others.percentage])
+      const python = spawn('python3', [daoContent.file_path, ...parameters])
 
       // collect data from script
       python.stdout.on('data', (data) => {
