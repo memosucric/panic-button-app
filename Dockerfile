@@ -31,8 +31,11 @@ RUN apk update && \
 
 # Install Python dependencies
 
-RUN pip3 install -e ./roles_royce
-RUN pip3 install -r requirements.txt
+RUN git submodule update --init --recursive && \
+    pip3 install -e ./roles_royce && \
+    pip3 install -r requirements.txt 
+    
+# RUN pip3 install -r requirements.txt
 # COPY test.py ./roles_royce
 
 # Remove build dependencies

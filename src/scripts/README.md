@@ -39,3 +39,57 @@ export PRIVATE_KEY="lol lol lol"
 ```sh
 python3.10 src/scripts/main.py
 ```
+
+### docker-compose local testing
+
+- Create .env file
+
+```sh
+nano .env
+```
+
+Copy all the content into the file
+
+```
+GOOGLE_CLIENT_ID=''
+GOOGLE_CLIENT_EMAIL=''
+GOOGLE_PRIVATE_KEY=
+GOOGLE_PROJECT_ID=
+DATA_WAREHOUSE_ENV=
+#  'use [openssl rand -hex 32] to generate a 32 bytes value'
+AUTH0_SECRET=
+AUTH0_BASE_URL='http://localhost:3000'
+AUTH0_ISSUER_BASE_URL=
+AUTH0_CLIENT_ID=
+AUTH0_CLIENT_SECRET=
+
+TENDERLY_PROJECT=
+TENDERLY_API=
+TENDERLY_ID=
+PRIVATE_KEY=
+
+```
+
+- Run below command to execute the script
+
+```sh
+dcoker compose up
+```
+
+Ps: For the docker-compose example I have changed the line 42 in main_GnosisDAO.py (anvil is container name)
+
+Debugging:
+
+- Get into application container
+
+```sh
+docker exec -it app /bin/sh
+```
+
+then run python script manually
+
+```sh
+python3 src/scripts/main_GnosisDAO.py
+```
+
+You will see that in backend its working fine, so we need to debug from front end side!
