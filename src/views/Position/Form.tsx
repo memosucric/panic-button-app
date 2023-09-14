@@ -158,7 +158,6 @@ const Form = (props: FormProps) => {
             <BoxWrapperColumn gap={2}>
               <FormTitle title={'Strategies'} />
               <BoxWrapperColumn gap={2}>
-                <FormLabel title={'Choose a strategy'} />
                 <Controller
                   name="strategy"
                   control={control}
@@ -197,7 +196,6 @@ const Form = (props: FormProps) => {
             <BoxWrapperColumn gap={2}>
               <FormTitle title={'Execution type'} />
               <BoxWrapperColumn gap={2}>
-                <FormLabel title={'Choose an execution type'} />
                 <Controller
                   name="executionType"
                   control={control}
