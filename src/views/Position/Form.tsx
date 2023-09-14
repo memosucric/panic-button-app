@@ -76,7 +76,7 @@ const Form = (props: FormProps) => {
   const [openError, setOpenError] = React.useState(false)
 
   const {
-    formState: { errors },
+    formState: { errors, isSubmitting },
     handleSubmit,
     control,
     setError,
@@ -276,7 +276,7 @@ const Form = (props: FormProps) => {
             variant="contained"
             size="large"
             sx={{ height: '60px', marginTop: '30px' }}
-            disabled={Object.keys(errors).length > 0}
+            disabled={Object.keys(errors).length > 0 || isSubmitting}
           >
             Submit
           </Button>
