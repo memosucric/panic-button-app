@@ -85,6 +85,11 @@ export default withApiAuthRequired(async function handler(
   if (executionType === 'Simulate') {
     parameters.push('--simulate')
   }
+
+  if (executionType === 'Normal execution') {
+    parameters.push('--execute')
+  }
+
   if (percentage) {
     parameters.push('-p')
     parameters.push(`${percentage}`)

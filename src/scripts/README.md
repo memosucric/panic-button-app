@@ -73,7 +73,7 @@ PRIVATE_KEY=
 - Run below command to execute the script
 
 ```sh
-dcoker compose up
+docker compose up
 ```
 
 Ps: For the docker-compose example I have changed the line 42 in main_GnosisDAO.py (anvil is container name)
