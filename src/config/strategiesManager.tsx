@@ -5,6 +5,7 @@ export type DAO = 'Gnosis DAO' | 'Balancer DAO' | 'karpatkey DAO' | 'ENS DAO' | 
 export type Parameter = {
   name: string
   value: string | number
+  enable: boolean
 }
 
 export type ExecConfig = {

@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { Button, RadioGroup, FormControlLabel, Radio, Divider } from '@mui/material'
+import { Button, RadioGroup, FormControlLabel, Radio, Divider, TextField } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import { ExecConfig } from 'src/config/strategiesManager'
 import CustomTypography from 'src/components/CustomTypography'
@@ -12,16 +12,19 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
+import Tooltip from '@mui/material/Tooltip'
+import InfoIcon from '@mui/icons-material/Info'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-interface TitleProps {
+interface FormLabelProps {
   title: string
 }
 
-const Title = ({ title }: TitleProps) => {
+const FormLabel = ({ title }: FormLabelProps) => {
   return (
     <CustomTypography
       sx={{
@@ -38,6 +41,27 @@ const Title = ({ title }: TitleProps) => {
   )
 }
 
+interface FormTitleProps {
+  title: string
+}
+
+const FormTitle = ({ title }: FormTitleProps) => {
+  return (
+    <BoxWrapperColumn gap={1}>
+      <Primary title={title} />
+      <Divider sx={{ borderBottomWidth: 5 }} />
+    </BoxWrapperColumn>
+  )
+}
+
+export type PossibleExecutionTypeValues = 'Simulate' | 'Normal execution'
+
+interface ExecutionType {
+  name: PossibleExecutionTypeValues
+}
+
+const EXECUTION_TYPE: ExecutionType[] = [{ name: 'Simulate' }, { name: 'Normal execution' }]
+
 interface FormProps {
   strategies: ExecConfig[]
 }
@@ -48,16 +72,21 @@ const Form = (props: FormProps) => {
   const [open, setOpen] = React.useState(false)
 
   const [openSuccess, setOpenSuccess] = React.useState(false)
+  const [trx, setTrx] = React.useState<Maybe<string>>(null)
   const [openError, setOpenError] = React.useState(false)
 
   const {
     formState: { errors },
     handleSubmit,
     control,
+    setError,
+    clearErrors,
     watch
   } = useForm<any>({
     defaultValues: {
-      strategy: strategies[0].name
+      strategy: strategies[0].name,
+      executionType: 'Simulate',
+      percentage: 100
     }
   })
 
@@ -84,27 +113,20 @@ const Form = (props: FormProps) => {
 
   const onSubmit: SubmitHandler<any> = async (data: any) => {
     try {
-      // python /app/src/scripts/main_GnosisDAO.py --strategy "Exit_1" --simulate --percentage 98 --parameter1 6578 --parameter2 '0x62376'
-      // python /app/src/scripts/main_GnosisDAO.py --strategy "Exit_1" --execute --percentage 98 --parameter1 6578
-
-      // TODO: remove this, we need to do it in another way, simulate should come from another submit button
-      const bodyParams = {
-        ...data,
-        simulate: true
-      }
-
       const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(bodyParams)
+        body: JSON.stringify(data)
       })
 
       const result = await response.json()
       if (response.status === 200 && result.data.status) {
+        setTrx(result?.data?.trx)
         setOpenSuccess(true)
       } else {
+        setTrx(null)
         setOpenError(true)
       }
     } catch (error) {
@@ -134,12 +156,9 @@ const Form = (props: FormProps) => {
         <BoxWrapperColumn gap={2}>
           <BoxWrapperColumn gap={6}>
             <BoxWrapperColumn gap={2}>
-              <BoxWrapperColumn gap={1}>
-                <Primary title={'Strategies'} />
-                <Divider sx={{ borderBottomWidth: 5 }} />
-              </BoxWrapperColumn>
+              <FormTitle title={'Strategies'} />
               <BoxWrapperColumn gap={2}>
-                <Title title={'Choose a strategy'} />
+                <FormLabel title={'Choose a strategy'} />
                 <Controller
                   name="strategy"
                   control={control}
@@ -148,11 +167,50 @@ const Form = (props: FormProps) => {
                     <RadioGroup {...field}>
                       {strategies.map((strategy: ExecConfig, index: number) => {
                         return (
+                          <BoxWrapperRow sx={{ justifyContent: 'flex-start' }} key={index}>
+                            <FormControlLabel
+                              value={strategy.name}
+                              control={<Radio />}
+                              label={strategy.name}
+                            />
+                            {strategy?.description ? (
+                              <Tooltip
+                                title={
+                                  <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
+                                    {strategy?.description}
+                                  </CustomTypography>
+                                }
+                                sx={{ ml: 1, cursor: 'pointer' }}
+                              >
+                                <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
+                              </Tooltip>
+                            ) : null}
+                          </BoxWrapperRow>
+                        )
+                      })}
+                    </RadioGroup>
+                  )}
+                />
+              </BoxWrapperColumn>
+            </BoxWrapperColumn>
+
+            <BoxWrapperColumn gap={2}>
+              <FormTitle title={'Execution type'} />
+              <BoxWrapperColumn gap={2}>
+                <FormLabel title={'Choose an execution type'} />
+                <Controller
+                  name="executionType"
+                  control={control}
+                  rules={{ required: 'Execution type is required' }}
+                  render={({ field }) => (
+                    <RadioGroup {...field}>
+                      {EXECUTION_TYPE.map((executionType: ExecutionType, index: number) => {
+                        return (
                           <FormControlLabel
                             key={index}
-                            value={strategy.name}
+                            value={executionType.name}
                             control={<Radio />}
-                            label={strategy.name}
+                            label={executionType.name}
                           />
                         )
                       })}
@@ -163,48 +221,54 @@ const Form = (props: FormProps) => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
-              {/*<BoxWrapperColumn gap={1}>*/}
-              {/*  <Primary title={'Parameters'} />*/}
-              {/*  <Divider sx={{ borderBottomWidth: 5 }} />*/}
-              {/*</BoxWrapperColumn>*/}
-              {/*TODO: we only should implement percentage*/}
-              {/*<BoxWrapperColumn gap={2}>*/}
-              {/*  <Title title={'Fill in inputs'} />*/}
-              {/*  {strategies*/}
-              {/*    .find((strategy: StrategyContent) => strategy.name === watchStrategy)*/}
-              {/*    ?.parameters.map((parameter: Parameter, index: number) => {*/}
-              {/*      const { name, type, label, placeholder, default: defaultValue = '' } = parameter*/}
-              {/*      return (*/}
-              {/*        <Controller*/}
-              {/*          name={name}*/}
-              {/*          control={control}*/}
-              {/*          key={index}*/}
-              {/*          rules={{ required: `${label} is required` }}*/}
-              {/*          defaultValue={defaultValue}*/}
-              {/*          render={({ field }) => (*/}
-              {/*            <TextField*/}
-              {/*              type={type}*/}
-              {/*              label={label}*/}
-              {/*              placeholder={placeholder}*/}
-              {/*              onChange={field.onChange}*/}
-              {/*              value={field.value || ''}*/}
-              {/*              error={!!errors[name]}*/}
-              {/*              helperText={errors[name]?.message?.toString()}*/}
-              {/*              sx={{*/}
-              {/*                fontFamily: 'IBM Plex Sans',*/}
-              {/*                fontStyle: 'normal',*/}
-              {/*                fontWeight: 500,*/}
-              {/*                fontSize: 18,*/}
-              {/*                lineHeight: '18px',*/}
-              {/*                color: 'custom.grey.dark',*/}
-              {/*                width: '100%'*/}
-              {/*              }}*/}
-              {/*            />*/}
-              {/*          )}*/}
-              {/*        />*/}
-              {/*      )*/}
-              {/*    })}*/}
-              {/*</BoxWrapperColumn>*/}
+              <FormTitle title={'Parameters'} />
+              <BoxWrapperColumn gap={2}>
+                <FormLabel title={'Percentage'} />
+                <Controller
+                  name="percentage"
+                  control={control}
+                  rules={{ required: `Percentage is required` }}
+                  render={({ field }) => (
+                    <TextField
+                      type="number"
+                      placeholder="Percentage"
+                      onChange={(e) => {
+                        const value = e.target.value
+                        if (+value > 100) {
+                          e.target.value = '100'
+                        }
+                        if (+value < 0) {
+                          e.target.value = '0'
+                        }
+
+                        if (!value) {
+                          setError(field.name, {
+                            type: 'manual',
+                            message: `Percentage is required`
+                          })
+                        } else {
+                          clearErrors(field.name)
+                        }
+
+                        return field.onChange(e)
+                      }}
+                      value={field.value || ''}
+                      error={!!errors[field.name]}
+                      inputProps={{ min: 1, max: 100 }}
+                      helperText={errors[field.name]?.message?.toString()}
+                      sx={{
+                        fontFamily: 'IBM Plex Sans',
+                        fontStyle: 'normal',
+                        fontWeight: 500,
+                        fontSize: 18,
+                        lineHeight: '18px',
+                        color: 'custom.grey.dark',
+                        width: '100%'
+                      }}
+                    />
+                  )}
+                />
+              </BoxWrapperColumn>
             </BoxWrapperColumn>
           </BoxWrapperColumn>
           <Button
@@ -228,7 +292,7 @@ const Form = (props: FormProps) => {
         <DialogTitle id="alert-dialog-title">{`Execute ${watchStrategy} strategy`}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to execute the {watchStrategy} strategy?
+            Are you sure you want to execute the "{watchStrategy}" strategy?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -254,12 +318,15 @@ const Form = (props: FormProps) => {
       </Dialog>
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-          Strategy executed successfully!
+          Strategy "{watchStrategy}" executed successfully! Check it out{' '}
+          <a href={`${trx}`} target="_blank" rel="noreferrer">
+            here
+          </a>
         </Alert>
       </Snackbar>
       <Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
         <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-          Error executing strategy!
+          Error executing the "{watchStrategy}" strategy!
         </Alert>
       </Snackbar>
     </>
