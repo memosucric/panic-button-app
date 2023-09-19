@@ -6,6 +6,7 @@ import { Avatar, Button } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import CustomTypography from 'src/components/CustomTypography'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export const HEADER_HEIGHT = 100
 
@@ -32,21 +33,31 @@ const LoggedComponent = (props: LoggedComponentProps) => {
   const { name, image, dao } = props
   const { push } = useRouter()
 
+  const matches = useMediaQuery((theme: any) => theme.breakpoints.up('sm'))
+
   const onLogout = () => {
     push('/api/auth/logout')
   }
   return (
-    <BoxWrapperRow gap={4}>
+    <BoxWrapperRow>
       <BoxWrapperRow>
-        <Avatar alt={name} src={image} />
+        {matches && <Avatar alt={name} src={image} />}
         <BoxWrapperColumn>
           <CustomTypography
             sx={{
+              ...(!matches
+                ? {
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap'
+                  }
+                : {}),
               gap: 2,
-              height: '20px',
+              height: '30px',
+              width: !matches ? '120px' : 'auto',
               padding: '6px 14px',
               alignItems: 'center',
-              display: 'flex'
+              display: 'inline-block'
             }}
           >
             {name}

@@ -1,37 +1,34 @@
 {
-  "Gnosis DAO": [
-    {
-      "name": "Withdraw",
-      "filePath": "/app/src/scripts/main.py",
-      "parameters": [
-        {
-          "name": "percentage",
-          "label": "Percentage",
-          "type": "number",
-          "placeholder": "Type a number between 0 and 100",
-          "default": 100
-        }
-      ]
-    },
-    {
-      "name": "Move",
-      "filePath": "/app/src/scripts/main.py",
-      "parameters": [
-        {
-          "name": "percentage",
-          "label": "Percentage",
-          "type": "number",
-          "placeholder": "Type a number between 0 and 100",
-          "default": 100
-        },
-        {
-          "name": "address",
-          "label": "Address",
-          "type": "string",
-          "placeholder": "Type an address",
-          "default": null
-        }
-      ]
-    }
-  ]
+  "Gnosis DAO": {
+    "file_path": "src/scripts/main_GnosisDAO.py",
+    "positions": [
+      {
+        "position_id": "Agave_14",
+        "exec_config": [
+          {
+            "name": "Exit_1",
+            "description": "Withdraw from Agave",
+            "parameters": [
+              {
+                "name": "rewarder_address",
+                "value": "0x2323893289389389478943987",
+                "enable": false
+              }
+            ]
+          },
+          {
+            "name": "Exit_2",
+            "description": "Withdraw from Agave and swap or whatever bla bla bla",
+            "parameters": [
+              {
+                "name": "parameter_1",
+                "value": 987,
+                "enable": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }

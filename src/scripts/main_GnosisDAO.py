@@ -39,7 +39,7 @@ def main():
         return
     blockchain = "fork"
     if blockchain == "fork":
-        w3 = Web3(HTTPProvider(f"http://localhost:8546"))
+        w3 = Web3(HTTPProvider(f"http://anvil:8546"))
         w3.eth.send_transaction({"to": EOA_address, "value": Web3.to_wei(0.01, "ether")})
         print(w3.eth.get_balance(EOA_address))
         aura_rewards_addr = "0x6c3f6C327DE4aE51a2DfAaF3431b3c508ec8D3EB"

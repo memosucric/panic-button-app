@@ -2,7 +2,16 @@ import { withApiAuthRequired } from '@auth0/nextjs-auth0'
 import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
-import { DAO, getStrategies } from 'src/config/strategiesManager'
+import {
+  DAO,
+  ExecConfig,
+  getStrategies,
+  Parameter,
+  Position,
+  StrategyContent
+} from 'src/config/strategiesManager'
+import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
+import * as path from 'path'
 
 type Status = {
   data: {
@@ -43,48 +52,92 @@ export default withApiAuthRequired(async function handler(
   }
 
   // Get the strategy from the body, if not found, return an error
-  const { strategy, ...others } = req.body
-  const strategies = getStrategies(dao as DAO)
+  const { strategy, executionType, percentage } = req.body as {
+    strategy: string
+    executionType: PossibleExecutionTypeValues
+    percentage: number
+  }
+
+  const daoContent: StrategyContent = getStrategies(dao as DAO)
+
+  const position: Position | undefined = daoContent?.positions?.find((position: Position) => {
+    return position?.exec_config?.find((exec: ExecConfig) => exec.name === strategy)
+  })
+
+  const strategies: ExecConfig[] = position?.exec_config ?? []
   const strategyObject = strategies.find((s) => s.name === strategy)
 
-  if (!strategyObject || !strategyObject?.filePath || !others?.percentage) {
+  if (!strategyObject || !strategyObject?.parameters?.length) {
     res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
     return
   }
 
+  // Build parameters to add as a parameters to the python script
+  const parameters = strategyObject.parameters.reduce((acc: string[], parameter: Parameter) => {
+    if (parameter.enable) {
+      acc.push(`--${parameter.name}`)
+      acc.push(`${parameter.value}`)
+    }
+    return acc
+  }, [])
+
+  // Add the rest of the parameters if needed
+  if (executionType === 'Simulate') {
+    parameters.push('--simulate')
+  }
+
+  if (executionType === 'Normal execution') {
+    parameters.push('--execute')
+  }
+
+  if (percentage) {
+    parameters.push('-p')
+    parameters.push(`${percentage}`)
+  }
+
   return new Promise<void>((resolve, reject) => {
     try {
-      let message: string
-      // spawn new child process to call the python script
-      const python = spawn('python3', [strategyObject.filePath, '-p', others.percentage])
+      const scriptFile = path.resolve(process.cwd(), daoContent.file_path)
 
-      // collect data from script
-      python.stdout.on('data', (data) => {
-        console.log('Pipe data from python script ...')
-        message = data.toString()
+      const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
+
+      let buffer = ''
+      python.stdout.on('data', function (data) {
+        buffer += data.toString()
+
+        if (buffer.indexOf('DEBUGGER READY') !== -1) {
+          console.log('DEBUGGER READY')
+          console.log('after connect_client')
+        }
       })
 
-      // in close event we are sure that stream from child process is closed
-      python.on('close', (code) => {
-        console.log(`child process close all stdio with code ${code} and message: ${message}`)
+      python.stderr.on('data', function (data) {
+        console.log(data.toString())
+      })
 
-        const status = code === 120 || message?.includes('Success')
-        const match = message?.match(
+      python.on('error', function (data) {
+        console.log('DEBUG PROGRAM ERROR:')
+        console.error('ERROR: ', data.toString())
+        res.status(500).json({ data: { status: false, error: new Error('Internal Server Error') } })
+        reject()
+      })
+
+      python.on('exit', function (code) {
+        console.log('Debug Program Exit')
+        console.log(code)
+        // destroy python process
+        python.kill()
+
+        const match = buffer?.match(
           /\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi
         )
-        const trx = match ? match[0].substring(0, match[0].indexOf('|')) : null
+        const trx = match ? match[0] : null
 
-        const data = {
-          status,
-          trx
-        }
-
-        // send data to browser
-        res.status(200).json({ data })
+        res.status(200).json({ data: { status: true, trx } })
         resolve()
       })
     } catch (error) {
-      console.error('Error: ', error)
+      console.error('ERROR: ', error)
       res.status(500).json({ data: { status: false, error: error as Error } })
       reject()
     }
