@@ -1,6 +1,6 @@
 {
   "Gnosis DAO": {
-    "file_path": "src/scripts/main_GnosisDAO.py",
+    "file_path": "src/scripts/main.py",
     "positions": [
       {
         "position_id": "Agave_14",
