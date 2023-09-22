@@ -300,7 +300,7 @@ const Form = (props: FormProps) => {
             size="large"
             sx={{ height: '60px', marginTop: '30px' }}
           >
-            Disagree
+            No, cancel
           </Button>
           <Button
             onClick={handleAgree}
@@ -310,7 +310,7 @@ const Form = (props: FormProps) => {
             form="hook-form"
             autoFocus
           >
-            Agree
+            Yes, continue
           </Button>
         </DialogActions>
       </Dialog>
