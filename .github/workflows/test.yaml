@@ -18,6 +18,7 @@ jobs:
       TENDERLY_ID: ${{ secrets.TENDERLY_ID }}
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       START_LOCAL_BLOCKCHAIN: yes
+      ETHEREUM_PW: "https://rpc.mevblocker.io/"
 
     steps:
       - uses: actions/checkout@v3
