@@ -1,0 +1,72 @@
+
+name: test
+on:
+  push:
+    branches: [ test ]
+  pull_request:
+    branches: [ test ]
+  workflow_dispatch:
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.10.10" ]
+
+    runs-on: self-hosted
+    timeout-minutes: 20
+    env:
+      TENDERLY_PROJECT: ${{ secrets.TENDERLY_PROJECT }}
+      TENDERLY_API: ${{ secrets.TENDERLY_API }}
+      TENDERLY_ID: ${{ secrets.TENDERLY_ID }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+    services:
+      anvil:
+        image: ghcr.io/foundry-rs/foundry:latest
+        entrypoint: ["/bin/sh"]
+        env:
+          TENDERLY_PROJECT: ${{ secrets.TENDERLY_PROJECT }}
+          TENDERLY_API: ${{ secrets.TENDERLY_API }}
+          TENDERLY_ID: ${{ secrets.TENDERLY_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        ports:
+          - 8546:8546
+        # Set health checks to wait until postgres has started
+        options: >-
+          -c "anvil --accounts 15 -f https://rpc.mevblocker.io/ --fork-block-number 17612540 --port 8546 --host 0.0.0.0"
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout of the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: View file structure
+        run: ls -la
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          git submodule update --init --recursive
+          pip3.10 install ./roles_royce
+          pip3.10 install -r requirements.txt
+
+      - name: Test scripts
+        shell: bash
+        run: |
+          python3.10 src/scripts/main.py
+
+      # - name: Check overall coverage
+      #   run: |
+      #     poetry run coverage report
+
+      # - name: Check file coverage
+      #   run: |
+      #     ./check_file_coverage.sh
+
+  
