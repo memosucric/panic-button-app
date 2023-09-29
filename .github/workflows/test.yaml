@@ -44,7 +44,7 @@ jobs:
 
 
       - name: Run tests
-        run: python3.10 src/scripts/main.py
+        run: python3.10 src/scripts/test.py
       
       - name: Coverage report
         run: coverage report
