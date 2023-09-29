@@ -19,6 +19,7 @@ jobs:
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       START_LOCAL_BLOCKCHAIN: yes
       ETHEREUM_PW: "https://rpc.mevblocker.io/"
+      SIMULATE: True
 
     steps:
       - uses: actions/checkout@v3
