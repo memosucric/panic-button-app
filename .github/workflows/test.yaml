@@ -6,12 +6,9 @@ on:
   pull_request:
     branches: [ ci/test ]
   workflow_dispatch:
+
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ "3.10.10" ]
+  Test:
 
     runs-on: self-hosted
     timeout-minutes: 20
@@ -20,54 +17,65 @@ jobs:
       TENDERLY_API: ${{ secrets.TENDERLY_API }}
       TENDERLY_ID: ${{ secrets.TENDERLY_ID }}
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      START_LOCAL_BLOCKCHAIN: yes
 
-    services:
-      anvil:
-        image: ghcr.io/foundry-rs/foundry:latest
-        # entrypoint: ["/bin/sh"]
-        env:
-          TENDERLY_PROJECT: ${{ secrets.TENDERLY_PROJECT }}
-          TENDERLY_API: ${{ secrets.TENDERLY_API }}
-          TENDERLY_ID: ${{ secrets.TENDERLY_ID }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        ports:
-          - 8546:8546
-        # Set health checks to wait until postgres has started
-        options: >-
-          --entrypoint=sh
-          -c "anvil --accounts 15 -f https://rpc.mevblocker.io/ --fork-block-number 17612540 --port 8546 --host 0.0.0.0"
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout of the repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
 
-      - name: View file structure
-        run: ls -la
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
 
       - name: Install dependencies
-        shell: bash
         run: |
+          python -m pip install --upgrade pip
           git submodule update --init --recursive
           pip3.10 install ./roles_royce
           pip3.10 install -r requirements.txt
 
-      - name: Test scripts
-        shell: bash
-        run: |
-          python3.10 src/scripts/main.py
 
-      # - name: Check overall coverage
+      - name: Run tests
+        run: python3.10 src/scripts/main.py
+      
+      - name: Coverage report
+        run: coverage report
+      
+      - name:  Anvil log
+        if: ${{ failure() }}
+        run: cat /tmp/rr_fork_node_log.txt
+
+      # - name: Linter -- check black
+      #   run: black --fast --check defyes tests
+
+      # - name: Linter -- check isort
+      #   run: isort --check defyes tests
+
+      # - name: Linter -- check flake8
+      #   run: flake8 defyes tests
+
+      # - name: Run tests
+      #   env:
+      #     CI: true
+      #     NODE_ETH: ${{ secrets.NODE_ETH }}
+      #     NODE_XDAI: ${{ secrets.NODE_XDAI }}
+      #     NODE_POLYGON: ${{ secrets.NODE_POLYGON }}
+      #     NODE_OPTIMISM: ${{ secrets.NODE_OPTIMISM }}
+      #     NODE_ARBITRUM: ${{ secrets.NODE_ARBITRUM }}
+      #     APIKEYS_ETHERSCAN: ${{ secrets.APIKEYS_ETHERSCAN }}
+      #     APIKEYS_POLSCAN: ${{ secrets.APIKEYS_POLSCAN }}
+      #     APIKEYS_GNOSISSCAN: ${{ secrets.APIKEYS_GNOSISSCAN }}
+      #     APIKEYS_OPTIMISM: ${{ secrets.APIKEYS_OPTIMISM }}
+      #     APIKEYS_ARBITRUM: ${{ secrets.APIKEYS_ARBITRUM }}
       #   run: |
-      #     poetry run coverage report
-
-      # - name: Check file coverage
-      #   run: |
-      #     ./check_file_coverage.sh
-
-  
+      #     sh ci_secrets_helper.sh
+      #     cat /tmp/tmp_config.json
+      #     echo "Removing defi_protocols and future_defyes directory to ensure testing the installed version."
+      #     rm -rf defi_protocols future_defyes
+      #     PYTHONPATH=${PYTHONPATH}:. CONFIG_PATH=/tmp/tmp_config.json pytest -vs --debug-defiproto
