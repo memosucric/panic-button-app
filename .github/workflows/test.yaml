@@ -2,9 +2,9 @@
 name: test
 on:
   push:
-    branches: [ test ]
+    branches: [ ci/test ]
   pull_request:
-    branches: [ test ]
+    branches: [ ci/test ]
   workflow_dispatch:
 jobs:
   test:
