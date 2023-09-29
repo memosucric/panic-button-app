@@ -24,7 +24,7 @@ jobs:
     services:
       anvil:
         image: ghcr.io/foundry-rs/foundry:latest
-        entrypoint: ["/bin/sh"]
+        # entrypoint: ["/bin/sh"]
         env:
           TENDERLY_PROJECT: ${{ secrets.TENDERLY_PROJECT }}
           TENDERLY_API: ${{ secrets.TENDERLY_API }}
@@ -34,6 +34,7 @@ jobs:
           - 8546:8546
         # Set health checks to wait until postgres has started
         options: >-
+          --entrypoint=sh
           -c "anvil --accounts 15 -f https://rpc.mevblocker.io/ --fork-block-number 17612540 --port 8546 --host 0.0.0.0"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
