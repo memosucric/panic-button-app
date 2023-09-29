@@ -1,7 +1,6 @@
 import time
-import requests
 import socket
-import os
+import requests
 import subprocess
 import shlex
 import argparse
@@ -14,27 +13,23 @@ from dissa_aura import exit_1
 
 load_dotenv()
 
+def wait_for_port(port, host='localhost', timeout=300.0):
+    start_time = time.time()
+    while True:
+        try:
+            with socket.create_connection((host, port), timeout=timeout) as s:
+                return
+        except (socket.error, ConnectionRefusedError):
+            time.sleep(0.5)
+            if time.time() - start_time >= timeout:
+                raise TimeoutError(f"Timeout waiting for port {port} on {host}")
+
 def start_local_blockchain():
     ETH_FORK_NODE_URL = os.getenv("ETHEREUM_PW")
     LOCAL_NODE_DEFAULT_BLOCK = 17612540
     cmd = f"anvil --accounts 15 -f {ETH_FORK_NODE_URL} --fork-block-number {LOCAL_NODE_DEFAULT_BLOCK} --port 8546"
     subprocess.Popen(shlex.split(cmd))
-
-def wait_for_server_up():
-    max_retries = 30  # Number of retries
-    retry_delay = 5  # Delay between retries in seconds
-
-    for _ in range(max_retries):
-        try:
-            response = requests.get("http://localhost:8546")
-            if response.status_code == 200:
-                return True  # Server is up
-        except requests.exceptions.RequestException:
-            pass  # Server is not up yet
-
-        time.sleep(retry_delay)
-
-    return False  # Server didn't become available
+    wait_for_port(8546)
 
 def main():
     parser = argparse.ArgumentParser(description="Dummy testing script", epilog='This is the epilog',
@@ -48,9 +43,6 @@ def main():
     start_local = os.getenv("START_LOCAL_BLOCKCHAIN", "").lower() == "yes"
     if start_local:
         start_local_blockchain()
-        if not wait_for_server_up():
-            print("Local blockchain server did not start within the expected time.")
-            return
 
     roles = 4
     roles_mod = "0x1cFB0CD7B1111bf2054615C7C491a15C4A3303cc"
