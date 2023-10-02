@@ -75,6 +75,5 @@ def main():
                     role=roles, private_key=private_key, args_dict={"rewarder_address": aura_rewards_addr_checksum})
         print(tx)
 
-
 if __name__ == "__main__":
     main()
