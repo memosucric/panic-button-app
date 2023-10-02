@@ -1,0 +1,50 @@
+{"exec_config": [
+    {
+      "function_name": "Exit_1",
+      "description":"Unwrap wstETH for stETH",
+      "parameters": []
+    },
+    {
+        "function_name": "Exit_2",
+        "description":"Unstake stETH for ETH",
+        "parameters": []
+    },
+    {
+        "function_name": "Exit_3",
+        "description":"Unwrap and Unstake wstETH for ETH",
+        "parameters": []
+    },
+    {
+        "function_name": "Exit_4",
+        "description":"Swap stETH for ETH",
+        "parameters": [
+            {
+            "max_slippage": {
+                "type": "user_inputted",
+                "scale": {
+                    "min":0,
+                    "max":100,
+                    "step":0.5
+                  }
+                }
+            }
+        ]
+    },
+    {
+        "function_name": "Exit_5",
+        "description":"Swap wstETH for ETH",
+        "parameters": [
+            {
+            "max_slippage": {
+                "type": "user_inputted",
+                "scale": {
+                    "min":0,
+                    "max":100,
+                    "step":0.5
+                  }
+                }
+            }
+        ]
+    }    
+    ]
+}

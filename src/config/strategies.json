@@ -1,34 +1,269 @@
 {
   "Gnosis DAO": {
-    "file_path": "src/scripts/main.py",
+    "ethereum": {
+      "file_path": "src/scripts/mainGnosisDAOEthereum.py",
+      "common_exec_config": [
+        {
+          "percentage": {
+            "type": "user_inputted",
+            "scale": {
+              "min":0,
+              "max":100,
+              "step":10
+            }
+          }
+        }
+      ],
+      "positions": [
+        {
+          "position_id": "Agave_14",
+          "position_exec_config": ["check templates for input"]
+        }
+      ]
+    },
+    "gnosis": {
+      "file_path": "src/scripts/mainGnosisDAOGnosis.py",
+      "common_exec_config": [
+        { 
+          "percentage": {
+            "type": "user_inputted",
+            "scale": {
+              "min":0,
+              "max":100,
+              "step":10
+            }
+          } 
+        }
+      ],
     "positions": [
       {
         "position_id": "Agave_14",
-        "exec_config": [
+        "position_exec_config": ["check templates for input"]
+      }
+    ]
+    }
+  },
+  "Balancer DAO": {
+    "ethereum": {
+      "file_path": "src/scripts/mainBalancerDAOEthereum.py",
+      "common_exec_config": [
+        {
+          "percentage": {
+            "type": "user_inputted",
+            "scale": {
+              "min":0,
+              "max":100,
+              "step":10
+            }
+          }
+        }
+      ],
+      "positions": [
+        {
+          "position_id": "Agave_14",
+          "position_exec_config": ["check templates for input"]
+        }
+      ]
+    },
+    "gnosis": {
+      "file_path": "src/scripts/mainBalancerDAOGnosis.py",
+      "common_exec_config": [
+        { 
+          "percentage": {
+            "type": "user_inputted",
+            "scale": {
+              "min":0,
+              "max":100,
+              "step":10
+            }
+          } 
+        }
+      ],
+      "positions": [
+        {
+          "position_id": "Agave_14",
+          "position_exec_config": ["check templates for input"]
+        }
+      ]
+      }
+    },
+    "ENS DAO": {
+      "ethereum": {
+        "file_path": "src/scripts/mainENSDAOEthereum.py",
+        "common_exec_config": [
           {
-            "name": "Exit_1",
-            "description": "Withdraw from Agave",
-            "parameters": [
-              {
-                "name": "rewarder_address",
-                "value": "0x2323893289389389478943987",
-                "enable": false
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
               }
-            ]
-          },
+            }
+          }
+        ],
+        "positions": [
           {
-            "name": "Exit_2",
-            "description": "Withdraw from Agave and swap or whatever bla bla bla",
-            "parameters": [
-              {
-                "name": "parameter_1",
-                "value": 987,
-                "enable": false
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      },
+      "gnosis": {
+        "file_path": "src/scripts/mainENSDAOGnosis.py",
+        "common_exec_config": [
+          { 
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
               }
-            ]
+            } 
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
           }
         ]
       }
-    ]
+    },
+    "CoW DAO": {
+      "ethereum": {
+        "file_path": "src/scripts/mainCowDAOEthereum.py",
+        "common_exec_config": [
+          {
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            }
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      },
+      "gnosis": {
+        "file_path": "src/scripts/mainBalancerDAOGnosis.py",
+        "common_exec_config": [
+          { 
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            } 
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      }
+    },
+    "karpatkey DAO": {
+      "ethereum": {
+        "file_path": "src/scripts/mainBalancerDAOEthereum.py",
+        "common_exec_config": [
+          {
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            }
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      },
+      "gnosis": {
+        "file_path": "src/scripts/mainBalancerDAOGnosis.py",
+        "common_exec_config": [
+          { 
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            } 
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      }
+    },
+    "Gnosis Ltd": {
+      "ethereum": {
+        "file_path": "src/scripts/mainGnosisLtdEthereum.py",
+        "common_exec_config": [
+          {
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            }
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      },
+      "gnosis": {
+        "file_path": "src/scripts/mainGnosisLtdGnosis.py",
+        "common_exec_config": [
+          { 
+            "percentage": {
+              "type": "user_inputted",
+              "scale": {
+                "min":0,
+                "max":100,
+                "step":10
+              }
+            } 
+          }
+        ],
+        "positions": [
+          {
+            "position_id": "Agave_14",
+            "position_exec_config": ["check templates for input"]
+          }
+        ]
+      }
+    }
   }
-}
+
+
+
