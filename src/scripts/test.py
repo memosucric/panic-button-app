@@ -59,8 +59,9 @@ def main():
         w3.eth.send_transaction({"to": EOA_address, "value": Web3.to_wei(0.01, "ether")})
         print(w3.eth.get_balance(EOA_address))
         aura_rewards_addr = "0x6c3f6C327DE4aE51a2DfaAF3431b3c508ec8D3EB"
+        aura_rewards_addr_checksum = Web3.to_checksum_address(aura_rewards_addr)  # Ensure the address has the correct checksum
         tx = exit_1(simulate=simulate, w3=w3, avatar_safe_address=safe_address, roles_mod_address=roles_mod,
-                    role=roles, private_key=private_key, args_dict={"rewarder_address": aura_rewards_addr})
+                    role=roles, private_key=private_key, args_dict={"rewarder_address": aura_rewards_addr_checksum})
         print(tx)
 
 if __name__ == "__main__":
