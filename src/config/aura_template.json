@@ -54,7 +54,20 @@
                     "max":100,
                     "step":0.5
                   }
-                }
+                },
+                "token_out_address": {
+                  "type": "user_inputted",
+                  "options": [
+                      {
+                          "token_address":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+                          "token_symbol": "WETH"
+                      },
+                      {
+                          "token_address":"0xba100000625a3754423978a60c9317c58a424e3D",
+                          "token_symbol": "BAL"
+                      }
+                  ]
+              }
               }
         ]
     },
