@@ -21,3 +21,7 @@ jobs:
           labels: dependencies
           base: develop
           delete-branch: false
+          assignees:
+            - "mariano-aguero"
+          reviewers:
+            - "mariano-aguero"
