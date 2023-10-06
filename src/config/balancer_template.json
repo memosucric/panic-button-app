@@ -1,4 +1,4 @@
-{"exec_config": [
+{"position_exec_config": [
     {
       "function_name": "Exit_1",
       "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
