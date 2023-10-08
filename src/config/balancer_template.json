@@ -1,4 +1,6 @@
-{"position_exec_config": [
+{"position_id": "Aura_35",
+"protocol": "Aura",
+"position_exec_config": [
     {
       "function_name": "Exit_1",
       "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
@@ -20,7 +22,7 @@
         ]
     },
     {
-        "function_name": "Exit_2_2",
+        "function_name": "Exit_2",
         "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
         "parameters": [
              {
@@ -35,12 +37,17 @@
                     "max":100,
                     "step":0.5
                   }
-                }
+                },                
+                "token_out_address": {
+                  "type": "user_inputted",
+                  "options": [
+                  ]
+              }
               }
         ]
     },
     {
-        "function_name": "Exit_2_3",
+        "function_name": "Exit_3",
         "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
         "parameters": [
         {
@@ -59,23 +66,13 @@
             "amounts_out": {
                 "type": "user_inputted",
                 "display": [
-                    {
-                        "token_address":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH",
-                        "amount": "int"
-                    },
-                    {
-                        "token_address":"0xba100000625a3754423978a60c9317c58a424e3D",
-                        "token_symbol": "BAL",
-                        "amount": "int"
-                    }
                 ]
             }
         }
         ]
     },
     {
-        "function_name": "Exit_2_4",
+        "function_name": "Exit_4",
         "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
         "parameters": [
              {

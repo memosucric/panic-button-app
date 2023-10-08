@@ -1,4 +1,6 @@
-{"position_exec_config": [
+{"position_id": "stETH",
+"protocol":"Lido",
+    "position_exec_config": [
     {
       "function_name": "Exit_1",
       "description":"Unwrap wstETH for stETH",

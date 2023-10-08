@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from web3 import Web3
 from roles_royce.toolshed.disassembling.Aura.disassembling_aura import AuraDisassembler
+from roles_royce.toolshed.disassembling.Balancer.disassembling_balancer import BalancerDisassembler
 
 load_dotenv()
 
@@ -47,10 +48,18 @@ def main():
     if not w3.is_connected():
       raise Exception("No connection to RPC endpoint")
 
-  # TODO: sanity check with ETH balance
+  eth_balance = w3.eth.get_balance(EOA_address)
+  if eth_balance <= 0.1:
+    raise Exception("Not enough ETH balance in EOA")
 
   if protocol == "Aura":
     disassembler = AuraDisassembler(w3=w3,
+                                    avatar_safe_address=safe_address,
+                                    roles_mod_address=roles_mod,
+                                    role=roles,
+                                    signer_address=EOA_address)
+  elif protocol == "Balancer":
+    disassembler = BalancerDisassembler(w3=w3,
                                     avatar_safe_address=safe_address,
                                     roles_mod_address=roles_mod,
                                     role=roles,
@@ -64,19 +73,23 @@ def main():
 
   try:
     if simulate:
-      exit_tx = disassembler.simulate(txn_transactable)
+      tx_status, sim_link = disassembler.simulate(txn_transactable)
+      if tx_status:
+        response_message = {"status" : 200, "link": sim_link, 
+                            "message": "Transaction executed successfully"}
+      else:
+        response_message = {"status" : 200, "link": "", 
+                          "message": "Transaction reverted"}
     else:
-      # TODO: add a sanity check with the 'check' function of the roles and the amount of ETH needed
-      exit_tx = disassembler.send(txn_transactable, private_key)
-    # TODO: build the dictionary to be returned
-    """
-    {"status" : 200,
-    "link": etherscan or tenderly link
-    "message": "Transaction executed successfully" or "Transaction reverted"
-    }
-    """
-    # The simulate function should also return the status: successful or reverted
-    return exit_tx
+      check_exit_tx = disassembler.check(txn_transactable, account= EOA_address)
+      if check_exit_tx:
+        exit_tx = disassembler.send(txn_transactable, private_key)
+        response_message = {"status" : 200, "link": exit_tx, 
+                            "message": "Transaction executed successfully"}
+      else:
+        response_message = {"status" : 200, "link": "", 
+                          "message": "Transaction reverted"}
+    return response_message
   except Exception as e:
     return {"status": 500, "message": f"Error: {e}"}
 

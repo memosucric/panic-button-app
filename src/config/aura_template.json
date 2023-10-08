@@ -1,4 +1,6 @@
-{"position_exec_config": [
+{"position_id": "Aura_35",
+  "protocol": "Aura",
+  "position_exec_config": [
     {
       "function_name": "Exit_1",
       "description": "Withdraw from Aura",
@@ -6,7 +8,7 @@
         {
         "rewarder_address": {
           "type":"fixed",
-          "value":"0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
+          "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
           "max_slippage": {
             "type": "user_inputted",
@@ -25,7 +27,7 @@
             {
                 "rewarder_address": {
                   "type":"fixed",
-                  "value":"0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
+                  "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
                 },  
                 "max_slippage": {
                   "type": "user_inputted",
@@ -45,7 +47,7 @@
              {
             "rewarder_address": {
             "type":"fixed",
-            "value":"0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
+            "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
             "max_slippage": {
                 "type": "user_inputted",
@@ -58,14 +60,6 @@
                 "token_out_address": {
                   "type": "user_inputted",
                   "options": [
-                      {
-                          "token_address":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                          "token_symbol": "WETH"
-                      },
-                      {
-                          "token_address":"0xba100000625a3754423978a60c9317c58a424e3D",
-                          "token_symbol": "BAL"
-                      }
                   ]
               }
               }
@@ -78,7 +72,7 @@
         {
             "rewarder_address": {
             "type":"fixed",
-            "value":"0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
+            "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
             "max_slippage": {
                 "type": "user_inputted",
@@ -91,16 +85,7 @@
             "amounts_out": {
                 "type": "user_inputted",
                 "display": [
-                    {
-                        "token_address":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH",
-                        "amount": "int"
-                    },
-                    {
-                        "token_address":"0xba100000625a3754423978a60c9317c58a424e3D",
-                        "token_symbol": "BAL",
-                        "amount": "int"
-                    }
+
                 ]
             }
         }
@@ -113,7 +98,7 @@
              {
             "rewarder_address": {
             "type":"fixed",
-            "value":"0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
+            "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
             "max_slippage": {
                 "type": "user_inputted",
