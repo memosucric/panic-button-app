@@ -1,5 +1,5 @@
 {"position_id": "Aura_35",
-"protocol": "Aura",
+"protocol": "Balancer",
 "position_exec_config": [
     {
       "function_name": "Exit_1",
@@ -23,7 +23,7 @@
     },
     {
         "function_name": "Exit_2",
-        "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+        "description":"Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
         "parameters": [
              {
             "bpt_address": {
@@ -48,7 +48,7 @@
     },
     {
         "function_name": "Exit_3",
-        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+        "description":"Withdraw funds from the Balancer pool with specified amounts",
         "parameters": [
         {
             "bpt_address": {
@@ -73,7 +73,7 @@
     },
     {
         "function_name": "Exit_4",
-        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
+        "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
         "parameters": [
              {
             "bpt_address": {

@@ -42,7 +42,7 @@
     },
     {
         "function_name": "Exit_2_2",
-        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
         "parameters": [
              {
             "rewarder_address": {
@@ -67,7 +67,7 @@
     },
     {
         "function_name": "Exit_2_3",
-        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+        "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in custom way, choosing which tokens and amounts out).",
         "parameters": [
         {
             "rewarder_address": {
