@@ -2,22 +2,22 @@
 "protocol":"Lido",
     "position_exec_config": [
     {
-      "function_name": "Exit_1",
+      "function_name": "exit_1",
       "description":"Unwrap wstETH for stETH",
       "parameters": []
     },
     {
-        "function_name": "Exit_2",
+        "function_name": "exit_2",
         "description":"Unstake stETH for ETH",
         "parameters": []
     },
     {
-        "function_name": "Exit_3",
+        "function_name": "exit_3",
         "description":"Unwrap and Unstake wstETH for ETH",
         "parameters": []
     },
     {
-        "function_name": "Exit_4",
+        "function_name": "exit_4",
         "description":"Swap stETH for ETH",
         "parameters": [
             {
@@ -33,7 +33,7 @@
         ]
     },
     {
-        "function_name": "Exit_5",
+        "function_name": "exit_5",
         "description":"Swap wstETH for ETH",
         "parameters": [
             {

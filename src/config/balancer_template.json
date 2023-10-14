@@ -2,7 +2,7 @@
 "protocol": "Balancer",
 "position_exec_config": [
     {
-      "function_name": "Exit_1",
+      "function_name": "exit_1",
       "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
       "parameters": [
             {
@@ -22,7 +22,7 @@
         ]
     },
     {
-        "function_name": "Exit_2",
+        "function_name": "exit_2",
         "description":"Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
         "parameters": [
              {
@@ -47,7 +47,7 @@
         ]
     },
     {
-        "function_name": "Exit_3",
+        "function_name": "exit_3",
         "description":"Withdraw funds from the Balancer pool with specified amounts",
         "parameters": [
         {
@@ -72,7 +72,7 @@
         ]
     },
     {
-        "function_name": "Exit_4",
+        "function_name": "exit_4",
         "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
         "parameters": [
              {

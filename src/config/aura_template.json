@@ -2,11 +2,11 @@
   "protocol": "Aura",
   "position_exec_config": [
     {
-      "function_name": "Exit_1",
+      "function_name": "exit_1",
       "description": "Withdraw from Aura",
       "parameters": [
         {
-        "rewarder_address": {
+        "rewards_address": {
           "type":"fixed",
           "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
@@ -21,11 +21,11 @@
         }]
       },
     {
-      "function_name": "Exit_2_1",
+      "function_name": "exit_2_1",
       "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
       "parameters": [
             {
-                "rewarder_address": {
+                "rewards_address": {
                   "type":"fixed",
                   "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
                 },  
@@ -41,11 +41,11 @@
         ]
     },
     {
-        "function_name": "Exit_2_2",
+        "function_name": "exit_2_2",
         "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
         "parameters": [
              {
-            "rewarder_address": {
+            "rewards_address": {
             "type":"fixed",
             "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
@@ -66,11 +66,11 @@
         ]
     },
     {
-        "function_name": "Exit_2_3",
+        "function_name": "exit_2_3",
         "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in custom way, choosing which tokens and amounts out).",
         "parameters": [
         {
-            "rewarder_address": {
+            "rewards_address": {
             "type":"fixed",
             "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
@@ -92,11 +92,11 @@
         ]
     },
     {
-        "function_name": "Exit_2_4",
+        "function_name": "exit_2_4",
         "description":"Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
         "parameters": [
              {
-            "rewarder_address": {
+            "rewards_address": {
             "type":"fixed",
             "value":"0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
             },
