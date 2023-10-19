@@ -9,8 +9,13 @@ from web3 import Web3
 from roles_royce.toolshed.disassembling.Aura.disassembling_aura import AuraDisassembler
 from roles_royce.toolshed.disassembling.Balancer.disassembling_balancer import BalancerDisassembler
 from roles_royce.toolshed.disassembling.utils import Disassembler
+from roles_royce.utils import TenderlyCredentials
 
 load_dotenv()
+ACCOUNT_ID = "FILL"
+PROJECT = "FILL"
+API_TOKEN = "FILL"
+
 
 def start_the_engine():
   w3 = Web3(Web3.HTTPProvider(os.getenv("RPC_ENDPOINT")))
@@ -39,12 +44,16 @@ def gear_up(protocol: str, w3: Web3, safe_address: str, roles_mod: str, role: st
                                     avatar_safe_address=safe_address,
                                     roles_mod_address=roles_mod,
                                     role=role,
+                                    tenderly_credentials=TenderlyCredentials(account_id=ACCOUNT_ID,
+                                    project=PROJECT, api_token=API_TOKEN),
                                     signer_address=EOA_address)
   elif protocol == "Balancer":
     disassembler = BalancerDisassembler(w3=w3,
                                     avatar_safe_address=safe_address,
                                     roles_mod_address=roles_mod,
                                     role=role,
+                                    tenderly_credentials=TenderlyCredentials(account_id=ACCOUNT_ID,
+                                    project=PROJECT, api_token=API_TOKEN),
                                     signer_address=EOA_address)
   else:
     raise Exception("Invalid protocol")
@@ -59,8 +68,8 @@ def drive_away(simulate: bool, disassembler: Disassembler, txn_transactable: lis
                 EOA_address: str):
   try:
     if simulate:
-      tx_status, sim_link = disassembler.simulate(txn_transactable, from_address= EOA_address)
-      if tx_status:
+      sim_data, sim_link = disassembler.simulate(txn_transactable)
+      if sim_data['transaction']['status']:
         response_message = {"status" : 200, "link": sim_link, 
                             "message": "Transaction executed successfully"}
       else:

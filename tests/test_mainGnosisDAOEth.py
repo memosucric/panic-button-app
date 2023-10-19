@@ -53,7 +53,7 @@ def test_gear_up():
     assert disassembler.avatar_safe_address == '0x849D52316331967b6fF1198e5E32A0eB168D039d'    
     assert txn_transactable[0].data == "0xc32e7202000000000000000000000000000000000000000000000051869e87b8f26fdf540000000000000000000000000000000000000000000000000000000000000001"    
 
-@pytest.mark.skip("WIP")   
+#@pytest.mark.skip("WIP")   
 def test_drive_away():
     PROTOCOL = JSON_FORM["protocol"]
     W3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8546'))
@@ -71,6 +71,7 @@ def test_drive_away():
                                 PERCENTAGE, EXIT_STRATEGY, EXIT_ARGUMENTS)
     response = drive_away(SIMULATE, DISASSEMBLER, TXN_TRANSACTABLE, PRIVATE_KEY, EOA_ADDRESS)
 
+#TODO: get some values out of the tenderly link to assert success
     assert response == ""
 
 
