@@ -1,95 +1,88 @@
-{"position_id": "Aura_35",
-"protocol": "Balancer",
-"position_exec_config": [
+{
+  "position_id": "Aura_35",
+  "protocol": "Balancer",
+  "position_exec_config": [
     {
       "function_name": "exit_1",
-      "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+      "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
       "parameters": [
-            {
-                "bpt_address": {
-                  "type":"fixed",
-                  "value":"0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
-                },  
-                "max_slippage": {
-                  "type": "user_inputted",
-                  "scale": {
-                    "min":0,
-                    "max":100,
-                    "step":0.5
-                    }
-                  }
-                }
-        ]
-    },
-    {
-        "function_name": "exit_2",
-        "description":"Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
-        "parameters": [
-             {
-            "bpt_address": {
-            "type":"fixed",
-            "value":"0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
-            },
-            "max_slippage": {
-                "type": "user_inputted",
-                "scale": {
-                    "min":0,
-                    "max":100,
-                    "step":0.5
-                  }
-                },                
-                "token_out_address": {
-                  "type": "user_inputted",
-                  "options": [
-                  ]
-              }
-              }
-        ]
-    },
-    {
-        "function_name": "exit_3",
-        "description":"Withdraw funds from the Balancer pool with specified amounts",
-        "parameters": [
         {
-            "bpt_address": {
-            "type":"fixed",
-            "value":"0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
-            },
-            "max_slippage": {
-                "type": "user_inputted",
-                "scale": {
-                    "min":0,
-                    "max":100,
-                    "step":0.5
-                  }
-            },
-            "amounts_out": {
-                "type": "user_inputted",
-                "display": [
-                ]
-            }
+          "name": "bpt_address",
+          "type": "fixed",
+          "value": "0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
+        },
+        {
+          "name": "max_slippage",
+          "type": "user_inputted",
+          "scale": {
+            "min": 0,
+            "max": 100,
+            "step": 0.5
+          }
         }
-        ]
+      ]
     },
     {
-        "function_name": "exit_4",
-        "description":"Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
-        "parameters": [
-             {
-            "bpt_address": {
-            "type":"fixed",
-            "value":"0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
-            },
-            "max_slippage": {
-                "type": "user_inputted",
-                "scale": {
-                    "min":0,
-                    "max":100,
-                    "step":0.5
-                  }
-                }
-              }
-        ]
-    }    
-    ]
+      "function_name": "exit_2",
+      "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
+      "parameters": [
+        {
+          "name": "bpt_address",
+          "type": "fixed",
+          "value": "0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
+        },
+        {
+          "name": "max_slippage",
+          "type": "user_inputted",
+          "scale": {
+            "min": 0,
+            "max": 100,
+            "step": 0.5
+          }
+        },
+        { "name": "token_out_address", "type": "user_inputted", "options": [] }
+      ]
+    },
+    {
+      "function_name": "exit_3",
+      "description": "Withdraw funds from the Balancer pool with specified amounts",
+      "parameters": [
+        {
+          "name": "bpt_address",
+          "type": "fixed",
+          "value": "0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
+        },
+        {
+          "name": "max_slippage",
+          "type": "user_inputted",
+          "scale": {
+            "min": 0,
+            "max": 100,
+            "step": 0.5
+          }
+        },
+        { "name": "amounts_out", "type": "user_inputted", "display": [] }
+      ]
+    },
+    {
+      "function_name": "exit_4",
+      "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
+      "parameters": [
+        {
+          "name": "bpt_address",
+          "type": "fixed",
+          "value": "0x5c6Ee304399DBdB9C8Ef030aB642B10820DB8F56 "
+        },
+        {
+          "name": "max_slippage",
+          "type": "user_inputted",
+          "scale": {
+            "min": 0,
+            "max": 100,
+            "step": 0.5
+          }
+        }
+      ]
+    }
+  ]
 }
