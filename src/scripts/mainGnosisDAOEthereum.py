@@ -68,25 +68,30 @@ def drive_away(simulate: bool, disassembler: Disassembler, txn_transactable: lis
                 EOA_address: str):
   try:
     if simulate:
-      sim_data, sim_link = disassembler.simulate(txn_transactable)
-      if sim_data['transaction']['status']:
+      tx_data, sim_link = disassembler.simulate(txn_transactable, EOA_address)
+      if tx_data['transaction']['status']:
         response_message = {"status" : 200, "link": sim_link, 
                             "message": "Transaction executed successfully"}
       else:
         response_message = {"status" : 200, "link": "", 
                           "message": "Transaction reverted"}
+      return tx_data, response_message
     else:
-      check_exit_tx = disassembler.check(txn_transactable, account= EOA_address)
+      check_exit_tx = disassembler.check(txn_transactable, from_address= EOA_address)
+
       if check_exit_tx:
-        exit_tx = disassembler.send(txn_transactable, private_key)
-        response_message = {"status" : 200, "link": exit_tx, 
+        tx_data = disassembler.send(txn_transactable, private_key)
+        response_message = {"status" : 200, "link": tx_data['transactionHash'], 
                             "message": "Transaction executed successfully"}
       else:
+        tx_data = ""
         response_message = {"status" : 200, "link": "", 
                           "message": "Transaction reverted"}
-    return response_message
+      return tx_data, response_message
   except Exception as e:
-    return {"status": 500, "message": f"Error: {e}"}
+    tx_data = "No tx_data"
+    response_message = {"status": 500, "message": f"Error: {e}"}
+    return tx_data, response_message
 
 def main():
   parser = argparse.ArgumentParser(description="This is the real Gnosis DAO disassembling script",
