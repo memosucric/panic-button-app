@@ -1,395 +1,203 @@
-{
-  "ENS DAO": {
-    "ethereum": {
-      "file_path": "src/scripts/mainENSDAOEthereum.py",
-      "common_exec_config": [
-        {
-          "percentage": {
-            "type": "user_inputted",
-            "scale": {
-              "min": 0,
-              "max": 100,
-              "step": 10
-            }
+{"ENS DAO": {
+  "ethereum": {
+    "file_path": "src/scripts/main.py",
+    "common_exec_config": [
+      {
+        "name": "percentage",
+        "type": "user_inputted",
+        "scale": { "min": 0, "max": 100, "step": 10 }
+      }
+    ],
+    "positions": [
+      {
+        "position_id": "Lido_15",
+        "protocol": "Lido",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "description": "Unwrap wstETH for stETH",
+            "parameters": []
+          },
+          { "function_name": "exit_2", "description": "Unstake stETH for ETH", "parameters": [] },
+          {
+            "function_name": "exit_3",
+            "description": "Unwrap and Unstake wstETH for ETH",
+            "parameters": []
+          },
+          {
+            "function_name": "exit_4",
+            "description": "Swap stETH for ETH",
+            "parameters": [
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_5",
+            "description": "Swap wstETH for ETH",
+            "parameters": [
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
           }
-        }
-      ],
-      "positions": [
-        {
-          "position_id": "Aura_11",
-          "protocol": "Aura",
-          "position_exec_config": [
-            {
-              "function_name": "Exit_1",
-              "description": "Withdraw from Aura",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D"
+        ]
+      },
+      {
+        "position_id": "Balancer_124",
+        "protocol": "Balancer",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+            "parameters": [
+              {
+                "name": "bpt_address",
+                "type": "fixed",
+                "value": "0x32296969ef14eb0c6d29669c550d4a0449130230"
+              },
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2",
+            "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
+            "parameters": [
+              {
+                "name": "bpt_address",
+                "type": "fixed",
+                "value": "0x32296969ef14eb0c6d29669c550d4a0449130230"
+              },
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              },
+              {
+                "name": "token_out_address",
+                "type": "user_inputted",
+                "options": [
+                  {
+                    "token_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+                    "token_symbol": "wstETH"
                   },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
+                  {
+                    "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+                    "token_symbol": "WETH"
                   }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_1",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D"
+                ]
+              }
+            ]
+          },
+          {
+            "function_name": "exit_3",
+            "description": "Withdraw funds from the Balancer pool with specified amounts",
+            "parameters": [
+              {
+                "name": "bpt_address",
+                "type": "fixed",
+                "value": "0x32296969ef14eb0c6d29669c550d4a0449130230"
+              },
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              },
+              {
+                "name": "amounts_out",
+                "type": "user_inputted",
+                "display": [
+                  {
+                    "token_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+                    "token_symbol": "wstETH",
+                    "amount": "int"
                   },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
+                  {
+                    "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+                    "token_symbol": "WETH",
+                    "amount": "int"
                   }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_2",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  },
-                  "token_out_address": {
-                    "type": "user_inputted",
-                    "options": [
-                      {
-                        "token_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
-                        "token_symbol": "wstETH"
-                      },
-                      {
-                        "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_3",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  },
-                  "amounts_out": {
-                    "type": "user_inputted",
-                    "display": [
-                      {
-                        "token_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
-                        "token_symbol": "wstETH",
-                        "amount": "int"
-                      },
-                      {
-                        "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH",
-                        "amount": "int"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_4",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "positions_id": "Aura_219",
-          "protocol": "Aura",
-          "position_exec_config": [
-            {
-              "function_name": "Exit_1",
-              "description": "Withdraw from Aura",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0x68655ad9852a99c87c0934c7290bb62cfa5d4123"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_1",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0xdd1fe5ad401d4777ce89959b7fa587e569bf125d"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_2",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0xdd1fe5ad401d4777ce89959b7fa587e569bf125d"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  },
-                  "token_out_address": {
-                    "type": "user_inputted",
-                    "options": [
-                      {
-                        "token_address": "0xae78736Cd615f374D3085123A210448E74Fc6393",
-                        "token_symbol": "rETH"
-                      },
-                      {
-                        "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_3",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0xdd1fe5ad401d4777ce89959b7fa587e569bf125d"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  },
-                  "amounts_out": {
-                    "type": "user_inputted",
-                    "display": [
-                      {
-                        "token_address": "0xae78736Cd615f374D3085123A210448E74Fc6393",
-                        "token_symbol": "rETH",
-                        "amount": "int"
-                      },
-                      {
-                        "token_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                        "token_symbol": "WETH",
-                        "amount": "int"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_2_4",
-              "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
-              "parameters": [
-                {
-                  "rewarder_address": {
-                    "type": "fixed",
-                    "value": "0xdd1fe5ad401d4777ce89959b7fa587e569bf125d"
-                  },
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "position_id": "Lido_15",
-          "protocol": "Lido",
-          "position_exec_config": [
-            {
-              "function_name": "Exit_1",
-              "description": "Unwrap wstETH for stETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_2",
-              "description": "Unstake stETH for ETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_3",
-              "description": "Unwrap and Unstake wstETH for ETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_4",
-              "description": "Swap stETH for ETH",
-              "parameters": [
-                {
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_5",
-              "description": "Swap wstETH for ETH",
-              "parameters": [
-                {
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "position_id": "Lido_149",
-          "protocol": "Lido",
-          "position_exec_config": [
-            {
-              "function_name": "Exit_1",
-              "description": "Unwrap wstETH for stETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_2",
-              "description": "Unstake stETH for ETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_3",
-              "description": "Unwrap and Unstake wstETH for ETH",
-              "parameters": []
-            },
-            {
-              "function_name": "Exit_4",
-              "description": "Swap stETH for ETH",
-              "parameters": [
-                {
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "function_name": "Exit_5",
-              "description": "Swap wstETH for ETH",
-              "parameters": [
-                {
-                  "max_slippage": {
-                    "type": "user_inputted",
-                    "scale": {
-                      "min": 0,
-                      "max": 100,
-                      "step": 0.5
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+                ]
+              }
+            ]
+          },
+          {
+            "function_name": "exit_4",
+            "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
+            "parameters": [
+              {
+                "name": "bpt_address",
+                "type": "fixed",
+                "value": "0x32296969ef14eb0c6d29669c550d4a0449130230"
+              },
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "position_id": "Lido_194",
+        "protocol": "Lido",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "description": "Unwrap wstETH for stETH",
+            "parameters": []
+          },
+          { "function_name": "exit_2", "description": "Unstake stETH for ETH", "parameters": [] },
+          {
+            "function_name": "exit_3",
+            "description": "Unwrap and Unstake wstETH for ETH",
+            "parameters": []
+          },
+          {
+            "function_name": "exit_4",
+            "description": "Swap stETH for ETH",
+            "parameters": [
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_5",
+            "description": "Swap wstETH for ETH",
+            "parameters": [
+              {
+                "name": "max_slippage",
+                "type": "user_inputted",
+                "scale": { "min": 0, "max": 100, "step": 0.5 }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "gnosisChain": {
+    "file_path": "src/scripts/main.py",
+    "common_exec_config": [
+      {
+        "name": "percentage",
+        "type": "user_inputted",
+        "scale": { "min": 0, "max": 100, "step": 10 }
+      }
+    ],
+    "positions": []
   }
-}
+}}
