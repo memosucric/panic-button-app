@@ -5,7 +5,7 @@ type DataWarehouseEnvironment = 'production' | 'development'
 
 const REPORTS_DATASET = {
   development: {
-    getPositions: 'reports_production.prod_position_list'
+    getPositions: 'reports.vw_position_list'
   },
   production: {
     getPositions: 'reports_production.prod_position_list'

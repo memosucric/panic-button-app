@@ -9,16 +9,6 @@ export const GOOGLE_CREDS = {
 export const DATA_WAREHOUSE_ENV = process.env.DATA_WAREHOUSE_ENV || 'production'
 export const TITLE = 'karpatkey'
 
-export const NONE = 'None'
-
-export type CHAIN = {
-  id: number
-  name: string
-  short: string
-  explorer: string
-  logo: string
-}
-
 export const enum DAO_NAME_KEY {
   'Gnosis DAO' = 0,
   'Gnosis LTD' = 1,
@@ -42,7 +32,7 @@ export interface DAO {
   }[]
 }
 
-export const DAOS: DAO[] = [
+export const DAO_LIST: DAO[] = [
   {
     id: DAO_NAME_KEY['Gnosis DAO'],
     name: 'Gnosis',
