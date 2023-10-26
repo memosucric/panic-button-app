@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Button, RadioGroup, FormControlLabel, Radio, Divider, TextField } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
-import { ExecConfig } from 'src/config/strategiesManager'
+import { ExecConfig } from '../../config/strategies/manager'
 import CustomTypography from 'src/components/CustomTypography'
 import * as React from 'react'
 import Primary from 'src/views/Position/Title/Primary'

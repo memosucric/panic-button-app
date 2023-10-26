@@ -9,7 +9,7 @@ import {
   Parameter,
   Position,
   StrategyContent
-} from 'src/config/strategiesManager'
+} from '../../config/strategies/manager'
 import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
 import * as path from 'path'
 

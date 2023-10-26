@@ -6,7 +6,7 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
-import { DAO, ExecConfig, getStrategies, StrategyContent } from 'src/config/strategiesManager'
+import { DAO, ExecConfig, getStrategies, StrategyContent } from '../../config/strategies/manager'
 
 interface PositionProps {
   id: number
@@ -20,7 +20,7 @@ const Position = (props: PositionProps) => {
   const strategyContent: StrategyContent = getStrategies(position.dao as DAO)
 
   const positionId = `${positionName}_${position_id}`
-  const positionFound = strategyContent?.positions.find(
+  const positionFound = strategyContent?.positions?.find(
     (position) => position.position_id === positionId
   )
 
