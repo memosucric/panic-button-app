@@ -11,12 +11,188 @@
     ],
     "positions": [
       {
+        "position_id": "Aura_18",
+        "protocol": "Aura",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "label": "Exit 1",
+            "description": "Withdraw from Aura",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xFb6b1c1A1eA5618b3CfC20F81a11A97E930fA46B"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_1",
+            "label": "Exit 2 1",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xFb6b1c1A1eA5618b3CfC20F81a11A97E930fA46B"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_2",
+            "label": "Exit 2 2",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xFb6b1c1A1eA5618b3CfC20F81a11A97E930fA46B"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              },
+              {
+                "name": "token_out_address",
+                "label": "Token out",
+                "type": "input",
+                "options": [
+                  { "value": "0x2F4eb100552ef93840d5aDC30560E5513DFfFACb", "label": "bb-a-USDT" },
+                  { "value": "0x82698aeCc9E28e9Bb27608Bd52cF57f704BD1B83", "label": "bb-a-USDC" },
+                  { "value": "0xA13a9247ea42D743238089903570127DdA72fE44", "label": "bb-a-USD" },
+                  { "value": "0xae37D54Ae477268B9997d4161B96b8200755935c", "label": "bb-a-DAI" }
+                ]
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_3",
+            "label": "Exit 2 3",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xFb6b1c1A1eA5618b3CfC20F81a11A97E930fA46B"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "position_id": "Aura_19",
+        "protocol": "Aura",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "label": "Exit 1",
+            "description": "Withdraw from Aura",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xA6e54eA1C67396Bde9e92cA462197bE59Af3E875"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_1",
+            "label": "Exit 2 1",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xA6e54eA1C67396Bde9e92cA462197bE59Af3E875"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_2",
+            "label": "Exit 2 2",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xA6e54eA1C67396Bde9e92cA462197bE59Af3E875"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              },
+              {
+                "name": "token_out_address",
+                "label": "Token out",
+                "type": "input",
+                "options": [
+                  { "value": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "label": "WETH" },
+                  { "value": "0xDEf1CA1fb7FBcDC777520aa7f396b4E015F497aB", "label": "COW" }
+                ]
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_3",
+            "label": "Exit 2 3",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xA6e54eA1C67396Bde9e92cA462197bE59Af3E875"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          }
+        ]
+      },
+      {
         "position_id": "Balancer_122",
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -33,8 +209,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -62,8 +238,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -86,8 +262,8 @@
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -104,8 +280,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -131,8 +307,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -155,8 +331,8 @@
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -173,8 +349,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -200,8 +376,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -224,8 +400,8 @@
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -242,8 +418,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -271,8 +447,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -291,12 +467,101 @@
         ]
       },
       {
+        "position_id": "Aura_140",
+        "protocol": "Aura",
+        "position_exec_config": [
+          {
+            "function_name": "exit_1",
+            "label": "Exit 1",
+            "description": "Withdraw from Aura",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xD48451A61d5190a1Ba7C9D17056490cB5d50999d"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_1",
+            "label": "Exit 2 1",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xD48451A61d5190a1Ba7C9D17056490cB5d50999d"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_2",
+            "label": "Exit 2 2",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xD48451A61d5190a1Ba7C9D17056490cB5d50999d"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              },
+              {
+                "name": "token_out_address",
+                "label": "Token out",
+                "type": "input",
+                "options": [
+                  { "value": "0x6667c6fa9f2b3Fc1Cc8D85320b62703d938E4385", "label": "bb-a-DAI" },
+                  { "value": "0xA1697F9Af0875B63DdC472d6EeBADa8C1fAB8568", "label": "bb-a-USDT" },
+                  { "value": "0xcbFA4532D8B2ade2C261D3DD5ef2A2284f792692", "label": "bb-a-USDC" },
+                  { "value": "0xfeBb0bbf162E64fb9D0dfe186E517d84C395f016", "label": "bb-a-USD" }
+                ]
+              }
+            ]
+          },
+          {
+            "function_name": "exit_2_3",
+            "label": "Exit 2 3",
+            "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
+            "parameters": [
+              {
+                "name": "rewards_address",
+                "type": "constant",
+                "value": "0xD48451A61d5190a1Ba7C9D17056490cB5d50999d"
+              },
+              {
+                "name": "max_slippage",
+                "label": "Max slippage",
+                "type": "input",
+                "rules": { "min": 0, "max": 100 }
+              }
+            ]
+          }
+        ]
+      },
+      {
         "position_id": "Balancer_174",
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -313,8 +578,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -342,8 +607,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -366,8 +631,8 @@
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -384,8 +649,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -413,8 +678,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
@@ -437,8 +702,8 @@
         "protocol": "Balancer",
         "position_exec_config": [
           {
-            "function_name": "exit_1",
-            "label": "Exit_1",
+            "function_name": "exit_1_1",
+            "label": "Exit_1_1",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
             "parameters": [
               {
@@ -455,8 +720,8 @@
             ]
           },
           {
-            "function_name": "exit_2",
-            "label": "Exit_2",
+            "function_name": "exit_1_2",
+            "label": "Exit_1_2",
             "description": "Withdraw funds from the Balancer pool withdrawing a single asset specified by the token index.",
             "parameters": [
               {
@@ -484,8 +749,8 @@
             ]
           },
           {
-            "function_name": "exit_3",
-            "label": "Exit_3",
+            "function_name": "exit_1_3",
+            "label": "Exit_1_3",
             "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
             "parameters": [
               {
