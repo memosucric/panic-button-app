@@ -6,7 +6,7 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
-import { DAO, ExecConfig, getStrategies, StrategyContent } from '../../config/strategies/manager'
+import { BLOCKCHAIN, DAO, getStrategies } from '../../config/strategies/manager'
 
 interface PositionProps {
   id: number
@@ -17,14 +17,14 @@ const Position = (props: PositionProps) => {
   const { position } = props
   const { position_id, protocol, blockchain, lptoken_name: positionName } = position
 
-  const strategyContent: StrategyContent = getStrategies(position.dao as DAO)
+  const daoData = getStrategies(position.dao as DAO, blockchain as BLOCKCHAIN)
 
-  const positionId = `${positionName}_${position_id}`
-  const positionFound = strategyContent?.positions?.find(
-    (position) => position.position_id === positionId
+  const positionId = `${protocol}_${position_id}`
+  const positionFound = daoData?.config?.positions?.find(
+    (position) =>  position.position_id.toLowerCase() === positionId.toLowerCase()
   )
 
-  const strategies: ExecConfig[] = positionFound?.exec_config ?? []
+  const strategies = positionFound?.position_exec_config ?? []
 
   const PositionWrapper = () => {
     return (

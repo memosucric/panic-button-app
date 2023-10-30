@@ -1,7 +1,7 @@
-import KPK from './Kpk.json'
-import ENS from './ENS.json'
-import GnosisDAO from './GnosisDAO.json'
-import GnosisLtd from './GnosisLtd.json'
+import GnosisDao_ethereum from './ethereum/GnosisDAO.json'
+import GnosisLtd_ethereum from './ethereum/GnosisLtd.json'
+import GnosisDao_gnosis_chain from './gnosis/GnosisDAO.json'
+import GnosisLtd_gnosis_chain from './gnosis/GnosisLtd.json'
 
 export type DAO =
   | 'Gnosis DAO'
@@ -11,51 +11,41 @@ export type DAO =
   | 'CoW DAO'
   | 'Gnosis Ltd'
 
-export type BLOCKCHAIN_DATAWAREHOUSE = 'Gnosis' | 'Ethereum'
+export type BLOCKCHAIN = 'Gnosis' | 'Ethereum'
 
-export const BLOCKCHAIN_MAPPER = {
-  Gnosis: 'gnosisChain',
-  Ethereum: 'ethereum'
+export type DAO_MAPPER_TYPE = {
+  name: DAO,
+  blockchain: BLOCKCHAIN,
+  config: any
 }
 
-export const DAO_MAPPER: { [key in DAO]: any } = {
-  'Gnosis DAO': GnosisDAO,
-  'Balancer DAO': GnosisDAO,
-  'karpatkey DAO': KPK,
-  'ENS DAO': ENS,
-  'CoW DAO': GnosisDAO,
-  'Gnosis Ltd': GnosisLtd
-}
+export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
+  {
+    name: 'Gnosis DAO',
+    blockchain: 'Ethereum',
+    config: GnosisDao_ethereum
+  },
+  {
+    name: 'Gnosis Ltd',
+    blockchain: 'Ethereum',
+    config: GnosisLtd_ethereum
+  },
+  {
+    name: 'Gnosis DAO',
+    blockchain: 'Gnosis',
+    config: GnosisDao_gnosis_chain
+  },
+  {
+    name: 'Gnosis Ltd',
+    blockchain: 'Gnosis',
+    config: GnosisLtd_gnosis_chain
+  }
+]
 
-export type Parameter = {
-  name: string
-  value: string | number
-  enable: boolean
-}
-
-export type ExecConfig = {
-  name: string
-  description: string
-  parameters: Parameter[]
-}
-
-export type Position = {
-  position_id: string
-  exec_config: ExecConfig[]
-}
-
-export type StrategyContent = {
-  file_path: string
-  positions: Position[]
-}
-
-export type StrategyList = {
-  [key in DAO]: StrategyContent
-}
-
-const getStrategies = (dao: DAO) => {
-  const manager = DAO_MAPPER[dao as keyof typeof DAO_MAPPER] as StrategyList
-  return manager[dao]
+const getStrategies = (dao: DAO, blockchain: BLOCKCHAIN) => {
+  const DAO_ITEM: DAO_MAPPER_TYPE | undefined = DAO_MAPPER.find((daoMapper) => daoMapper.name === dao &&
+    daoMapper.blockchain === blockchain)
+  return DAO_ITEM
 }
 
 export { getStrategies }
