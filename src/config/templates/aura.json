@@ -4,95 +4,91 @@
   "position_exec_config": [
     {
       "function_name": "exit_1",
+      "label": "Exit 1",
       "description": "Withdraw from Aura",
       "parameters": [
         {
           "name": "rewards_address",
-          "type": "fixed",
+          "type": "constant",
           "value": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": {
+          "label": "Max slippage",
+          "type": "input",
+          "rules": {
             "min": 0,
-            "max": 100,
-            "step": 0.5
+            "max": 100
           }
         }
       ]
     },
     {
       "function_name": "exit_2_1",
+      "label": "Exit 2 1",
       "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way (not used for pools in recovery mode!)",
       "parameters": [
         {
           "name": "rewards_address",
-          "type": "fixed",
+          "type": "constant",
           "value": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": {
+          "label": "Max slippage",
+          "type": "input",
+          "rules": {
             "min": 0,
-            "max": 100,
-            "step": 0.5
+            "max": 100
           }
         }
       ]
     },
     {
       "function_name": "exit_2_2",
+      "label": "Exit 2 2",
       "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing a single asset specified by the token index.",
       "parameters": [
         {
           "name": "rewards_address",
-          "type": "fixed",
+          "type": "constant",
           "value": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": { "min": 0, "max": 100, "step": 0.5 }
+          "label": "Max slippage",
+          "type": "input",
+          "rules": {
+            "min": 0,
+            "max": 100
+          }
         },
         {
           "name": "token_out_address",
-          "type": "user_inputted",
+          "label": "Token out",
+          "type": "input",
           "options": []
         }
       ]
     },
     {
       "function_name": "exit_2_3",
-      "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in custom way, choosing which tokens and amounts out).",
-      "parameters": [
-        {
-          "name": "rewards_address",
-          "type": "fixed",
-          "value": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
-        },
-        {
-          "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": { "min": 0, "max": 100, "step": 0.5 }
-        },
-        { "name": "amounts_out", "type": "user_inputted", "display": [] }
-      ]
-    },
-    {
-      "function_name": "exit_2_4",
+      "label": "Exit 2 3",
       "description": "Withdraw funds from Aura and then from the Balancer pool withdrawing all assets in proportional way when pool is in recovery mode",
       "parameters": [
         {
           "name": "rewards_address",
-          "type": "fixed",
+          "type": "constant",
           "value": "0x3dd0843a028c86e0b760b1a76929d1c5ef93a2dd"
         },
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": { "min": 0, "max": 100, "step": 0.5 }
+          "label": "Max slippage",
+          "type": "input",
+          "rules": {
+            "min": 0,
+            "max": 100
+          }
         }
       ]
     }

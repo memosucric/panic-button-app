@@ -4,45 +4,44 @@
   "position_exec_config": [
     {
       "function_name": "exit_1",
-      "description": "Unwrap wstETH for stETH",
-      "parameters": []
-    },
-    {
-      "function_name": "exit_2",
+      "label": "Exit_1",
       "description": "Unstake stETH for ETH",
       "parameters": []
     },
     {
-      "function_name": "exit_3",
-      "description": "Unwrap and Unstake wstETH for ETH",
+      "function_name": "exit_2",
+      "label": "Exit_2",
+      "description": "Unstake wstETH for ETH",
       "parameters": []
     },
     {
-      "function_name": "exit_4",
+      "function_name": "exit_3",
+      "label": "Exit_3",
       "description": "Swap stETH for ETH",
       "parameters": [
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": {
+          "type": "input",
+          "label": "Max slippage",
+          "rules": {
             "min": 0,
-            "max": 100,
-            "step": 0.5
+            "max": 100
           }
         }
       ]
     },
     {
-      "function_name": "exit_5",
+      "function_name": "exit_4",
+      "label": "Exit_4",
       "description": "Swap wstETH for ETH",
       "parameters": [
         {
           "name": "max_slippage",
-          "type": "user_inputted",
-          "scale": {
+          "label": "Max slippage",
+          "type": "input",
+          "rules": {
             "min": 0,
-            "max": 100,
-            "step": 0.5
+            "max": 100
           }
         }
       ]
