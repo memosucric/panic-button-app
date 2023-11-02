@@ -16,7 +16,7 @@
           "name": "max_slippage",
           "label": "Max slippage",
           "type": "input",
-          "rules": {"min": 0,"max": 100}
+          "rules": { "min": 0, "max": 100 }
         }
       ]
     },
@@ -34,18 +34,15 @@
           "name": "max_slippage",
           "label": "Max slippage",
           "type": "input",
-          "rules": {"min": 0,"max": 100}
+          "rules": { "min": 0, "max": 100 }
         },
-        { "name": "token_out_address", 
-        "label": "Token out",
-        "type": "input", 
-        "options": [] }
+        { "name": "token_out_address", "label": "Token out", "type": "input", "options": [] }
       ]
     },
     {
       "function_name": "exit_1_3",
       "label": "Exit_1_3",
-      "description":  "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
+      "description": "Withdraw funds from the Balancer pool withdrawing all assets in proportional way for pools in recovery mode.",
       "parameters": [
         {
           "name": "bpt_address",
@@ -56,7 +53,7 @@
           "name": "max_slippage",
           "label": "Max slippage",
           "type": "input",
-          "rules": {"min": 0,"max": 100}
+          "rules": { "min": 0, "max": 100 }
         }
       ]
     }
