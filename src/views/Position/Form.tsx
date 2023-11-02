@@ -1,7 +1,6 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Button, RadioGroup, FormControlLabel, Radio, Divider, TextField } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
-import { ExecConfig } from '../../config/strategies/manager'
 import CustomTypography from 'src/components/CustomTypography'
 import * as React from 'react'
 import Primary from 'src/views/Position/Title/Primary'
@@ -15,6 +14,13 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
+import {
+  Config,
+  DEFAULT_VALUES_TYPE,
+  ExecConfig,
+  PositionConfig
+} from 'src/config/strategies/manager'
+import { PositionType } from 'src/contexts/types'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -54,26 +60,40 @@ const FormTitle = ({ title }: FormTitleProps) => {
   )
 }
 
-export type PossibleExecutionTypeValues = 'Simulate' | 'Normal execution'
+export type PossibleExecutionTypeValues = 'Simulate' | 'Execute'
 
 interface ExecutionType {
   name: PossibleExecutionTypeValues
 }
 
-const EXECUTION_TYPE: ExecutionType[] = [{ name: 'Simulate' }, { name: 'Normal execution' }]
+const EXECUTION_TYPE: ExecutionType[] = [{ name: 'Simulate' }, { name: 'Execute' }]
 
 interface FormProps {
-  strategies: ExecConfig[]
+  config: ExecConfig
+  position: PositionType
 }
 
 const Form = (props: FormProps) => {
-  const { strategies } = props
+  const { config, position } = props
+  const { commonConfig, positionConfig } = config
 
   const [open, setOpen] = React.useState(false)
 
   const [openSuccess, setOpenSuccess] = React.useState(false)
   const [trx, setTrx] = React.useState<Maybe<string>>(null)
   const [openError, setOpenError] = React.useState(false)
+
+  const defaultValues: DEFAULT_VALUES_TYPE = {
+    position_id: position?.position_id ?? null,
+    blockchain: position?.blockchain ?? null,
+    protocol: position?.protocol ?? null,
+    execution_type: 'Simulate' as PossibleExecutionTypeValues,
+    strategy: positionConfig[0]?.function_name ?? null,
+    percentage: null,
+    rewards_address: null,
+    max_slippage: null,
+    token_out_address: null
+  }
 
   const {
     formState: { errors, isSubmitting },
@@ -83,11 +103,7 @@ const Form = (props: FormProps) => {
     clearErrors,
     watch
   } = useForm<any>({
-    defaultValues: {
-      strategy: strategies[0].name,
-      executionType: 'Simulate',
-      percentage: 100
-    }
+    defaultValues
   })
 
   const watchStrategy = watch('strategy')
@@ -150,6 +166,11 @@ const Form = (props: FormProps) => {
     setOpenError(false)
   }
 
+  const specificParameters: Config[] =
+    (positionConfig as PositionConfig[])?.find(
+      (item: PositionConfig) => item.function_name === watchStrategy
+    )?.parameters ?? []
+
   return (
     <>
       <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
@@ -164,19 +185,19 @@ const Form = (props: FormProps) => {
                   rules={{ required: 'Strategy is required' }}
                   render={({ field }) => (
                     <RadioGroup {...field}>
-                      {strategies.map((strategy: ExecConfig, index: number) => {
+                      {positionConfig.map((item: PositionConfig, index: number) => {
                         return (
                           <BoxWrapperRow sx={{ justifyContent: 'flex-start' }} key={index}>
                             <FormControlLabel
-                              value={strategy.name}
+                              value={item.function_name}
                               control={<Radio />}
-                              label={strategy.name}
+                              label={item.label}
                             />
-                            {strategy?.description ? (
+                            {item?.description ? (
                               <Tooltip
                                 title={
                                   <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                    {strategy?.description}
+                                    {item?.description}
                                   </CustomTypography>
                                 }
                                 sx={{ ml: 1, cursor: 'pointer' }}
@@ -194,10 +215,191 @@ const Form = (props: FormProps) => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
+              <FormTitle title={'Common parameters'} />
+              {commonConfig.map((commonConfigItem: Config, index: number) => {
+                const { name, label = '', type, rules } = commonConfigItem
+
+                if (type === 'constant') {
+                  return null
+                }
+
+                const min = rules?.min
+                const max = rules?.max
+                const existMinAndMax = !!(min !== undefined && max !== undefined)
+
+                return (
+                  <BoxWrapperColumn gap={2} key={index}>
+                    <FormLabel title={label} />
+                    <Controller
+                      name={name}
+                      control={control}
+                      rules={{ required: `${label} is required` }}
+                      render={({ field }) => (
+                        <TextField
+                          type={existMinAndMax ? 'number' : 'string'}
+                          placeholder={`Enter a value for ${label}`}
+                          onChange={
+                            existMinAndMax
+                              ? (e) => {
+                                  const value = e.target.value
+                                  if (+value > max) {
+                                    e.target.value = max + ''
+                                  }
+                                  if (+value < min) {
+                                    e.target.value = min + ''
+                                  }
+
+                                  if (!value) {
+                                    setError(field.name, {
+                                      type: 'manual',
+                                      message: `${label} is required`
+                                    })
+                                  } else {
+                                    clearErrors(field.name)
+                                  }
+
+                                  return field.onChange(e)
+                                }
+                              : (e) => {
+                                  return field.onChange(e)
+                                }
+                          }
+                          value={field.value || ''}
+                          error={!!errors[field.name]}
+                          helperText={errors[field.name]?.message?.toString()}
+                          sx={{
+                            fontFamily: 'IBM Plex Sans',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: 18,
+                            lineHeight: '18px',
+                            color: 'custom.grey.dark',
+                            width: '100%'
+                          }}
+                        />
+                      )}
+                    />
+                  </BoxWrapperColumn>
+                )
+              })}
+            </BoxWrapperColumn>
+
+            {specificParameters?.length > 0 ? (
+              <BoxWrapperColumn gap={2}>
+                <FormTitle title={'Specific parameters'} />
+                {specificParameters?.map((item: Config, index: number) => {
+                  const { name, label = '', type, rules, options } = item
+
+                  if (type === 'constant') {
+                    return null
+                  }
+
+                  const min = rules?.min
+                  const max = rules?.max
+                  const haveRules = !!(min !== undefined && max !== undefined)
+
+                  if (haveRules) {
+                    return (
+                      <BoxWrapperColumn gap={2} key={index}>
+                        <FormLabel title={label} />
+                        <Controller
+                          name={name}
+                          control={control}
+                          rules={{ required: `${label} is required` }}
+                          render={({ field }) => (
+                            <TextField
+                              type={haveRules ? 'number' : 'string'}
+                              placeholder={`Enter a value for ${label}`}
+                              onChange={
+                                haveRules
+                                  ? (e) => {
+                                      const value = e.target.value
+                                      if (+value > max) {
+                                        e.target.value = max + ''
+                                      }
+                                      if (+value < min) {
+                                        e.target.value = min + ''
+                                      }
+
+                                      if (!value) {
+                                        setError(field.name, {
+                                          type: 'manual',
+                                          message: `${label} is required`
+                                        })
+                                      } else {
+                                        clearErrors(field.name)
+                                      }
+
+                                      return field.onChange(e)
+                                    }
+                                  : (e) => {
+                                      return field.onChange(e)
+                                    }
+                              }
+                              value={field.value || ''}
+                              error={!!errors[field.name]}
+                              helperText={errors[field.name]?.message?.toString()}
+                              sx={{
+                                fontFamily: 'IBM Plex Sans',
+                                fontStyle: 'normal',
+                                fontWeight: 500,
+                                fontSize: 18,
+                                lineHeight: '18px',
+                                color: 'custom.grey.dark',
+                                width: '100%'
+                              }}
+                            />
+                          )}
+                        />
+                      </BoxWrapperColumn>
+                    )
+                  }
+
+                  const haveOptions = !!options?.length
+
+                  if (haveOptions) {
+                    return (
+                      <BoxWrapperColumn gap={2} key={index}>
+                        <FormLabel title={label} />
+                        <Controller
+                          name={name}
+                          control={control}
+                          rules={{ required: `${label} is required` }}
+                          render={({ field }) => (
+                            <RadioGroup {...field}>
+                              {options?.map(
+                                (item: { label: string; value: string }, index: number) => {
+                                  return (
+                                    <BoxWrapperRow
+                                      sx={{ justifyContent: 'flex-start' }}
+                                      key={index}
+                                    >
+                                      <FormControlLabel
+                                        value={item.value}
+                                        control={<Radio />}
+                                        label={item.label}
+                                      />
+                                    </BoxWrapperRow>
+                                  )
+                                }
+                              )}
+                            </RadioGroup>
+                          )}
+                        />
+                      </BoxWrapperColumn>
+                    )
+                  }
+
+                  return null
+                })}
+              </BoxWrapperColumn>
+            ) : null}
+
+            <BoxWrapperColumn gap={2}>
               <FormTitle title={'Execution type'} />
               <BoxWrapperColumn gap={2}>
                 <Controller
-                  name="executionType"
+                  name="execution_type"
                   control={control}
                   rules={{ required: 'Execution type is required' }}
                   render={({ field }) => (
@@ -213,57 +415,6 @@ const Form = (props: FormProps) => {
                         )
                       })}
                     </RadioGroup>
-                  )}
-                />
-              </BoxWrapperColumn>
-            </BoxWrapperColumn>
-
-            <BoxWrapperColumn gap={2}>
-              <FormTitle title={'Parameters'} />
-              <BoxWrapperColumn gap={2}>
-                <FormLabel title={'Percentage'} />
-                <Controller
-                  name="percentage"
-                  control={control}
-                  rules={{ required: `Percentage is required` }}
-                  render={({ field }) => (
-                    <TextField
-                      type="number"
-                      placeholder="Percentage"
-                      onChange={(e) => {
-                        const value = e.target.value
-                        if (+value > 100) {
-                          e.target.value = '100'
-                        }
-                        if (+value < 0) {
-                          e.target.value = '0'
-                        }
-
-                        if (!value) {
-                          setError(field.name, {
-                            type: 'manual',
-                            message: `Percentage is required`
-                          })
-                        } else {
-                          clearErrors(field.name)
-                        }
-
-                        return field.onChange(e)
-                      }}
-                      value={field.value || ''}
-                      error={!!errors[field.name]}
-                      inputProps={{ min: 1, max: 100 }}
-                      helperText={errors[field.name]?.message?.toString()}
-                      sx={{
-                        fontFamily: 'IBM Plex Sans',
-                        fontStyle: 'normal',
-                        fontWeight: 500,
-                        fontSize: 18,
-                        lineHeight: '18px',
-                        color: 'custom.grey.dark',
-                        width: '100%'
-                      }}
-                    />
                   )}
                 />
               </BoxWrapperColumn>

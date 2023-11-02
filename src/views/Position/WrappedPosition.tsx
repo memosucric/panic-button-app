@@ -10,16 +10,16 @@ import Detail from 'src/views/Position/Detail'
 const WrappedPosition = () => {
   const { state } = useApp()
   const { positions } = state
-  const { selectedValue, status } = positions
+  const { selectedValue: position, status } = positions
 
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
         {status === 'loading' ? <Loading /> : null}
         {status === 'idle' ? (
-          <PaperSection title="Position detail">
-            {selectedValue ? <Detail selectedValue={selectedValue} /> : null}
-            {!selectedValue ? <EmptyData /> : null}
+          <PaperSection title="Card detail">
+            {position ? <Detail position={position} /> : null}
+            {!position ? <EmptyData /> : null}
           </PaperSection>
         ) : null}
       </BoxContainerWrapper>
