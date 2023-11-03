@@ -75,6 +75,22 @@ export default withApiAuthRequired(async function handler(
   const parameters: string[] = []
 
   // Add the rest of the parameters if needed
+  if (dao) {
+    parameters.push('--dao')
+    // Create a mapper for DAOs
+    const daoMapper: Record<string, string> = {
+      'Gnosis DAO': 'GnosisDAO',
+      'Gnosis Ltd': 'GnosisLtd'
+    }
+
+    parameters.push(daoMapper[dao])
+  }
+
+  if (blockchain) {
+    parameters.push('--blockchain')
+    parameters.push(`${blockchain.toLowerCase()}`)
+  }
+
   if (execution_type === 'Simulate') {
     parameters.push('--simulate')
   }
@@ -116,7 +132,7 @@ export default withApiAuthRequired(async function handler(
       if (parameter.type === 'constant') {
         exitArguments = {
           ...exitArguments,
-          [parameter.name]: `${parameter.value}`
+          [parameter.name]: parameter.value
         }
       }
     })
@@ -125,25 +141,25 @@ export default withApiAuthRequired(async function handler(
   if (rewards_address) {
     exitArguments = {
       ...exitArguments,
-      rewards_address: `${rewards_address}`
+      rewards_address: rewards_address
     }
   }
   if (max_slippage) {
     exitArguments = {
       ...exitArguments,
-      max_slippage: `${max_slippage}`
+      max_slippage: +max_slippage
     }
   }
   if (token_out_address) {
     exitArguments = {
       ...exitArguments,
-      token_out_address: `${token_out_address}`
+      token_out_address: token_out_address
     }
   }
 
   if (Object.keys(exitArguments).length > 0) {
     parameters.push('--exitArguments')
-    parameters.push(`${JSON.stringify(strategy)}`)
+    parameters.push(`[${JSON.stringify(exitArguments)}]`)
   }
 
   const DAOFilePath = getDAOFilePath(dao as DAO, blockchain as unknown as BLOCKCHAIN)
@@ -152,6 +168,7 @@ export default withApiAuthRequired(async function handler(
     try {
       const scriptFile = path.resolve(process.cwd(), DAOFilePath)
 
+      console.log('parameters', parameters)
       const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
 
       let buffer = ''

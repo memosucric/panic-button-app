@@ -6,6 +6,12 @@
 git submodule update --init --recursive
 ```
 
+- To update the roles_royce submodule to the latest changes
+
+```sh
+git submodule update --remote --merge
+```
+
 - Install the latest rolce_royce submodule
 
 ```sh

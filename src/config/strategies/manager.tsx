@@ -26,7 +26,7 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     name: 'Gnosis DAO',
     blockchain: 'Ethereum',
     config: GnosisDao_ethereum,
-    filePath: 'src/scripts/mainGnosisDAOEthereum.py'
+    filePath: 'roles_royce/roles_royce/applications/panic_button_app/panic_button_main.py'
   },
   {
     name: 'Gnosis Ltd',
