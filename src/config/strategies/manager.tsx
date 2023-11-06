@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategiesGnosisDAOEthereum.json'
 import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
 
