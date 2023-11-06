@@ -3,13 +3,11 @@ import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import {
+  BLOCKCHAIN,
   DAO,
-  ExecConfig,
-  getStrategies,
-  Parameter,
-  Position,
-  StrategyContent
-} from 'src/config/strategiesManager'
+  getDAOFilePath,
+  getStrategyByPositionId
+} from 'src/config/strategies/manager'
 import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
 import * as path from 'path'
 
@@ -52,53 +50,125 @@ export default withApiAuthRequired(async function handler(
   }
 
   // Get the strategy from the body, if not found, return an error
-  const { strategy, executionType, percentage } = req.body as {
-    strategy: string
-    executionType: PossibleExecutionTypeValues
-    percentage: number
+  const {
+    position_id,
+    blockchain,
+    protocol,
+    strategy,
+    execution_type,
+    percentage,
+    rewards_address,
+    max_slippage,
+    token_out_address
+  } = req.body as {
+    strategy: Maybe<string>
+    execution_type: PossibleExecutionTypeValues
+    percentage: Maybe<number>
+    position_id: Maybe<string>
+    protocol: Maybe<string>
+    blockchain: Maybe<BLOCKCHAIN>
+    rewards_address: Maybe<string>
+    max_slippage: Maybe<number>
+    token_out_address: Maybe<string>
   }
 
-  const daoContent: StrategyContent = getStrategies(dao as DAO)
-
-  const position: Position | undefined = daoContent?.positions?.find((position: Position) => {
-    return position?.exec_config?.find((exec: ExecConfig) => exec.name === strategy)
-  })
-
-  const strategies: ExecConfig[] = position?.exec_config ?? []
-  const strategyObject = strategies.find((s) => s.name === strategy)
-
-  if (!strategyObject || !strategyObject?.parameters?.length) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
-    return
-  }
-
-  // Build parameters to add as a parameters to the python script
-  const parameters = strategyObject.parameters.reduce((acc: string[], parameter: Parameter) => {
-    if (parameter.enable) {
-      acc.push(`--${parameter.name}`)
-      acc.push(`${parameter.value}`)
-    }
-    return acc
-  }, [])
+  const parameters: string[] = []
 
   // Add the rest of the parameters if needed
-  if (executionType === 'Simulate') {
+  if (dao) {
+    parameters.push('--dao')
+    // Create a mapper for DAOs
+    const daoMapper: Record<string, string> = {
+      'Gnosis DAO': 'GnosisDAO',
+      'Gnosis Ltd': 'GnosisLtd'
+    }
+
+    parameters.push(daoMapper[dao])
+  }
+
+  if (blockchain) {
+    parameters.push('--blockchain')
+    parameters.push(`${blockchain.toLowerCase()}`)
+  }
+
+  if (execution_type === 'Simulate') {
     parameters.push('--simulate')
   }
 
-  if (executionType === 'Normal execution') {
+  if (execution_type === 'Execute') {
     parameters.push('--execute')
   }
 
+  if (protocol) {
+    parameters.push('--protocol')
+    parameters.push(`${protocol}`)
+  }
+
   if (percentage) {
-    parameters.push('-p')
+    parameters.push('--percentage')
     parameters.push(`${percentage}`)
   }
 
+  if (strategy) {
+    parameters.push('--exitStrategy')
+    parameters.push(`${strategy}`)
+  }
+
+  let exitArguments = {}
+
+  // Add constants
+  if (protocol) {
+    const { positionConfig } = getStrategyByPositionId(
+      dao as DAO,
+      blockchain as unknown as BLOCKCHAIN,
+      protocol,
+      position_id as string
+    )
+    const positionConfigItemFound = positionConfig?.find(
+      (positionConfigItem) => positionConfigItem.function_name === strategy
+    )
+
+    positionConfigItemFound?.parameters?.forEach((parameter) => {
+      if (parameter.type === 'constant') {
+        exitArguments = {
+          ...exitArguments,
+          [parameter.name]: parameter.value
+        }
+      }
+    })
+  }
+
+  if (rewards_address) {
+    exitArguments = {
+      ...exitArguments,
+      rewards_address: rewards_address
+    }
+  }
+  if (max_slippage) {
+    exitArguments = {
+      ...exitArguments,
+      max_slippage: +max_slippage
+    }
+  }
+  if (token_out_address) {
+    exitArguments = {
+      ...exitArguments,
+      token_out_address: token_out_address
+    }
+  }
+
+  if (Object.keys(exitArguments).length > 0) {
+    parameters.push('--exitArguments')
+    parameters.push(`[${JSON.stringify(exitArguments)}]`)
+  }
+
+  const DAOFilePath = getDAOFilePath(dao as DAO, blockchain as unknown as BLOCKCHAIN)
+
   return new Promise<void>((resolve, reject) => {
     try {
-      const scriptFile = path.resolve(process.cwd(), daoContent.file_path)
+      const scriptFile = path.resolve(process.cwd(), DAOFilePath)
 
+      console.log('parameters', parameters)
       const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
 
       let buffer = ''
@@ -125,6 +195,7 @@ export default withApiAuthRequired(async function handler(
       python.on('exit', function (code) {
         console.log('Debug Program Exit')
         console.log(code)
+        console.log('buffer', buffer)
         // destroy python process
         python.kill()
 

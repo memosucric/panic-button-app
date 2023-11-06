@@ -2,29 +2,42 @@ import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import { Divider } from '@mui/material'
-import { getStrategies, DAO, StrategyContent, ExecConfig } from 'src/config/strategiesManager'
+import {
+  DAO,
+  getStrategyByPositionId,
+  BLOCKCHAIN,
+  ExecConfig,
+  getDAOFilePath
+} from 'src/config/strategies/manager'
 import Form from 'src/views/Position/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
 import NoStrategies from 'src/views/Position/NoStrategies'
 
 interface DetailProps {
-  selectedValue: PositionType
+  position: PositionType
 }
 
 const Detail = (props: DetailProps) => {
-  const { selectedValue } = props
+  const { position } = props
 
-  const { protocol, blockchain, lptoken_name: positionName } = selectedValue
+  const {
+    dao,
+    position_id: positionId,
+    protocol,
+    blockchain,
+    lptoken_name: positionName
+  } = position
 
-  const strategyContent: StrategyContent = getStrategies(selectedValue.dao as DAO)
-
-  const positionId = `${selectedValue.lptoken_name}_${selectedValue.position_id}`
-  const position = strategyContent?.positions.find(
-    (position) => position.position_id === positionId
+  const config: ExecConfig = getStrategyByPositionId(
+    dao as DAO,
+    blockchain as unknown as BLOCKCHAIN,
+    protocol,
+    positionId
   )
-
-  const strategies: ExecConfig[] = position?.exec_config ?? []
+  const { positionConfig } = config
+  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN)
+  const areAnyStrategies = positionConfig?.length > 0
 
   return (
     <BoxWrapperColumn
@@ -51,7 +64,11 @@ const Detail = (props: DetailProps) => {
         </BoxWrapperColumn>
       </BoxWrapperColumn>
       <BoxWrapperColumn gap={2}>
-        {strategies ? <Form strategies={strategies} /> : <NoStrategies />}
+        {areAnyStrategies && existDAOFilePath ? (
+          <Form config={config} position={position} />
+        ) : (
+          <NoStrategies />
+        )}
       </BoxWrapperColumn>
     </BoxWrapperColumn>
   )
