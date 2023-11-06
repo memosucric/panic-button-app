@@ -29,6 +29,6 @@
     },
     "require": ["tsconfig-paths/register"]
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "./roles_royce/**/*"],
   "exclude": ["node_modules"]
 }
