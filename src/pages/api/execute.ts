@@ -195,6 +195,7 @@ export default withApiAuthRequired(async function handler(
       python.on('exit', function (code) {
         console.log('Debug Program Exit')
         console.log(code)
+        console.log('buffer', buffer)
         // destroy python process
         python.kill()
 
