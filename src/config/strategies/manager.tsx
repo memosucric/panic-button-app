@@ -1,7 +1,6 @@
-import GnosisDao_ethereum from './ethereum/GnosisDAO.json'
-import GnosisLtd_ethereum from './ethereum/GnosisLtd.json'
-import GnosisDao_gnosis_chain from './gnosis/GnosisDAO.json'
-import GnosisLtd_gnosis_chain from './gnosis/GnosisLtd.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategiesGnosisDAOEthereum.json'
 import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
 
 export type DAO =
@@ -31,17 +30,17 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
   {
     name: 'Gnosis Ltd',
     blockchain: 'Ethereum',
-    config: GnosisLtd_ethereum
+    config: {}
   },
   {
     name: 'Gnosis DAO',
     blockchain: 'Gnosis',
-    config: GnosisDao_gnosis_chain
+    config: {}
   },
   {
     name: 'Gnosis Ltd',
     blockchain: 'Gnosis',
-    config: GnosisLtd_gnosis_chain
+    config: {}
   }
 ]
 
@@ -114,8 +113,8 @@ export const getStrategyByPositionId = (
   )
 
   return {
-    commonConfig: DAO_ITEM?.config?.common_exec_config ?? [],
-    positionConfig: position?.position_exec_config ?? []
+    commonConfig: DAO_ITEM?.config?.general_parameters ?? [],
+    positionConfig: position?.exec_config ?? []
   } as ExecConfig
 }
 
