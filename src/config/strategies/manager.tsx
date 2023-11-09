@@ -53,7 +53,8 @@ export enum DEFAULT_VALUES_KEYS {
   percentage = 'percentage',
   rewards_address = 'rewards_address',
   max_slippage = 'max_slippage',
-  token_out_address = 'token_out_address'
+  token_out_address = 'token_out_address',
+  bpt_address = 'bpt_address'
 }
 
 export type DEFAULT_VALUES_TYPE = {
@@ -66,6 +67,7 @@ export type DEFAULT_VALUES_TYPE = {
   [DEFAULT_VALUES_KEYS.rewards_address]: Maybe<string>
   [DEFAULT_VALUES_KEYS.max_slippage]: Maybe<string>
   [DEFAULT_VALUES_KEYS.token_out_address]: Maybe<string>
+  [DEFAULT_VALUES_KEYS.bpt_address]: Maybe<string>
 }
 
 export type Config = {

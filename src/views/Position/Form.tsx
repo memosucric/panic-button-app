@@ -93,7 +93,8 @@ const Form = (props: FormProps) => {
     percentage: null,
     rewards_address: null,
     max_slippage: null,
-    token_out_address: null
+    token_out_address: null,
+    bpt_address: null
   }
 
   const {
@@ -130,12 +131,30 @@ const Form = (props: FormProps) => {
 
   const onSubmit: SubmitHandler<any> = async (data: any) => {
     try {
+      const exitArguments = {
+        rewards_address: data?.rewards_address,
+        max_slippage: data?.max_slippage,
+        token_out_address: data?.token_out_address,
+        bpt_address: data?.bpt_address
+      }
+
+      const params = {
+        position_id: data?.position_id,
+        blockchain: data?.blockchain,
+        protocol: data?.protocol,
+        strategy: data?.strategy,
+        execution_type: data?.execution_type,
+        percentage: data?.percentage,
+        exit_arguments: exitArguments
+      }
+      const body = JSON.stringify(params)
+
       const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body
       })
 
       const result = await response.json()
