@@ -14,9 +14,16 @@ import * as path from 'path'
 type Status = {
   data: {
     status: boolean
-    trx?: Maybe<string>
+    link?: Maybe<string>
+    message?: Maybe<string>
     error?: Maybe<Error>
   }
+}
+
+// Create a mapper for DAOs
+const DAO_MAPPER: Record<string, string> = {
+  'Gnosis DAO': 'GnosisDAO',
+  'Gnosis Ltd': 'GnosisLtd'
 }
 
 export default withApiAuthRequired(async function handler(
@@ -77,13 +84,8 @@ export default withApiAuthRequired(async function handler(
   // Add the rest of the parameters if needed
   if (dao) {
     parameters.push('--dao')
-    // Create a mapper for DAOs
-    const daoMapper: Record<string, string> = {
-      'Gnosis DAO': 'GnosisDAO',
-      'Gnosis Ltd': 'GnosisLtd'
-    }
 
-    parameters.push(daoMapper[dao])
+    parameters.push(DAO_MAPPER[dao])
   }
 
   if (blockchain) {
@@ -112,7 +114,7 @@ export default withApiAuthRequired(async function handler(
 
   let exitArguments = {}
 
-  // Add constants
+  // Add CONSTANTS from the strategy
   if (protocol) {
     const { positionConfig } = getStrategyByPositionId(
       dao as DAO,
@@ -189,18 +191,30 @@ export default withApiAuthRequired(async function handler(
       })
 
       python.on('exit', function (code) {
-        console.log('Debug Program Exit')
-        console.log(code)
-        console.log('buffer', buffer)
+        console.log('Debug Program Exit', code)
+
         // destroy python process
         python.kill()
 
-        const match = buffer?.match(
-          /\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi
-        )
-        const trx = match ? match[0] : null
+        let response: {
+          status?: string
+          link?: string
+          message?: string
+        } = {}
+        try {
+          response = JSON.parse(buffer.replace(/'/g, '"'))
+        } catch (e) {
+          console.log('Error with buffer, is not a valid json object', e, buffer)
+        }
 
-        res.status(200).json({ data: { status: true, trx } })
+        const status = response?.status ?? 500
+        const link = response?.link ?? ''
+        const message = response?.message ?? ''
+
+        console.log('status', status)
+        console.log('link', link)
+        console.log('message', message)
+        res.status(+status).json({ data: { status: true, link, message } })
         resolve()
       })
     } catch (error) {
