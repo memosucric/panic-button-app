@@ -80,7 +80,8 @@ const Form = (props: FormProps) => {
   const [open, setOpen] = React.useState(false)
 
   const [openSuccess, setOpenSuccess] = React.useState(false)
-  const [trx, setTrx] = React.useState<Maybe<string>>(null)
+  const [link, setLink] = React.useState<Maybe<string>>(null)
+  const [message, setMessage] = React.useState<Maybe<string>>(null)
   const [openError, setOpenError] = React.useState(false)
 
   const defaultValues: DEFAULT_VALUES_TYPE = {
@@ -139,10 +140,11 @@ const Form = (props: FormProps) => {
 
       const result = await response.json()
       if (response.status === 200 && result.data.status) {
-        setTrx(result?.data?.trx)
+        setLink(result?.data?.link)
+        setMessage(result?.data?.message)
         setOpenSuccess(true)
       } else {
-        setTrx(null)
+        setLink(null)
         setOpenError(true)
       }
     } catch (error) {
@@ -467,8 +469,8 @@ const Form = (props: FormProps) => {
       </Dialog>
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-          Strategy "{watchStrategy}" executed successfully! Check it out{' '}
-          <a href={`${trx}`} target="_blank" rel="noreferrer">
+          {message}. Check it out{' '}
+          <a href={`${link}`} target="_blank" rel="noreferrer">
             here
           </a>
         </Alert>
