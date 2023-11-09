@@ -58,15 +58,13 @@ export default withApiAuthRequired(async function handler(
 
   // Get the strategy from the body, if not found, return an error
   const {
-    position_id,
-    blockchain,
-    protocol,
     strategy,
     execution_type,
     percentage,
-    rewards_address,
-    max_slippage,
-    token_out_address
+    position_id,
+    protocol,
+    blockchain,
+    exit_arguments
   } = req.body as {
     strategy: Maybe<string>
     execution_type: PossibleExecutionTypeValues
@@ -74,9 +72,12 @@ export default withApiAuthRequired(async function handler(
     position_id: Maybe<string>
     protocol: Maybe<string>
     blockchain: Maybe<BLOCKCHAIN>
-    rewards_address: Maybe<string>
-    max_slippage: Maybe<number>
-    token_out_address: Maybe<string>
+    exit_arguments: {
+      rewards_address: Maybe<string>
+      max_slippage: Maybe<number>
+      token_out_address: Maybe<string>
+      bpt_address: Maybe<string>
+    }
   }
 
   const parameters: string[] = []
@@ -136,22 +137,14 @@ export default withApiAuthRequired(async function handler(
     })
   }
 
-  if (rewards_address) {
-    exitArguments = {
-      ...exitArguments,
-      rewards_address: rewards_address
-    }
-  }
-  if (max_slippage) {
-    exitArguments = {
-      ...exitArguments,
-      max_slippage: +max_slippage
-    }
-  }
-  if (token_out_address) {
-    exitArguments = {
-      ...exitArguments,
-      token_out_address: token_out_address
+  // Add the rest of the parameters if needed
+  for (const key in exit_arguments) {
+    const value = exit_arguments[key as keyof typeof exit_arguments]
+    if (value) {
+      exitArguments = {
+        ...exitArguments,
+        [key]: value
+      }
     }
   }
 
