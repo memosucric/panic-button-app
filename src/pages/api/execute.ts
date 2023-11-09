@@ -95,10 +95,6 @@ export default withApiAuthRequired(async function handler(
     parameters.push('--simulate')
   }
 
-  if (execution_type === 'Execute') {
-    parameters.push('--execute')
-  }
-
   if (protocol) {
     parameters.push('--protocol')
     parameters.push(`${protocol}`)
