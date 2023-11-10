@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { Variants, motion, useAnimation } from 'framer-motion'
 import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
-import Position from 'src/views/Positions/Position'
+import Card from 'src/views/Positions/Card'
 import { PositionType } from 'src/contexts/types'
 
 interface ListProps {
@@ -79,7 +79,7 @@ const List = (props: ListProps) => {
               borderRadius: '8px'
             }}
           >
-            <Position id={index} key={index} position={position} />
+            <Card id={index} key={index} position={position} />
           </Box>
         )
       })}

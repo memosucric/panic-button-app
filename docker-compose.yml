@@ -13,9 +13,6 @@ services:
   anvil:
     image: ghcr.io/foundry-rs/foundry:latest
     container_name: anvil
-    entrypoint: /bin/sh -c "anvil --accounts 15 -f https://rpc.mevblocker.io/ --fork-block-number 17612540 --port 8546 --host 0.0.0.0"
+    entrypoint: /bin/sh -c "anvil --accounts 15 -f https://eth.llamarpc.com --port 8546 --host 0.0.0.0"
     ports:
       - "8546:8546"
-    
-
-  

@@ -6,37 +6,44 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
-import { DAO, ExecConfig, getStrategies, StrategyContent } from 'src/config/strategiesManager'
+import {
+  BLOCKCHAIN,
+  DAO,
+  getDAOFilePath,
+  getStrategyByPositionId
+} from 'src/config/strategies/manager'
 
 interface PositionProps {
   id: number
   position: PositionType
 }
 
-const Position = (props: PositionProps) => {
+const Card = (props: PositionProps) => {
   const { position } = props
-  const { position_id, protocol, blockchain, lptoken_name: positionName } = position
+  const { position_id: positionId, protocol, blockchain, lptoken_name: positionName } = position
 
-  const strategyContent: StrategyContent = getStrategies(position.dao as DAO)
+  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN)
 
-  const positionId = `${positionName}_${position_id}`
-  const positionFound = strategyContent?.positions.find(
-    (position) => position.position_id === positionId
+  const config = getStrategyByPositionId(
+    position.dao as DAO,
+    blockchain as BLOCKCHAIN,
+    protocol,
+    positionId
   )
+  const { positionConfig } = config
+  const areAnyStrategies = positionConfig?.length > 0
 
-  const strategies: ExecConfig[] = positionFound?.exec_config ?? []
-
-  const PositionWrapper = () => {
+  const CardWrapper = () => {
     return (
       <BoxWrapperColumn
         gap={4}
         sx={{
           padding: '10px',
-          ...(strategies.length > 0 ? { cursor: 'pointer' } : {}),
           width: '100%',
           height: '100%',
           justifyContent: 'space-between',
-          ...(strategies.length === 0 ? { opacity: '0.2 !important' } : {})
+          ...(areAnyStrategies && existDAOFilePath ? { cursor: 'pointer' } : {}),
+          ...(!areAnyStrategies || !existDAOFilePath ? { opacity: '0.2 !important' } : {})
         }}
       >
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
@@ -53,13 +60,13 @@ const Position = (props: PositionProps) => {
     )
   }
 
-  return strategies.length > 0 ? (
-    <Link href={`/positions/${position_id}`} style={{ textDecoration: 'none' }}>
-      <PositionWrapper />
+  return areAnyStrategies ? (
+    <Link href={`/positions/${positionId}`} style={{ textDecoration: 'none' }}>
+      <CardWrapper />
     </Link>
   ) : (
-    <PositionWrapper />
+    <CardWrapper />
   )
 }
 
-export default Position
+export default Card
