@@ -1,5 +1,5 @@
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { Button, RadioGroup, FormControlLabel, Radio, TextField } from '@mui/material'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { Button } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 import Dialog from '@mui/material/Dialog'
@@ -9,7 +9,6 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
-import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import {
   Config,
   DEFAULT_VALUES_TYPE,
@@ -26,8 +25,6 @@ import InputText from 'src/views/Position/Form/InputText'
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
-
-// const EXECUTION_TYPE: ExecutionType[] = [{ name: 'Simulate' }, { name: 'Execute' }]
 
 interface FormProps {
   config: ExecConfig
@@ -246,54 +243,32 @@ const Form = (props: FormProps) => {
                     return (
                       <BoxWrapperColumn gap={2} key={index}>
                         <FormLabel title={label} />
-                        <Controller
+                        <InputText
+                          textFieldType={'number'}
                           name={name}
+                          label={label}
                           control={control}
                           rules={{ required: `${label} is required` }}
-                          render={({ field }) => (
-                            <TextField
-                              type={haveRules ? 'number' : 'string'}
-                              placeholder={`Enter a value for ${label}`}
-                              onChange={
-                                haveRules
-                                  ? (e) => {
-                                      const value = e.target.value
-                                      if (+value > max) {
-                                        e.target.value = max + ''
-                                      }
-                                      if (+value < min) {
-                                        e.target.value = min + ''
-                                      }
+                          placeholder={`Enter a value for ${label}`}
+                          errors={errors}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            if (+value > max) {
+                              e.target.value = max + ''
+                            }
+                            if (+value < min) {
+                              e.target.value = min + ''
+                            }
 
-                                      if (!value) {
-                                        setError(field.name, {
-                                          type: 'manual',
-                                          message: `${label} is required`
-                                        })
-                                      } else {
-                                        clearErrors(field.name)
-                                      }
-
-                                      return field.onChange(e)
-                                    }
-                                  : (e) => {
-                                      return field.onChange(e)
-                                    }
-                              }
-                              value={field.value || ''}
-                              error={!!errors[field.name]}
-                              helperText={errors[field.name]?.message?.toString()}
-                              sx={{
-                                fontFamily: 'IBM Plex Sans',
-                                fontStyle: 'normal',
-                                fontWeight: 500,
-                                fontSize: 18,
-                                lineHeight: '18px',
-                                color: 'custom.grey.dark',
-                                width: '100%'
-                              }}
-                            />
-                          )}
+                            if (!value) {
+                              setError(label as any, {
+                                type: 'manual',
+                                message: `${label} is required`
+                              })
+                            } else {
+                              clearErrors(label as any)
+                            }
+                          }}
                         />
                       </BoxWrapperColumn>
                     )
@@ -305,30 +280,15 @@ const Form = (props: FormProps) => {
                     return (
                       <BoxWrapperColumn gap={2} key={index}>
                         <FormLabel title={label} />
-                        <Controller
+                        <InputRadio
                           name={name}
                           control={control}
-                          rules={{ required: `${label} is required` }}
-                          render={({ field }) => (
-                            <RadioGroup {...field}>
-                              {options?.map(
-                                (item: { label: string; value: string }, index: number) => {
-                                  return (
-                                    <BoxWrapperRow
-                                      sx={{ justifyContent: 'flex-start' }}
-                                      key={index}
-                                    >
-                                      <FormControlLabel
-                                        value={item.value}
-                                        control={<Radio />}
-                                        label={item.label}
-                                      />
-                                    </BoxWrapperRow>
-                                  )
-                                }
-                              )}
-                            </RadioGroup>
-                          )}
+                          options={options?.map((item) => {
+                            return {
+                              name: item.label,
+                              value: item.value
+                            }
+                          })}
                         />
                       </BoxWrapperColumn>
                     )
