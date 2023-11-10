@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategiesGnosisDAOEthereum.json'
-import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
+import { PossibleExecutionTypeValues } from 'src/views/Position/Form/Types'
 
 export type DAO =
   | 'Gnosis DAO'

@@ -54,7 +54,7 @@ const Detail = (props: DetailProps) => {
     >
       <BoxWrapperColumn gap={2}>
         <BoxWrapperColumn gap={1}>
-          <Primary title={'Information'} />
+          <Primary title={'Overview'} />
           <Divider sx={{ borderBottomWidth: 5 }} />
         </BoxWrapperColumn>
         <BoxWrapperColumn gap={2}>
