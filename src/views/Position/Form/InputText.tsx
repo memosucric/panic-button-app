@@ -2,7 +2,7 @@ import React from 'react'
 import { Controller } from 'react-hook-form'
 import { TextFieldProps } from '@mui/material/TextField/TextField'
 import { InputProps } from 'src/views/Position/Form/Types'
-import { TextField } from '@mui/material'
+import { InputAdornment, TextField } from '@mui/material'
 
 export interface CustomInputPropsProps {
   label: string
@@ -15,7 +15,7 @@ export interface CustomInputPropsProps {
 export type ControlledTextFieldProps = InputProps & TextFieldProps & CustomInputPropsProps
 
 const InputText = (props: ControlledTextFieldProps) => {
-  const { name, defaultValue, control, textFieldType, errors, onChange, label, ...rest } = props
+  const { name, defaultValue, control, textFieldType, errors, onChange, ...restProps } = props
 
   return (
     <Controller
@@ -25,10 +25,12 @@ const InputText = (props: ControlledTextFieldProps) => {
       render={({ field }) => (
         <TextField
           type={textFieldType}
-          placeholder={`Enter a value for ${label}`}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (onChange) onChange(e)
             field.onChange(e)
+          }}
+          InputProps={{
+            endAdornment: <InputAdornment position="start">%</InputAdornment>
           }}
           value={field.value || ''}
           error={!!errors[field.name]}
@@ -40,11 +42,22 @@ const InputText = (props: ControlledTextFieldProps) => {
             fontSize: 18,
             lineHeight: '18px',
             color: 'custom.grey.dark',
-            width: '100%'
+            width: '100%',
+            '& input[type=number]': {
+              MozAppearance: 'textfield'
+            },
+            '& input[type=number]::-webkit-outer-spin-button': {
+              WebkitAppearance: 'none',
+              margin: 0
+            },
+            '& input[type=number]::-webkit-inner-spin-button': {
+              WebkitAppearance: 'none',
+              margin: 0
+            }
           }}
+          {...restProps}
         />
       )}
-      {...rest}
     />
   )
 }

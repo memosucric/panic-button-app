@@ -11,8 +11,10 @@ import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import {
   Config,
+  DEFAULT_VALUES_KEYS,
   DEFAULT_VALUES_TYPE,
   ExecConfig,
+  PARAMETERS_CONFIG,
   PositionConfig
 } from 'src/config/strategies/manager'
 import { PositionType } from 'src/contexts/types'
@@ -21,6 +23,8 @@ import InputRadio from 'src/views/Position/Form/InputRadio'
 import { FormLabel } from 'src/views/Position/Form/FormLabel'
 import { FormTitle } from 'src/views/Position/Form/FormTitle'
 import InputText from 'src/views/Position/Form/InputText'
+import { trimAll } from 'src/utils/string'
+import BoxWrapperRow from '../../components/Wrappers/BoxWrapperRow'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -60,6 +64,7 @@ const Form = (props: FormProps) => {
     handleSubmit,
     control,
     setError,
+    setValue,
     clearErrors,
     watch
   } = useForm<any>({
@@ -67,6 +72,8 @@ const Form = (props: FormProps) => {
   })
 
   const watchStrategy = watch('strategy')
+  const watchMaxSlippage = watch('max_slippage')
+  const watchPercentage = watch('percentage')
 
   const refSubmitButtom = React.useRef<HTMLButtonElement>(null)
 
@@ -106,7 +113,7 @@ const Form = (props: FormProps) => {
         exit_arguments: exitArguments
       }
 
-      const body = JSON.stringify(params)
+      const body = JSON.stringify(trimAll(params))
 
       const response = await fetch('/api/execute', {
         method: 'POST',
@@ -151,6 +158,8 @@ const Form = (props: FormProps) => {
       (item: PositionConfig) => item.function_name === watchStrategy
     )?.parameters ?? []
 
+  const parameters = [...commonConfig, ...specificParameters]
+
   return (
     <>
       <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
@@ -174,131 +183,120 @@ const Form = (props: FormProps) => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
-              <FormTitle title={'Common parameters'} />
-              {commonConfig.map((commonConfigItem: Config, index: number) => {
-                const { name, label = '', type, rules } = commonConfigItem
+              <FormTitle title={'Parameters'} />
+              {parameters.map((parameter: Config, index: number) => {
+                const { name, label = '', type, rules, options } = parameter
 
                 if (type === 'constant') {
                   return null
                 }
 
+                let textFieldType = 'string'
+                let haveMinAndMaxRules = false
+                let onChange = undefined
+                const haveOptions = !!options?.length
+
                 const min = rules?.min
                 const max = rules?.max
-                const existMinAndMax = !!(min !== undefined && max !== undefined)
 
-                return (
-                  <BoxWrapperColumn gap={2} key={index}>
-                    <FormLabel title={label} />
-                    <InputText
-                      textFieldType={existMinAndMax ? 'number' : 'string'}
-                      name={name}
-                      label={label}
-                      control={control}
-                      rules={{ required: `${label} is required` }}
-                      placeholder={`Enter a value for ${label}`}
-                      errors={errors}
-                      onChange={
-                        existMinAndMax
-                          ? (e) => {
-                              const value = e.target.value
-                              if (+value > max) {
-                                e.target.value = max + ''
-                              }
-                              if (+value < min) {
-                                e.target.value = min + ''
-                              }
+                if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
+                  textFieldType = 'number'
+                  haveMinAndMaxRules = min !== undefined && max !== undefined
 
-                              if (!value) {
-                                setError(label as any, {
-                                  type: 'manual',
-                                  message: `${label} is required`
-                                })
-                              } else {
-                                clearErrors(label as any)
-                              }
-                            }
-                          : undefined
+                  onChange = haveMinAndMaxRules
+                    ? (e: any) => {
+                        const value = e.target.value
+
+                        // check if value includes a decimal point, could a point or a comma
+                        if (value.match(/\.|,/g)) {
+                          const [, decimal] = value.includes('.')
+                            ? value.split('.')
+                            : value.split(',')
+
+                          // restrict value to only 2 decimal places
+                          if (decimal?.length > 2) {
+                            // remove last character from value
+                            e.target.value = value.slice(0, -1)
+                          }
+                        }
+
+                        if (max && +value > max) {
+                          e.target.value = max
+                        }
+                        if (min && +value < min) {
+                          e.target.value = min
+                        }
+
+                        if (!value) {
+                          setError(label as any, {
+                            type: 'manual',
+                            message: `${label} is required`
+                          })
+                        } else {
+                          clearErrors(label as any)
+                        }
                       }
-                    />
-                  </BoxWrapperColumn>
-                )
+                    : undefined
+                }
+
+                const onClickApplyMax = () => {
+                  if (max !== undefined) {
+                    clearErrors(name as any)
+                    setValue(name as any, max, { shouldValidate: true, shouldDirty: true })
+                  }
+                }
+
+                if (haveMinAndMaxRules) {
+                  const disabled =
+                    name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
+
+                  return (
+                    <BoxWrapperColumn gap={2} key={index}>
+                      <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+                        <FormLabel title={label} />
+                        <Button disabled={disabled} onClick={onClickApplyMax} variant="contained">
+                          Max
+                        </Button>
+                      </BoxWrapperRow>
+                      <InputText
+                        textFieldType={textFieldType}
+                        name={name}
+                        label={label}
+                        control={control}
+                        rules={{ required: `Please fill in the field ${label}` }}
+                        placeholder={
+                          PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
+                        }
+                        errors={errors}
+                        onChange={onChange}
+                      />
+                    </BoxWrapperColumn>
+                  )
+                }
+
+                if (haveOptions) {
+                  return (
+                    <BoxWrapperColumn gap={2} key={index}>
+                      <FormLabel title={label} />
+                      <InputRadio
+                        name={name}
+                        control={control}
+                        options={options?.map((item) => {
+                          return {
+                            name: item.label,
+                            value: item.value
+                          }
+                        })}
+                      />
+                    </BoxWrapperColumn>
+                  )
+                }
+
+                return null
               })}
             </BoxWrapperColumn>
-
-            {specificParameters?.length > 0 ? (
-              <BoxWrapperColumn gap={2}>
-                <FormTitle title={'Specific parameters'} />
-                {specificParameters?.map((item: Config, index: number) => {
-                  const { name, label = '', type, rules, options } = item
-
-                  if (type === 'constant') {
-                    return null
-                  }
-
-                  const min = rules?.min
-                  const max = rules?.max
-                  const haveRules = !!(min !== undefined && max !== undefined)
-
-                  if (haveRules) {
-                    return (
-                      <BoxWrapperColumn gap={2} key={index}>
-                        <FormLabel title={label} />
-                        <InputText
-                          textFieldType={'number'}
-                          name={name}
-                          label={label}
-                          control={control}
-                          rules={{ required: `${label} is required` }}
-                          placeholder={`Enter a value for ${label}`}
-                          errors={errors}
-                          onChange={(e) => {
-                            const value = e.target.value
-                            if (+value > max) {
-                              e.target.value = max + ''
-                            }
-                            if (+value < min) {
-                              e.target.value = min + ''
-                            }
-
-                            if (!value) {
-                              setError(label as any, {
-                                type: 'manual',
-                                message: `${label} is required`
-                              })
-                            } else {
-                              clearErrors(label as any)
-                            }
-                          }}
-                        />
-                      </BoxWrapperColumn>
-                    )
-                  }
-
-                  const haveOptions = !!options?.length
-
-                  if (haveOptions) {
-                    return (
-                      <BoxWrapperColumn gap={2} key={index}>
-                        <FormLabel title={label} />
-                        <InputRadio
-                          name={name}
-                          control={control}
-                          options={options?.map((item) => {
-                            return {
-                              name: item.label,
-                              value: item.value
-                            }
-                          })}
-                        />
-                      </BoxWrapperColumn>
-                    )
-                  }
-
-                  return null
-                })}
-              </BoxWrapperColumn>
-            ) : null}
           </BoxWrapperColumn>
+
           <Button
             onClick={handleClickOpen}
             variant="contained"

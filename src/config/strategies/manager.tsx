@@ -70,6 +70,43 @@ export type DEFAULT_VALUES_TYPE = {
   [DEFAULT_VALUES_KEYS.bpt_address]: Maybe<string>
 }
 
+export const PARAMETERS_CONFIG: {
+  [key in DEFAULT_VALUES_KEYS]: {
+    placeholder: string
+  }
+} = {
+  [DEFAULT_VALUES_KEYS.position_id]: {
+    placeholder: 'Position ID'
+  },
+  [DEFAULT_VALUES_KEYS.protocol]: {
+    placeholder: 'Protocol'
+  },
+  [DEFAULT_VALUES_KEYS.blockchain]: {
+    placeholder: 'Blockchain'
+  },
+  [DEFAULT_VALUES_KEYS.execution_type]: {
+    placeholder: 'Execution Type'
+  },
+  [DEFAULT_VALUES_KEYS.strategy]: {
+    placeholder: 'Strategy'
+  },
+  [DEFAULT_VALUES_KEYS.percentage]: {
+    placeholder: '0.00%'
+  },
+  [DEFAULT_VALUES_KEYS.rewards_address]: {
+    placeholder: '0x00000'
+  },
+  [DEFAULT_VALUES_KEYS.max_slippage]: {
+    placeholder: '0.00%'
+  },
+  [DEFAULT_VALUES_KEYS.token_out_address]: {
+    placeholder: '0x00000'
+  },
+  [DEFAULT_VALUES_KEYS.bpt_address]: {
+    placeholder: '0x00000'
+  }
+}
+
 export type Config = {
   name: DEFAULT_VALUES_KEYS
   label?: string
