@@ -9,7 +9,7 @@ import {
   ExecConfig,
   getDAOFilePath
 } from 'src/config/strategies/manager'
-import Form from 'src/views/Position/Form'
+import Form from 'src/views/Position/Form/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
 import NoStrategies from 'src/views/Position/NoStrategies'

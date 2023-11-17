@@ -1,12 +1,24 @@
-import React from 'react'
+import React, { ForwardedRef } from 'react'
 import { Controller } from 'react-hook-form'
 import { TextFieldProps } from '@mui/material/TextField/TextField'
 import { InputProps } from 'src/views/Position/Form/Types'
-import { InputAdornment, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
+import { NumericFormat } from 'react-number-format'
+
+interface PercentageNumberFormatProps {
+  inputRef: (instance: typeof NumericFormat | null) => void
+  name: string
+}
+
+// eslint-disable-next-line react/display-name
+const PercentageNumberFormat = React.forwardRef<
+  PercentageNumberFormatProps,
+  PercentageNumberFormatProps
+>((props: PercentageNumberFormatProps, ref: ForwardedRef<PercentageNumberFormatProps>) => {
+  return <NumericFormat {...props} getInputRef={ref} allowNegative={false} valueIsNumericString />
+})
 
 export interface CustomInputPropsProps {
-  label: string
-  textFieldType?: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   errors: any
   rules?: any
@@ -14,8 +26,8 @@ export interface CustomInputPropsProps {
 
 export type ControlledTextFieldProps = InputProps & TextFieldProps & CustomInputPropsProps
 
-export const InputText = (props: ControlledTextFieldProps) => {
-  const { name, defaultValue, control, textFieldType, errors, onChange, ...restProps } = props
+export const PercentageText = (props: ControlledTextFieldProps) => {
+  const { name, defaultValue, control, errors, onChange, ...restProps } = props
 
   return (
     <Controller
@@ -24,13 +36,22 @@ export const InputText = (props: ControlledTextFieldProps) => {
       defaultValue={(defaultValue as any) ?? ''}
       render={({ field }) => (
         <TextField
-          type={textFieldType}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (onChange) onChange(e)
-            field.onChange(e)
-          }}
           InputProps={{
-            endAdornment: <InputAdornment position="start">%</InputAdornment>
+            inputComponent: PercentageNumberFormat as any
+          }}
+          inputProps={{
+            value: field?.value,
+            suffix: '%',
+            isAllowed: (values: any) => {
+              return (
+                (values.floatValue! >= 0 && values.floatValue! <= 100) ||
+                values.floatValue === undefined
+              )
+            },
+            onValueChange: (values: any) => {
+              if (onChange) onChange(values)
+              field.onChange(values.floatValue)
+            }
           }}
           value={field.value || ''}
           error={!!errors[field.name]}

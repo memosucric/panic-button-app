@@ -7,7 +7,7 @@ interface FormTitleProps {
   title: string
 }
 
-export const FormTitle = ({ title }: FormTitleProps) => {
+export const Title = ({ title }: FormTitleProps) => {
   return (
     <BoxWrapperColumn gap={1}>
       <Primary title={title} />

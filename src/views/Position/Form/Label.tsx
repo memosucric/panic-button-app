@@ -5,7 +5,7 @@ interface FormLabelProps {
   title: string
 }
 
-export const FormLabel = ({ title }: FormLabelProps) => {
+export const Label = ({ title }: FormLabelProps) => {
   return (
     <CustomTypography
       sx={{
