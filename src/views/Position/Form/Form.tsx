@@ -54,18 +54,19 @@ const Form = (props: FormProps) => {
     clearErrors,
     watch
   } = useForm<any>({
-    defaultValues
+    defaultValues,
+    mode: 'onChange'
   })
 
   const watchStrategy = watch('strategy')
   const watchMaxSlippage = watch('max_slippage')
   const watchPercentage = watch('percentage')
 
-  const refSubmitButtom = React.useRef<HTMLButtonElement>(null)
+  const refSubmitButton = React.useRef<HTMLButtonElement>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const triggerSubmit = () => {
-    refSubmitButtom?.current?.click()
+    refSubmitButton?.current?.click()
   }
 
   const handleClickOpen = () => {
@@ -105,6 +106,9 @@ const Form = (props: FormProps) => {
 
   const parameters = [...commonConfig, ...specificParameters]
 
+  const isExecuteButtonDisabled =
+    Object.keys(errors).length > 0 || isSubmitting || !isDirty || !isValid
+
   return (
     <>
       <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
@@ -142,29 +146,26 @@ const Form = (props: FormProps) => {
 
                 const min = rules?.min
                 const max = rules?.max
+                haveMinAndMaxRules = min !== undefined && max !== undefined
 
                 if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
-                  haveMinAndMaxRules = min !== undefined && max !== undefined
-
-                  onChange = haveMinAndMaxRules
-                    ? (values: any) => {
-                        const value = values.floatValue
-                        if (!value) {
-                          setError(label as any, {
-                            type: 'manual',
-                            message: `${label} is required`
-                          })
-                        } else {
-                          clearErrors(label as any)
-                        }
-                      }
-                    : undefined
+                  onChange = (values: any) => {
+                    const value = values?.floatValue
+                    if (!value) {
+                      setError(name as any, {
+                        type: 'manual',
+                        message: `Please fill in the field ${label}`
+                      })
+                    } else {
+                      clearErrors(label as any)
+                    }
+                  }
                 }
 
                 const onClickApplyMax = () => {
                   if (max !== undefined) {
                     clearErrors(name as any)
-                    setValue(name as any, max, { shouldValidate: true, shouldDirty: true })
+                    setValue(name as any, max, { shouldValidate: true })
                   }
                 }
 
@@ -226,11 +227,11 @@ const Form = (props: FormProps) => {
             variant="contained"
             size="large"
             sx={{ height: '60px', marginTop: '30px' }}
-            disabled={Object.keys(errors).length > 0 || isSubmitting || !isDirty || !isValid}
+            disabled={isExecuteButtonDisabled}
           >
             Execute
           </Button>
-          <button hidden={true} ref={refSubmitButtom} type={'submit'} />
+          <button hidden={true} ref={refSubmitButton} type={'submit'} />
         </BoxWrapperColumn>
       </form>
       <Modal open={open} handleClose={handleClose} />
