@@ -41,5 +41,5 @@ kubectl apply -f ${TEMP_DEPLOYMENT_FILE}
 kubectl apply -f ${TEMP_INGRESS_FILE}
 
 # Clean up temporary files
-rm ${TEMP_DEPLOYMENT_FILE}
-rm ${TEMP_INGRESS_FILE}
+# rm ${TEMP_DEPLOYMENT_FILE}
+# rm ${TEMP_INGRESS_FILE}
