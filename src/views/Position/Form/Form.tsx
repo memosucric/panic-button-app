@@ -20,6 +20,10 @@ import { trimAll } from 'src/utils/string'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { PercentageText } from './PercentageText'
 import { Modal } from '../Modal'
+import Tooltip from '@mui/material/Tooltip'
+import CustomTypography from '../../../components/CustomTypography'
+import InfoIcon from '@mui/icons-material/Info'
+import { ChangeEvent } from 'react'
 
 interface FormProps {
   config: ExecConfig
@@ -119,6 +123,15 @@ const Form = (props: FormProps) => {
               <BoxWrapperColumn gap={2}>
                 <InputRadio
                   name={'strategy'}
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    // Clear fields
+                    setValue('percentage', null, { shouldValidate: true })
+                    setValue('max_slippage', null, { shouldValidate: true })
+                    setValue('rewards_address', null, { shouldValidate: true })
+                    setValue('token_out_address', null, { shouldValidate: true })
+                    setValue('bpt_address', null, { shouldValidate: true })
+                  }}
                   options={positionConfig.map((item: PositionConfig) => {
                     return {
                       name: item.label,
@@ -176,7 +189,22 @@ const Form = (props: FormProps) => {
                   return (
                     <BoxWrapperColumn gap={2} key={index}>
                       <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-                        <Label title={label} />
+                        <BoxWrapperRow gap={2}>
+                          <Label title={label} />
+                          {name === 'max_slippage' ? (
+                            <Tooltip
+                              title={
+                                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
+                                  The max slippage field is capped in 10% to start
+                                </CustomTypography>
+                              }
+                              sx={{ ml: 1, cursor: 'pointer' }}
+                            >
+                              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
+                            </Tooltip>
+                          ) : null}
+                        </BoxWrapperRow>
+
                         <Button
                           disabled={isMaxButtonDisabled}
                           onClick={onClickApplyMax}
@@ -189,6 +217,8 @@ const Form = (props: FormProps) => {
                         name={name}
                         control={control}
                         rules={{ required: `Please fill in the field ${label}` }}
+                        minValue={name === 'max_slippage' ? 0 : 1}
+                        maxValue={name === 'max_slippage' ? 10 : 100}
                         placeholder={
                           PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
                         }
