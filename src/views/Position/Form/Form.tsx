@@ -21,7 +21,7 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { PercentageText } from './PercentageText'
 import { Modal } from '../Modal'
 import Tooltip from '@mui/material/Tooltip'
-import CustomTypography from '../../../components/CustomTypography'
+import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { ChangeEvent } from 'react'
 
