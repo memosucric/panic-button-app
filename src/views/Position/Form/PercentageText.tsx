@@ -15,19 +15,40 @@ const PercentageNumberFormat = React.forwardRef<
   PercentageNumberFormatProps,
   PercentageNumberFormatProps
 >((props: PercentageNumberFormatProps, ref: ForwardedRef<PercentageNumberFormatProps>) => {
-  return <NumericFormat {...props} getInputRef={ref} allowNegative={false} valueIsNumericString />
+  return (
+    <NumericFormat
+      {...props}
+      getInputRef={ref}
+      allowNegative={false}
+      valueIsNumericString
+      decimalScale={2}
+    />
+  )
 })
 
 export interface CustomInputPropsProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   errors: any
   rules?: any
+  maxValue: number
+  minValue: number
+  defaultValue?: number
 }
 
 export type ControlledTextFieldProps = InputProps & TextFieldProps & CustomInputPropsProps
 
 export const PercentageText = (props: ControlledTextFieldProps) => {
-  const { name, rules, defaultValue, control, errors, onChange, ...restProps } = props
+  const {
+    name,
+    rules,
+    minValue = 0,
+    maxValue = 100,
+    defaultValue,
+    control,
+    errors,
+    onChange,
+    ...restProps
+  } = props
 
   return (
     <Controller
@@ -41,11 +62,11 @@ export const PercentageText = (props: ControlledTextFieldProps) => {
             inputComponent: PercentageNumberFormat as any
           }}
           inputProps={{
-            value: field?.value,
+            value: field?.value ? field?.value : null,
             suffix: '%',
             isAllowed: (values: any) => {
               return (
-                (values.floatValue! >= 0 && values.floatValue! <= 100) ||
+                (values.floatValue! >= minValue && values.floatValue! <= maxValue) ||
                 values.floatValue === undefined
               )
             },
@@ -54,7 +75,7 @@ export const PercentageText = (props: ControlledTextFieldProps) => {
               field.onChange(values.floatValue)
             }
           }}
-          value={field.value || ''}
+          value={field?.value ? field?.value : null}
           error={!!errors[field.name]}
           helperText={errors[field.name]?.message?.toString()}
           sx={{

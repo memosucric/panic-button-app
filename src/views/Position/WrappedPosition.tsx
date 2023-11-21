@@ -12,7 +12,7 @@ const WrappedPosition = () => {
   const { positions } = state
   const { selectedValue: position, status } = positions
 
-  const title = position?.lptoken_name ?? 'Card detail'
+  const title = `${position?.lptoken_name} position details` ?? 'Card detail'
 
   return (
     <ErrorBoundaryWrapper>
