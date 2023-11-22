@@ -52,7 +52,7 @@ jobs:
     needs: docker_build
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Kubernetes
       uses: tale/kubectl-action@v1
