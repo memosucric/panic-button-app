@@ -1,52 +1,94 @@
+import { Position, Strategy, Status, InitialState, ExecuteStrategyStatus } from './state'
 import {
-  Types,
-  PositionType,
-  PositionActionsType,
-  SelectedPositionActionsType,
-  StatusType,
-  StatusActionsType
-} from './types'
+  Actions,
+  ActionType,
+  UpdateStatus,
+  AddPositions,
+  ClearPositions,
+  SetSelectedPosition,
+  ClearSelectedPosition,
+  SetStrategy,
+  SetStrategyStatus
+} from './actions'
 
-export const positionReducer = (state: PositionType[], action: PositionActionsType) => {
+export const mainReducer = (state: InitialState, action: Actions): InitialState => {
   switch (action.type) {
-    case Types.CreatePosition:
-      return [...state, action.payload]
-    case Types.BulkPositions:
-      return [...action.payload]
-    case Types.ClearPositions:
-      return []
-    case Types.DeletePosition:
-      return [
-        ...state.filter(
-          (position) => position.position_id.toLowerCase() !== action.payload.toLowerCase()
-        )
-      ]
-    default:
-      return state
-  }
-}
-
-export const selectedPositionReducer = (
-  state: Maybe<PositionType>,
-  action: SelectedPositionActionsType
-) => {
-  switch (action.type) {
-    case Types.UpdatePositionSelected:
+    case ActionType.UpdateStatus:
       return {
-        ...action.payload
+        ...state,
+        status: action.payload
       }
-    case Types.ClearPositionSelected:
-      return null
+    case ActionType.AddPositions:
+      return {
+        ...state,
+        positions: action.payload
+      }
+    case ActionType.ClearPositions:
+      return {
+        ...state,
+        positions: []
+      }
+    case ActionType.SetSelectedPosition:
+      return {
+        ...state,
+        selectedPosition: action.payload
+      }
+    case ActionType.ClearSelectedPosition:
+      return {
+        ...state,
+        selectedPosition: null
+      }
+    case ActionType.SetStrategy:
+      return {
+        ...state,
+        strategy: {
+          ...state.strategy,
+          value: action.payload
+        }
+      }
+    case ActionType.SetStrategyStatus:
+      return {
+        ...state,
+        strategy: {
+          ...state.strategy,
+          status: action.payload
+        }
+      }
     default:
       return state
   }
 }
 
-export const statusReducer = (state: StatusType, action: StatusActionsType) => {
-  switch (action.type) {
-    case Types.UpdateStatus:
-      return action.payload
-    default:
-      return state
-  }
-}
+// Helper functions to simplify the caller
+export const updateStatus = (status: Status): UpdateStatus => ({
+  type: ActionType.UpdateStatus,
+  payload: status
+})
+
+export const addPositions = (positions: Position[]): AddPositions => ({
+  type: ActionType.AddPositions,
+  payload: positions
+})
+
+export const clearPositions = (): ClearPositions => ({
+  type: ActionType.ClearPositions
+})
+
+export const setSelectedPosition = (position: Position): SetSelectedPosition => ({
+  type: ActionType.SetSelectedPosition,
+  payload: position
+})
+
+export const clearSelectedPosition = (): ClearSelectedPosition => ({
+  type: ActionType.ClearSelectedPosition
+})
+
+export const setStrategy = (strategy: Strategy): SetStrategy => ({
+  type: ActionType.SetStrategy,
+  payload: strategy
+})
+
+export const setStrategyStatus = (status: ExecuteStrategyStatus): SetStrategyStatus => ({
+  type: ActionType.SetStrategyStatus,
+  payload: status
+})

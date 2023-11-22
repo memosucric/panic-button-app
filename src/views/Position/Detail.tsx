@@ -1,6 +1,5 @@
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
-import { PositionType } from 'src/contexts/types'
 import { Divider } from '@mui/material'
 import {
   DAO,
@@ -13,9 +12,10 @@ import Form from 'src/views/Position/Form/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
 import NoStrategies from 'src/views/Position/NoStrategies'
+import { Position } from 'src/contexts/state'
 
 interface DetailProps {
-  position: PositionType
+  position: Position
 }
 
 const Detail = (props: DetailProps) => {

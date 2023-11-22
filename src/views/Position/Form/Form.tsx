@@ -11,28 +11,31 @@ import {
   PARAMETERS_CONFIG,
   PositionConfig
 } from 'src/config/strategies/manager'
-import { PositionType } from 'src/contexts/types'
-import { PossibleExecutionTypeValues } from './Types'
 import InputRadio from './InputRadio'
 import { Label } from './Label'
 import { Title } from './Title'
-import { trimAll } from 'src/utils/string'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { PercentageText } from './PercentageText'
-import { Modal } from '../Modal'
+import { Modal } from '../Modal/Modal'
 import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { ChangeEvent } from 'react'
+import { useApp } from 'src/contexts/app.context'
+import { ExecuteStrategyStatus, Position, Strategy } from 'src/contexts/state'
+import { setStrategy, setStrategyStatus } from 'src/contexts/reducers'
 
 interface FormProps {
   config: ExecConfig
-  position: PositionType
+  position: Position
 }
 
 const Form = (props: FormProps) => {
   const { config, position } = props
   const { commonConfig, positionConfig } = config
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { dispatch, state } = useApp()
 
   const [open, setOpen] = React.useState(false)
 
@@ -40,7 +43,6 @@ const Form = (props: FormProps) => {
     position_id: position?.position_id ?? null,
     blockchain: position?.blockchain ?? null,
     protocol: position?.protocol ?? null,
-    execution_type: 'Simulate' as PossibleExecutionTypeValues,
     strategy: positionConfig[0]?.function_name ?? null,
     percentage: null,
     rewards_address: null,
@@ -66,13 +68,6 @@ const Form = (props: FormProps) => {
   const watchMaxSlippage = watch('max_slippage')
   const watchPercentage = watch('percentage')
 
-  const refSubmitButton = React.useRef<HTMLButtonElement>(null)
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const triggerSubmit = () => {
-    refSubmitButton?.current?.click()
-  }
-
   const handleClickOpen = () => {
     setOpen(true)
   }
@@ -89,18 +84,23 @@ const Form = (props: FormProps) => {
       bpt_address: data?.bpt_address
     }
 
-    const params = {
-      position_id: data?.position_id,
+    const strategy = {
+      id: data?.strategy,
+      name: data?.strategy,
+      description:
+        positionConfig.find((item: PositionConfig) => item.function_name === data?.strategy)
+          ?.description ?? '',
+      percentage: data?.percentage,
       blockchain: data?.blockchain,
       protocol: data?.protocol,
-      strategy: data?.strategy,
-      execution_type: data?.execution_type,
-      percentage: data?.percentage,
-      exit_arguments: exitArguments
+      position_id: data?.position_id,
+      position_name: position?.lptoken_name,
+      ...exitArguments
     }
 
-    const body = JSON.stringify(trimAll(params))
-    console.log('body', body)
+    dispatch(setStrategy(strategy as Strategy))
+
+    dispatch(setStrategyStatus('create' as ExecuteStrategyStatus))
   }
 
   const specificParameters: Config[] =
@@ -258,10 +258,10 @@ const Form = (props: FormProps) => {
             size="large"
             sx={{ height: '60px', marginTop: '30px' }}
             disabled={isExecuteButtonDisabled}
+            type={'submit'}
           >
             Execute
           </Button>
-          <button hidden={true} ref={refSubmitButton} type={'submit'} />
         </BoxWrapperColumn>
       </form>
       <Modal open={open} handleClose={handleClose} />

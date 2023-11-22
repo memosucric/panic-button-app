@@ -3,14 +3,15 @@ import * as React from 'react'
 import { ReactElement } from 'react'
 import WrapperPositions from 'src/views/Positions/WrapperPositions'
 import { useApp } from 'src/contexts/app.context'
-import { PositionType, Types } from 'src/contexts/types'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { updateStatus, addPositions } from 'src/contexts/reducers'
+import { Position, Status } from 'src/contexts/state'
 
 interface PositionsPageProps {
-  positions: PositionType[]
+  positions: Position[]
 }
 
 const PositionsPage = (props: PositionsPageProps): ReactElement => {
@@ -21,20 +22,11 @@ const PositionsPage = (props: PositionsPageProps): ReactElement => {
   React.useEffect(() => {
     if (values.length > 0) return
 
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'loading'
-    })
+    dispatch(updateStatus('Loading' as Status))
 
-    dispatch({
-      type: Types.BulkPositions,
-      payload: positions
-    })
+    dispatch(addPositions(positions))
 
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'idle'
-    })
+    dispatch(updateStatus('Finished' as Status))
   }, [dispatch, positions])
 
   return <WrapperPositions />
@@ -69,7 +61,7 @@ export const getServerSideProps = async (context: {
 
   const dataWarehouse = DataWarehouse.getInstance()
 
-  const allPositions: PositionType[] = await dataWarehouse.getPositions()
+  const allPositions: Position[] = await dataWarehouse.getPositions()
 
   const positions = allPositions
     .filter((position) => dao && position.dao === dao)

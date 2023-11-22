@@ -8,7 +8,7 @@ import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
 import { TextField, IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
-import { PositionType } from 'src/contexts/types'
+import { Position, Status } from 'src/contexts/state'
 
 interface SearchPositionProps {
   onChange: (value: string) => void
@@ -35,21 +35,20 @@ const SearchPosition = (props: SearchPositionProps) => {
 
 const WrapperPositions = () => {
   const { state } = useApp()
-  const { positions } = state
-  const { values, status } = positions
+  const { positions, status } = state
 
   const [value, setValue] = React.useState('')
-  const [filteredPositions, setFilteredPositions] = React.useState(values)
+  const [filteredPositions, setFilteredPositions] = React.useState(positions)
 
   React.useEffect(() => {
-    setFilteredPositions(values)
-  }, [values])
+    setFilteredPositions(positions)
+  }, [positions])
 
   const onChange = React.useCallback(
     (value: string) => {
       setValue(value)
 
-      const filtered = values.filter((position: PositionType) => {
+      const filtered = positions.filter((position: Position) => {
         if (value === '') return true
         return (
           position.lptoken_name.toLowerCase().includes(value.toLowerCase()) ||
@@ -59,18 +58,18 @@ const WrapperPositions = () => {
       })
       setFilteredPositions(filtered)
     },
-    [values]
+    [positions]
   )
 
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === 'loading' ? <Loading /> : null}
-        {status === 'idle' ? (
+        {status === Status.Loading ? <Loading /> : null}
+        {status === Status.Finished ? (
           <PaperSection title="Positions">
             <SearchPosition onChange={onChange} />
             {filteredPositions?.length > 0 ? <List positions={filteredPositions} /> : null}
-            {(filteredPositions?.length === 0 && value !== '') || values?.length === 0 ? (
+            {(filteredPositions?.length === 0 && value !== '') || positions?.length === 0 ? (
               <EmptyData />
             ) : null}
           </PaperSection>

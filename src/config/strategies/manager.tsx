@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategiesGnosisDAOEthereum.json'
-import { PossibleExecutionTypeValues } from 'src/views/Position/Form/Types'
 
 export type DAO =
   | 'Gnosis DAO'
@@ -48,7 +47,6 @@ export enum DEFAULT_VALUES_KEYS {
   position_id = 'position_id',
   protocol = 'protocol',
   blockchain = 'blockchain',
-  execution_type = 'execution_type',
   strategy = 'strategy',
   percentage = 'percentage',
   rewards_address = 'rewards_address',
@@ -61,7 +59,6 @@ export type DEFAULT_VALUES_TYPE = {
   [DEFAULT_VALUES_KEYS.position_id]: Maybe<string>
   [DEFAULT_VALUES_KEYS.protocol]: Maybe<string>
   [DEFAULT_VALUES_KEYS.blockchain]: Maybe<string>
-  [DEFAULT_VALUES_KEYS.execution_type]: PossibleExecutionTypeValues
   [DEFAULT_VALUES_KEYS.strategy]: Maybe<string>
   [DEFAULT_VALUES_KEYS.percentage]: Maybe<string>
   [DEFAULT_VALUES_KEYS.rewards_address]: Maybe<string>
@@ -83,9 +80,6 @@ export const PARAMETERS_CONFIG: {
   },
   [DEFAULT_VALUES_KEYS.blockchain]: {
     placeholder: 'Blockchain'
-  },
-  [DEFAULT_VALUES_KEYS.execution_type]: {
-    placeholder: 'Execution Type'
   },
   [DEFAULT_VALUES_KEYS.strategy]: {
     placeholder: 'Strategy'

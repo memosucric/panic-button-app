@@ -4,7 +4,6 @@ import Title from 'src/views/Positions/Title'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
-import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
 import {
   BLOCKCHAIN,
@@ -12,10 +11,11 @@ import {
   getDAOFilePath,
   getStrategyByPositionId
 } from 'src/config/strategies/manager'
+import { Position } from 'src/contexts/state'
 
 interface PositionProps {
   id: number
-  position: PositionType
+  position: Position
 }
 
 const Card = (props: PositionProps) => {
