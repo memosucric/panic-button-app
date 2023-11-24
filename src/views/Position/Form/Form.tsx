@@ -33,7 +33,6 @@ const Form = () => {
 
   const [open, setOpen] = React.useState(false)
 
-  console.log('AA')
   // If we don't do this, the application will rerender every time
   const defaultValues: DEFAULT_VALUES_TYPE = React.useMemo(() => {
     return {
@@ -79,6 +78,7 @@ const Form = () => {
       setValue('token_out_address', null)
       setValue('bpt_address', null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues])
 
   const handleClickOpen = () => {
@@ -168,10 +168,11 @@ const Form = () => {
 
                 let haveMinAndMaxRules = false
                 let onChange = undefined
-                const haveOptions = !!options?.length
 
-                const min = rules?.min ?? 0
-                const max = rules?.max ?? 100
+                const haveOptions = options?.length ?? 0 > 0
+                const min = rules?.min
+
+                const max = rules?.max
                 haveMinAndMaxRules = min !== undefined && max !== undefined
 
                 if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
@@ -231,8 +232,8 @@ const Form = () => {
                         name={name}
                         control={control}
                         rules={{ required: `Please fill in the field ${label}` }}
-                        minValue={min}
-                        maxValue={max}
+                        minValue={min || 0}
+                        maxValue={max || 100}
                         placeholder={
                           PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
                         }
@@ -250,12 +251,14 @@ const Form = () => {
                       <InputRadio
                         name={name}
                         control={control}
-                        options={options?.map((item) => {
-                          return {
-                            name: item.label,
-                            value: item.value
-                          }
-                        })}
+                        options={
+                          options?.map((item) => {
+                            return {
+                              name: item?.label ?? '',
+                              value: item?.value ?? ''
+                            }
+                          }) ?? []
+                        }
                       />
                     </BoxWrapperColumn>
                   )

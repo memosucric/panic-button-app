@@ -142,7 +142,6 @@ export const getStrategyByPositionId = (
 
   const positionKey = `${protocol}_${positionId}`
 
-  console.log('positionKey', positionKey)
   const position = DAO_ITEM?.config?.positions?.find(
     (position: any) => position.position_id.toLowerCase() === positionKey.toLowerCase()
   )
