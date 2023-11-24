@@ -7,7 +7,6 @@ import {
   Config,
   DEFAULT_VALUES_KEYS,
   DEFAULT_VALUES_TYPE,
-  ExecConfig,
   PARAMETERS_CONFIG,
   PositionConfig
 } from 'src/config/strategies/manager'
@@ -20,36 +19,35 @@ import { Modal } from '../Modal/Modal'
 import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
-import { ChangeEvent } from 'react'
 import { useApp } from 'src/contexts/app.context'
 import { ExecuteStrategyStatus, Position, Strategy } from 'src/contexts/state'
 import { setStrategy, setStrategyStatus } from 'src/contexts/reducers'
+import { getStrategy } from '../../../utils/strategies'
 
-interface FormProps {
-  config: ExecConfig
-  position: Position
-}
-
-const Form = (props: FormProps) => {
-  const { config, position } = props
-  const { commonConfig, positionConfig } = config
-
+const Form = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
+  const { selectedPosition: position } = state
+
+  const { positionConfig, commonConfig } = getStrategy(position as Position)
 
   const [open, setOpen] = React.useState(false)
 
-  const defaultValues: DEFAULT_VALUES_TYPE = {
-    position_id: position?.position_id ?? null,
-    blockchain: position?.blockchain ?? null,
-    protocol: position?.protocol ?? null,
-    strategy: positionConfig[0]?.function_name ?? null,
-    percentage: null,
-    rewards_address: null,
-    max_slippage: null,
-    token_out_address: null,
-    bpt_address: null
-  }
+  console.log('AA')
+  // If we don't do this, the application will rerender every time
+  const defaultValues: DEFAULT_VALUES_TYPE = React.useMemo(() => {
+    return {
+      position_id: position?.position_id ?? null,
+      blockchain: position?.blockchain ?? null,
+      protocol: position?.protocol ?? null,
+      strategy: positionConfig[0]?.function_name?.trim(),
+      percentage: null,
+      rewards_address: null,
+      max_slippage: null,
+      token_out_address: null,
+      bpt_address: null
+    }
+  }, [position, positionConfig])
 
   const {
     formState: { errors, isSubmitting, isDirty, isValid },
@@ -61,12 +59,27 @@ const Form = (props: FormProps) => {
     watch
   } = useForm<any>({
     defaultValues,
-    mode: 'onChange'
+    mode: 'all'
   })
 
   const watchStrategy = watch('strategy')
   const watchMaxSlippage = watch('max_slippage')
   const watchPercentage = watch('percentage')
+
+  // We need to do this, because the react hook form default values are not working properly
+  React.useEffect(() => {
+    if (defaultValues) {
+      setValue('position_id', position?.position_id ?? null)
+      setValue('blockchain', position?.blockchain ?? null)
+      setValue('protocol', position?.protocol ?? null)
+      setValue('strategy', positionConfig[0]?.function_name ?? null)
+      setValue('percentage', null)
+      setValue('rewards_address', null)
+      setValue('max_slippage', null)
+      setValue('token_out_address', null)
+      setValue('bpt_address', null)
+    }
+  }, [defaultValues])
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -124,18 +137,18 @@ const Form = (props: FormProps) => {
                 <InputRadio
                   name={'strategy'}
                   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  onChange={(e: any) => {
                     // Clear fields
-                    setValue('percentage', null, { shouldValidate: true })
-                    setValue('max_slippage', null, { shouldValidate: true })
-                    setValue('rewards_address', null, { shouldValidate: true })
-                    setValue('token_out_address', null, { shouldValidate: true })
-                    setValue('bpt_address', null, { shouldValidate: true })
+                    setValue('percentage', null)
+                    setValue('max_slippage', null)
+                    setValue('rewards_address', null)
+                    setValue('token_out_address', null)
+                    setValue('bpt_address', null)
                   }}
                   options={positionConfig.map((item: PositionConfig) => {
                     return {
                       name: item.label,
-                      value: item.function_name,
+                      value: item.function_name.trim(),
                       description: item.description
                     }
                   })}
@@ -157,8 +170,8 @@ const Form = (props: FormProps) => {
                 let onChange = undefined
                 const haveOptions = !!options?.length
 
-                const min = rules?.min
-                const max = rules?.max
+                const min = rules?.min ?? 0
+                const max = rules?.max ?? 100
                 haveMinAndMaxRules = min !== undefined && max !== undefined
 
                 if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
@@ -195,7 +208,7 @@ const Form = (props: FormProps) => {
                             <Tooltip
                               title={
                                 <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                  The max slippage field is capped in 10% to start
+                                  Please enter a slippage from {min}% to {max}%’
                                 </CustomTypography>
                               }
                               sx={{ ml: 1, cursor: 'pointer' }}
@@ -214,11 +227,12 @@ const Form = (props: FormProps) => {
                         </Button>
                       </BoxWrapperRow>
                       <PercentageText
+                        key={Date.now()}
                         name={name}
                         control={control}
                         rules={{ required: `Please fill in the field ${label}` }}
-                        minValue={name === 'max_slippage' ? 0 : 1}
-                        maxValue={name === 'max_slippage' ? 10 : 100}
+                        minValue={min}
+                        maxValue={max}
                         placeholder={
                           PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
                         }

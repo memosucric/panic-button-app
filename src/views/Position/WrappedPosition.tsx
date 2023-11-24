@@ -4,7 +4,6 @@ import ErrorBoundaryWrapper from 'src/components/ErrorBoundary/ErrorBoundaryWrap
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
 import PaperSection from 'src/components/PaperSection'
-import EmptyData from 'src/components/EmptyData'
 import Detail from 'src/views/Position/Detail'
 
 const WrappedPosition = () => {
@@ -18,8 +17,7 @@ const WrappedPosition = () => {
         {status === 'Loading' ? <Loading /> : null}
         {status === 'Finished' ? (
           <PaperSection title={title}>
-            {position ? <Detail position={position} /> : null}
-            {!position ? <EmptyData /> : null}
+            <Detail />
           </PaperSection>
         ) : null}
       </BoxContainerWrapper>

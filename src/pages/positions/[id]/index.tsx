@@ -10,6 +10,7 @@ import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
+import Loading from 'src/components/Loading'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
@@ -19,7 +20,8 @@ interface PositionIndexProps {
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
   const { position } = props
 
-  const { dispatch } = useApp()
+  const { dispatch, state } = useApp()
+  const { status } = state
 
   React.useEffect(() => {
     dispatch(updateStatus('Loading' as Status))
@@ -33,9 +35,14 @@ const PositionIndex = (props: PositionIndexProps): ReactElement => {
   }, [position, dispatch])
 
   return (
-    <BoxContainerWrapper>
-      <PositionDetail />
-    </BoxContainerWrapper>
+    <>
+      {status === 'Loading' && <Loading />}
+      {status === 'Finished' && (
+        <BoxContainerWrapper>
+          <PositionDetail />
+        </BoxContainerWrapper>
+      )}
+    </>
   )
 }
 

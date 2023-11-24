@@ -141,6 +141,8 @@ export const getStrategyByPositionId = (
   const DAO_ITEM: DAO_MAPPER_TYPE | undefined = getStrategies(dao, blockchain)
 
   const positionKey = `${protocol}_${positionId}`
+
+  console.log('positionKey', positionKey)
   const position = DAO_ITEM?.config?.positions?.find(
     (position: any) => position.position_id.toLowerCase() === positionKey.toLowerCase()
   )

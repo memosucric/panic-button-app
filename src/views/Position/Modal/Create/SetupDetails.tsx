@@ -105,8 +105,8 @@ export const SetupDetails = () => {
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
-                      '-webkit-line-clamp': 4,
-                      '-webkit-box-orient': 'vertical'
+                      WebkitLineClamp: 4,
+                      WebkitBoxOrient: 'vertical'
                     }}
                   >
                     {label + ':'}
