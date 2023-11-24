@@ -8,7 +8,7 @@ import {
   getDAOFilePath,
   getStrategyByPositionId
 } from 'src/config/strategies/manager'
-import { PossibleExecutionTypeValues } from 'src/views/Position/Form'
+import { PossibleExecutionTypeValues } from 'src/views/Position/Form/Types'
 import * as path from 'path'
 
 type Status = {
