@@ -15,7 +15,6 @@ import { formatPercentage } from 'src/utils/format'
 import * as React from 'react'
 import { AccordionWrapper } from 'src/components/Accordion/AccordionWrapper'
 import { useApp } from 'src/contexts/app.context'
-import Paper from '@mui/material/Paper'
 
 const LABEL_MAPPER = {
   description: {
@@ -95,7 +94,7 @@ export const SetupDetails = () => {
         </AccordionSummary>
         <AccordionDetails sx={{ justifyContent: 'flex-start', display: 'flex' }}>
           <BoxWrapperColumn sx={{ width: '100%' }}>
-            <TableContainer component={Paper}>
+            <TableContainer>
               <Table sx={{ minWidth: 450 }}>
                 <TableBody>
                   {parameters.map(({ label, value, key }, index) => {
