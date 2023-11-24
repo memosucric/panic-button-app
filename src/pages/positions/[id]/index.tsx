@@ -3,50 +3,46 @@ import { ReactElement } from 'react'
 import PageLayout from 'src/components/Layout/Layout'
 import { useApp } from 'src/contexts/app.context'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
-import { PositionType, Types } from 'src/contexts/types'
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import PositionDetail from 'src/views/Position/WrappedPosition'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
+import { Position, Status } from 'src/contexts/state'
+import Loading from 'src/components/Loading'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
-  position: Maybe<PositionType>
+  position: Maybe<Position>
 }
 
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
   const { position } = props
 
-  const { dispatch } = useApp()
+  const { dispatch, state } = useApp()
+  const { status } = state
 
   React.useEffect(() => {
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'loading'
-    })
+    dispatch(updateStatus('Loading' as Status))
     if (!position) {
-      dispatch({
-        type: Types.ClearPositionSelected,
-        payload: null
-      })
+      dispatch(clearSelectedPosition())
     } else {
-      dispatch({
-        type: Types.UpdatePositionSelected,
-        payload: position
-      })
+      dispatch(setSelectedPosition(position))
     }
 
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'idle'
-    })
+    dispatch(updateStatus('Finished' as Status))
   }, [position, dispatch])
 
   return (
-    <BoxContainerWrapper>
-      <PositionDetail />
-    </BoxContainerWrapper>
+    <>
+      {status === 'Loading' && <Loading />}
+      {status === 'Finished' && (
+        <BoxContainerWrapper>
+          <PositionDetail />
+        </BoxContainerWrapper>
+      )}
+    </>
   )
 }
 

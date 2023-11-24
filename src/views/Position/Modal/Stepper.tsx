@@ -6,22 +6,30 @@ import StepLabel from '@mui/material/StepLabel'
 import Paper from '@mui/material/Paper'
 import CustomTypography from 'src/components/CustomTypography'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
+import { useApp } from 'src/contexts/app.context'
 
 const steps = [
   {
+    key: 'create',
     label: 'Create'
   },
   {
+    key: 'simulation',
     label: 'Simulation'
   },
   {
+    key: 'confirm',
     label: 'Confirm'
   }
 ]
 
 export const Stepper = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeStep, setActiveStep] = React.useState(0)
+  const { dispatch, state } = useApp()
+
+  const { strategy } = state
+  const { status } = strategy
+  const activeStep = steps.findIndex((step) => step.key === status)
 
   return (
     <Box sx={{ backgroundColor: 'white', borderRadius: '8px' }}>

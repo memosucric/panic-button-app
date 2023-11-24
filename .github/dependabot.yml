@@ -12,6 +12,7 @@ updates:
       - "mariano-aguero"
     reviewers:
       - "mariano-aguero"
+    target-branch: 'dependencies'
   # Configuration for npm
   - package-ecosystem: "npm"
     directory: '/'

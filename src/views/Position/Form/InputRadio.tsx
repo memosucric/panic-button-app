@@ -15,7 +15,7 @@ export interface Option {
 
 export interface InputWithOptionsProps extends InputProps {
   options: Option[]
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (e: any) => void
 }
 
 const InputRadio: React.FC<InputWithOptionsProps> = ({
@@ -51,17 +51,20 @@ const InputRadio: React.FC<InputWithOptionsProps> = ({
         name={name}
         control={control}
         rules={{ required: `${name} is required` } as any}
-        render={({ field: { onChange, value } }) => (
-          <RadioGroup
-            value={value}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              if (onChangeRadio) onChangeRadio(e)
-              onChange(e)
-            }}
-          >
-            {generateRadioOptions()}
-          </RadioGroup>
-        )}
+        render={({ field }) => {
+          return (
+            <RadioGroup
+              {...field}
+              value={field?.value}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, value) => {
+                if (onChangeRadio) onChangeRadio(value)
+                field?.onChange(value)
+              }}
+            >
+              {generateRadioOptions()}
+            </RadioGroup>
+          )
+        }}
       />
     </FormControl>
   )
