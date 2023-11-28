@@ -81,7 +81,7 @@ export default withApiAuthRequired(async function handler(
   // Add the rest of the parameters if needed
   if (percentage) {
     parameters.push('--percentage')
-    parameters.push(+percentage)
+    parameters.push(`${percentage}`)
   }
 
   if (dao) {
