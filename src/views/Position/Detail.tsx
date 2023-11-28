@@ -1,7 +1,6 @@
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 import { Divider } from '@mui/material'
-import { DAO, BLOCKCHAIN, getDAOFilePath } from 'src/config/strategies/manager'
 import Form from 'src/views/Position/Form/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
@@ -19,10 +18,6 @@ const Detail = () => {
   }
 
   const { positionConfig } = getStrategy(position as Position)
-  const existDAOFilePath = !!getDAOFilePath(
-    position?.dao as DAO,
-    position?.blockchain as BLOCKCHAIN
-  )
   const areAnyStrategies = positionConfig?.length > 0
 
   return (
@@ -50,7 +45,7 @@ const Detail = () => {
         </BoxWrapperColumn>
       </BoxWrapperColumn>
       <BoxWrapperColumn gap={2}>
-        {areAnyStrategies && existDAOFilePath ? <Form /> : <NoStrategies />}
+        {areAnyStrategies ? <Form /> : <NoStrategies />}
       </BoxWrapperColumn>
     </BoxWrapperColumn>
   )

@@ -8,7 +8,7 @@ Close #(CHANGE_ME)
 
 # Test Plan
 
-### Manual Testing
+### TransactionCheck Testing
 
 - [ ] 1.
 

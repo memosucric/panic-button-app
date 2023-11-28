@@ -14,7 +14,8 @@
     "lint:tsc": "tsc -p tsconfig.json",
     "prepare": "husky install",
     "commit": "git-cz",
-    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts"
+    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts",
+    "submodule:sync": "git submodule update --remote"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",
@@ -35,7 +36,9 @@
     "react-error-boundary": "^4.0.11",
     "react-hook-form": "^7.48.2",
     "react-intersection-observer": "^9.5.3",
-    "react-number-format": "^5.3.1"
+    "react-json-pretty": "^2.2.0",
+    "react-number-format": "^5.3.1",
+    "react-query": "^3.39.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.2",

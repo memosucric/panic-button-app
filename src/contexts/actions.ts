@@ -1,4 +1,4 @@
-import { ExecuteStrategyStatus, Position, Status, Strategy } from './state'
+import { ExecuteStrategyStatus, Position, Status, Strategy, TransactionBuild } from './state'
 
 export enum ActionType {
   UpdateStatus,
@@ -7,7 +7,9 @@ export enum ActionType {
   SetSelectedPosition,
   ClearSelectedPosition,
   SetStrategy,
-  SetStrategyStatus
+  SetStrategyStatus,
+  SetTransactionBuild,
+  SetTransactionCheck
 }
 
 export interface UpdateStatus {
@@ -43,6 +45,16 @@ export interface SetStrategyStatus {
   payload: ExecuteStrategyStatus
 }
 
+export interface SetTransactionBuild {
+  type: ActionType.SetTransactionBuild
+  payload: TransactionBuild
+}
+
+export interface SetTransactionCheck {
+  type: ActionType.SetTransactionCheck
+  payload: boolean
+}
+
 export type Actions =
   | UpdateStatus
   | AddPositions
@@ -51,3 +63,5 @@ export type Actions =
   | ClearSelectedPosition
   | SetStrategy
   | SetStrategyStatus
+  | SetTransactionBuild
+  | SetTransactionCheck

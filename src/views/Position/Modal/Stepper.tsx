@@ -14,6 +14,14 @@ const steps = [
     label: 'Create'
   },
   {
+    key: 'transaction_build',
+    label: 'Transaction build'
+  },
+  {
+    key: 'transaction_check',
+    label: 'Transaction check'
+  },
+  {
     key: 'simulation',
     label: 'Simulation'
   },
@@ -29,8 +37,13 @@ export const Stepper = () => {
 
   const { strategy } = state
   const { status } = strategy
-  const activeStep = steps.findIndex((step) => step.key === status)
+  const activeStep = React.useMemo(() =>
+    steps.findIndex((step) => {
+      return step.key === status
+    }),
+    [status])
 
+  console.log('activeStep', activeStep, status)
   return (
     <Box sx={{ backgroundColor: 'white', borderRadius: '8px' }}>
       <BoxWrapperRow

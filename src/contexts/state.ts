@@ -6,6 +6,8 @@ export enum Status {
 export enum ExecuteStrategyStatus {
   Loading = 'loading',
   Create = 'create',
+  TransactionBuild = 'transaction_build',
+  TransactionCheck = 'transaction_check',
   Simulation = 'simulation',
   Confirm = 'confirm',
   Error = 'error'
@@ -35,13 +37,20 @@ export type Strategy = {
   position_name: Maybe<string>
 }
 
+export type TransactionBuild = {
+  transaction: any
+  decodedTransaction: any
+}
+
 export const initialState: InitialState = {
   status: Status.Loading,
   positions: [],
   selectedPosition: null,
   strategy: {
     status: ExecuteStrategyStatus.Loading,
-    value: null
+    create: null,
+    transactionBuild: null,
+    transactionCheck: null
   }
 }
 
@@ -51,6 +60,8 @@ export type InitialState = {
   selectedPosition: Maybe<Position>
   strategy: {
     status: ExecuteStrategyStatus
-    value: Maybe<Strategy>
+    create: Maybe<Strategy>
+    transactionBuild: Maybe<TransactionBuild>
+    transactionCheck: Maybe<boolean>
   }
 }

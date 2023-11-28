@@ -11,3 +11,7 @@ export const trimAll = (obj: any) => {
 export const isObject = (value: any) => {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
+
+export const shortenAddress = (address: string, chars = 4): string => {
+  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`
+}

@@ -1,6 +1,6 @@
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import {
-  AccordionSummary,
+  AccordionSummary, Alert,
   Table,
   TableBody,
   TableCell,
@@ -60,11 +60,11 @@ export const SetupDetails = () => {
   const { dispatch, state } = useApp()
 
   const { strategy } = state
-  const { value } = strategy
+  const { create } = strategy
 
   //filter value by LABEL_MAPPER and sort by order
-  const parameters = value
-    ? Object.keys(value)
+  const parameters = create
+    ? Object.keys(create)
         .filter((key) => LABEL_MAPPER[key as keyof typeof LABEL_MAPPER])
         .sort((a, b) => {
           return (
@@ -76,7 +76,7 @@ export const SetupDetails = () => {
           return {
             key,
             label: LABEL_MAPPER[key as keyof typeof LABEL_MAPPER].label,
-            value: value && value[key as keyof typeof value]
+            value: create && create[key as keyof typeof create]
           }
         })
         .filter(({ value }) => value)
@@ -95,7 +95,7 @@ export const SetupDetails = () => {
         <AccordionDetails sx={{ justifyContent: 'flex-start', display: 'flex' }}>
           <BoxWrapperColumn sx={{ width: '100%' }}>
             <TableContainer>
-              <Table sx={{ minWidth: 450 }}>
+              <Table sx={{ minWidth: 350 }}>
                 <TableBody>
                   {parameters.map(({ label, value, key }, index) => {
                     if (!value || !label) return null
@@ -115,7 +115,12 @@ export const SetupDetails = () => {
                         <TableCell component="th" scope="row">
                           {label}
                         </TableCell>
-                        <TableCell align="right">{valueToDisplay}</TableCell>
+                        <TableCell align="right">
+                          <BoxWrapperColumn gap={2}>
+                            <span>{valueToDisplay}</span>
+                          {key === 'max_slippage' && +value > 10 ? <Alert severity="warning">The user selected a max slippage greater than 10%!</Alert> : null}
+                          </BoxWrapperColumn>
+                        </TableCell>
                       </TableRow>
                     )
                   })}

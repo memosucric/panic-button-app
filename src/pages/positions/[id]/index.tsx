@@ -11,6 +11,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
+import {HEADER_HEIGHT} from "src/components/Layout/Header";
+import {FOOTER_HEIGHT} from "src/components/Layout/Footer";
 
 interface PositionIndexProps {
   positionId: Maybe<string>
@@ -36,7 +38,7 @@ const PositionIndex = (props: PositionIndexProps): ReactElement => {
 
   return (
     <>
-      {status === 'Loading' && <Loading />}
+      {status === 'Loading' && <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`}  />}
       {status === 'Finished' && (
         <BoxContainerWrapper>
           <PositionDetail />

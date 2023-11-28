@@ -1,4 +1,4 @@
-import { Position, Strategy, Status, InitialState, ExecuteStrategyStatus } from './state'
+import {Position, Strategy, Status, InitialState, ExecuteStrategyStatus, TransactionBuild} from './state'
 import {
   Actions,
   ActionType,
@@ -8,7 +8,9 @@ import {
   SetSelectedPosition,
   ClearSelectedPosition,
   SetStrategy,
-  SetStrategyStatus
+  SetStrategyStatus,
+  SetTransactionBuild,
+  SetTransactionCheck
 } from './actions'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
@@ -43,7 +45,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         ...state,
         strategy: {
           ...state.strategy,
-          value: action.payload
+          create: action.payload
         }
       }
     case ActionType.SetStrategyStatus:
@@ -52,6 +54,23 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         strategy: {
           ...state.strategy,
           status: action.payload
+        }
+      }
+    case ActionType.SetTransactionBuild:
+      return {
+        ...state,
+        strategy: {
+          ...state.strategy,
+          transactionBuild: action.payload
+        }
+      }
+
+    case ActionType.SetTransactionCheck:
+      return {
+        ...state,
+        strategy: {
+          ...state.strategy,
+          transactionCheck: action.payload
         }
       }
     default:
@@ -90,5 +109,15 @@ export const setStrategy = (strategy: Strategy): SetStrategy => ({
 
 export const setStrategyStatus = (status: ExecuteStrategyStatus): SetStrategyStatus => ({
   type: ActionType.SetStrategyStatus,
+  payload: status
+})
+
+export const setStrategyTransactionBuild = (transactionBuild: TransactionBuild): SetTransactionBuild => ({
+  type: ActionType.SetTransactionBuild,
+  payload: transactionBuild
+})
+
+export const setStrategyTransactionCheck = (status: boolean): SetTransactionCheck => ({
+  type: ActionType.SetTransactionCheck,
   payload: status
 })
