@@ -78,10 +78,10 @@ export const TransactionDetails = () => {
     mutationFn: fetchTransactionDetail,
     onSuccess: (body) => {
       const {transaction, decoded_transaction: decodedTransaction} = body?.data ?? {}
-      dispatch(setStrategyTransactionBuild({transaction, decodedTransaction} as TransactionBuild))
-      dispatch(setStrategyStatus('transaction_build' as ExecuteStrategyStatus))
-
       const isTransactionChecked = !!transaction && !!decodedTransaction
+      dispatch(setStrategyTransactionBuild({transaction, decodedTransaction} as TransactionBuild))
+
+      dispatch(setStrategyStatus('transaction_build' as ExecuteStrategyStatus))
       dispatch(setStrategyTransactionCheck(isTransactionChecked))
       if (isTransactionChecked) {
         dispatch(setStrategyStatus('transaction_check' as ExecuteStrategyStatus))
@@ -158,7 +158,9 @@ export const TransactionDetails = () => {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <CustomTypography variant={'body2'}>Transaction details</CustomTypography>
+          <BoxWrapperRow>
+            <CustomTypography variant={'body2'}>Transaction details</CustomTypography>
+          </BoxWrapperRow>
         </AccordionSummary>
         <AccordionDetails sx={{justifyContent: 'flex-start', display: 'flex'}}>
           <BoxWrapperColumn sx={{width: '100%'}} gap={2}>
