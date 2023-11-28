@@ -1,5 +1,5 @@
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import {AccordionSummary, Alert, Table, TableBody, TableCell, TableContainer, TableRow} from '@mui/material'
+import {AccordionSummary, Alert, Box, Table, TableBody, TableCell, TableContainer, TableRow} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CustomTypography from 'src/components/CustomTypography'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -11,8 +11,7 @@ import BoxWrapperColumn from "src/components/Wrappers/BoxWrapperColumn"
 import Loading from "src/components/Loading"
 import {setStrategyStatus, setStrategyTransactionBuild, setStrategyTransactionCheck} from "src/contexts/reducers";
 import {ExecuteStrategyStatus, TransactionBuild} from "src/contexts/state";
-import {shortenAddress} from "src/utils/string"
-import JSONPretty from 'react-json-pretty'
+import {shortenAddress} from "src/utils/string";
 
 const LABEL_MAPPER = {
   value: {
@@ -89,6 +88,10 @@ export const TransactionDetails = () => {
       }
 
     },
+    onError: (error) => {
+      dispatch(setStrategyStatus('transaction_build' as ExecuteStrategyStatus))
+      dispatch(setStrategyTransactionCheck(false))
+    }
   })
 
   React.useEffect(() => {
@@ -122,7 +125,7 @@ export const TransactionDetails = () => {
         token_out_address
       }
     })
-  }, [create, status])
+  }, [create])
 
   const parameters = React.useMemo(() => {
     if (!transactionBuild) return []
@@ -190,12 +193,21 @@ export const TransactionDetails = () => {
             )}
             {transactionBuild && transactionBuild?.decodedTransaction &&
               (
-                <BoxWrapperRow>
+                <BoxWrapperColumn sx={{
+                  width: 'fit-content',
+                  justifyContent: 'flex-start',
+                  alignItems: 'flex-start',
+                  fontSize: '0.8rem'
+                }}>
                   <CustomTypography variant={'body2'}>
                     Decoded Transaction
                   </CustomTypography>
-                  <JSONPretty id="json-pretty" space="4"  data={transactionBuild?.decodedTransaction}></JSONPretty>
-                </BoxWrapperRow>
+                  <Box>
+                    <pre id="json">
+                      <code>{JSON.stringify(transactionBuild?.decodedTransaction, null, 2)}</code>
+                    </pre>
+                  </Box>
+                </BoxWrapperColumn>
               )
             }
 

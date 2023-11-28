@@ -1,16 +1,16 @@
-import {Position, Strategy, Status, InitialState, ExecuteStrategyStatus, TransactionBuild} from './state'
+import {ExecuteStrategyStatus, InitialState, Position, Status, Strategy, TransactionBuild} from './state'
 import {
   Actions,
   ActionType,
-  UpdateStatus,
-  AddPositions,
+  AddPositions, ClearExecutionStage,
   ClearPositions,
-  SetSelectedPosition,
   ClearSelectedPosition,
+  SetSelectedPosition,
   SetStrategy,
   SetStrategyStatus,
   SetTransactionBuild,
-  SetTransactionCheck
+  SetTransactionCheck,
+  UpdateStatus
 } from './actions'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
@@ -73,6 +73,15 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           transactionCheck: action.payload
         }
       }
+    case ActionType.ClearExecutionStage:
+      return {
+        ...state,
+        strategy: {
+          ...state.strategy,
+          transactionBuild: null,
+          transactionCheck: null
+        }
+      }
     default:
       return state
   }
@@ -120,4 +129,8 @@ export const setStrategyTransactionBuild = (transactionBuild: TransactionBuild):
 export const setStrategyTransactionCheck = (status: boolean): SetTransactionCheck => ({
   type: ActionType.SetTransactionCheck,
   payload: status
+})
+
+export const clearExecutionStage = (): ClearExecutionStage => ({
+  type: ActionType.ClearExecutionStage
 })

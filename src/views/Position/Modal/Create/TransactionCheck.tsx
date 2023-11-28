@@ -9,6 +9,7 @@ export const TransactionCheck = () => {
   const {strategy} = state
   const {transactionCheck, status} = strategy
 
+  console.log('transactionCheck', transactionCheck)
 
   return (
     <AccordionBoxWrapper

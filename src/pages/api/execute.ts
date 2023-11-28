@@ -91,7 +91,7 @@ export default withApiAuthRequired(async function handler(
 
   if (blockchain) {
     parameters.push('--blockchain')
-    parameters.push(`${blockchain.toLowerCase()}`)
+    parameters.push(`${blockchain.toUpperCase()}`)
   }
 
   if(strategy) {

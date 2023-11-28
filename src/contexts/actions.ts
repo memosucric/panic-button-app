@@ -9,7 +9,8 @@ export enum ActionType {
   SetStrategy,
   SetStrategyStatus,
   SetTransactionBuild,
-  SetTransactionCheck
+  SetTransactionCheck,
+  ClearExecutionStage
 }
 
 export interface UpdateStatus {
@@ -55,6 +56,10 @@ export interface SetTransactionCheck {
   payload: boolean
 }
 
+export interface ClearExecutionStage {
+  type: ActionType.ClearExecutionStage
+}
+
 export type Actions =
   | UpdateStatus
   | AddPositions
@@ -65,3 +70,4 @@ export type Actions =
   | SetStrategyStatus
   | SetTransactionBuild
   | SetTransactionCheck
+  | ClearExecutionStage

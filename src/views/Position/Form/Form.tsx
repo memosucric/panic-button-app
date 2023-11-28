@@ -21,7 +21,7 @@ import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { useApp } from 'src/contexts/app.context'
 import { ExecuteStrategyStatus, Position, Strategy } from 'src/contexts/state'
-import { setStrategy, setStrategyStatus } from 'src/contexts/reducers'
+import {clearExecutionStage, setStrategy, setStrategyStatus} from 'src/contexts/reducers'
 import { getStrategy } from '../../../utils/strategies'
 
 const Form = () => {
@@ -114,6 +114,8 @@ const Form = () => {
     dispatch(setStrategy(strategy as Strategy))
 
     dispatch(setStrategyStatus('create' as ExecuteStrategyStatus))
+
+    dispatch(clearExecutionStage())
   }
 
   const specificParameters: Config[] =
