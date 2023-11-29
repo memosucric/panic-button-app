@@ -221,7 +221,7 @@ const Form = () => {
                             <Tooltip
                               title={
                                 <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                  Please enter a slippage from {min}% to {max}%’
+                                  Please enter a slippage from {min}% to {max}%
                                 </CustomTypography>
                               }
                               sx={{ ml: 1, cursor: 'pointer' }}
