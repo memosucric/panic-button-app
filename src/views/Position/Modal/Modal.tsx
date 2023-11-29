@@ -13,12 +13,9 @@ import { TransactionDetails } from './Create/TransactionDetails'
 import { TransactionCheck } from './Create/TransactionCheck'
 import { Tenderly } from './Simulation/Tenderly'
 import { Confirm } from './Confirm/Confirm'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { Stepper } from './Stepper'
-import { useApp } from '../../../contexts/app.context'
-import { Strategy } from '../../../contexts/state'
-
-const queryClient = new QueryClient()
+import { useApp } from 'src/contexts/app.context'
+import { Strategy } from 'src/contexts/state'
 
 interface ModalProps {
   open: boolean
@@ -53,65 +50,60 @@ export const Modal = (props: ModalProps) => {
         backgroundColor: 'custom.grey.light'
       }}
     >
-      <QueryClientProvider client={queryClient}>
-        <BoxContainerWrapper sx={{ maxHeight: '840px' }}>
-          <BoxWrapperRow sx={{ padding: '20px', justifyContent: 'space-between' }}>
-            <Box />
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-          </BoxWrapperRow>
+      <BoxContainerWrapper sx={{ maxHeight: '840px' }}>
+        <BoxWrapperRow sx={{ padding: '20px', justifyContent: 'space-between' }}>
+          <Box />
+          <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <CloseIcon />
+          </IconButton>
+        </BoxWrapperRow>
 
-          <BoxWrapperColumn sx={{ paddingRight: '10%', paddingLeft: '10%' }} gap={2}>
-            <BoxWrapperRowStyled gap={2}>
-              <CustomTypography variant="h6">Confirm exit strategy execution</CustomTypography>
-            </BoxWrapperRowStyled>
-            <BoxWrapperRow
+        <BoxWrapperColumn sx={{ paddingRight: '10%', paddingLeft: '10%' }} gap={2}>
+          <BoxWrapperRowStyled gap={2}>
+            <CustomTypography variant="h6">Confirm exit strategy execution</CustomTypography>
+          </BoxWrapperRowStyled>
+          <BoxWrapperRow gap={2} sx={{ justifyContent: 'space-between', alignItems: 'self-start' }}>
+            <BoxWrapperColumn
+              sx={{ width: '60%', justifyContent: 'flex-start', height: '100%' }}
               gap={2}
-              sx={{ justifyContent: 'space-between', alignItems: 'self-start' }}
             >
-              <BoxWrapperColumn
-                sx={{ width: '60%', justifyContent: 'flex-start', height: '100%' }}
-                gap={2}
-              >
-                <BoxWrapper>
-                  <BoxWrapperRowStyled gap={2}>
-                    <CustomTypography variant="body2" sx={{ m: 3 }}>
-                      {createValue?.description ?? 'Create'}
-                    </CustomTypography>
-                  </BoxWrapperRowStyled>
+              <BoxWrapper>
+                <BoxWrapperRowStyled gap={2}>
+                  <CustomTypography variant="body2" sx={{ m: 3 }}>
+                    {createValue?.description ?? 'Create'}
+                  </CustomTypography>
+                </BoxWrapperRowStyled>
 
-                  <SetupDetails />
-                  <TransactionDetails />
-                  <TransactionCheck />
-                </BoxWrapper>
-                <BoxWrapper>
-                  <BoxWrapperRowStyled gap={2}>
-                    <CustomTypography variant="body2" sx={{ m: 3 }}>
-                      Simulation
-                    </CustomTypography>
-                  </BoxWrapperRowStyled>
-                  <Tenderly />
-                </BoxWrapper>
+                <SetupDetails />
+                <TransactionDetails />
+                <TransactionCheck />
+              </BoxWrapper>
+              <BoxWrapper>
+                <BoxWrapperRowStyled gap={2}>
+                  <CustomTypography variant="body2" sx={{ m: 3 }}>
+                    Simulation
+                  </CustomTypography>
+                </BoxWrapperRowStyled>
+                <Tenderly />
+              </BoxWrapper>
 
-                <BoxWrapper>
-                  <BoxWrapperRowStyled gap={2}>
-                    <CustomTypography variant="body2" sx={{ m: 3 }}>
-                      Confirm
-                    </CustomTypography>
-                  </BoxWrapperRowStyled>
+              <BoxWrapper>
+                <BoxWrapperRowStyled gap={2}>
+                  <CustomTypography variant="body2" sx={{ m: 3 }}>
+                    Confirm
+                  </CustomTypography>
+                </BoxWrapperRowStyled>
 
-                  <Confirm />
-                </BoxWrapper>
-              </BoxWrapperColumn>
+                <Confirm />
+              </BoxWrapper>
+            </BoxWrapperColumn>
 
-              <BoxWrapperColumn sx={{ width: '40%', justifyContent: 'flex-start' }}>
-                <Stepper />
-              </BoxWrapperColumn>
-            </BoxWrapperRow>
-          </BoxWrapperColumn>
-        </BoxContainerWrapper>
-      </QueryClientProvider>
+            <BoxWrapperColumn sx={{ width: '40%', justifyContent: 'flex-start' }}>
+              <Stepper />
+            </BoxWrapperColumn>
+          </BoxWrapperRow>
+        </BoxWrapperColumn>
+      </BoxContainerWrapper>
     </Dialog>
   )
 }
