@@ -1,5 +1,5 @@
-import {useForm, SubmitHandler} from 'react-hook-form'
-import {Button} from '@mui/material'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { Button } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 
@@ -11,30 +11,26 @@ import {
   PositionConfig
 } from 'src/config/strategies/manager'
 import InputRadio from './InputRadio'
-import {Label} from './Label'
-import {Title} from './Title'
+import { Label } from './Label'
+import { Title } from './Title'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import {PercentageText} from './PercentageText'
-import {Modal} from '../Modal/Modal'
+import { PercentageText } from './PercentageText'
+import { Modal } from '../Modal/Modal'
 import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
-import {useApp} from 'src/contexts/app.context'
-import {Position, SetupStatus, Strategy} from 'src/contexts/state'
-import {
-  clearSetupWithoutCreate,
-  setSetupCreate,
-  setSetupStatus,
-} from 'src/contexts/reducers'
-import {getStrategy} from 'src/utils/strategies'
-import {neutralizeBack, revivalBack} from "src/utils/modal"
+import { useApp } from 'src/contexts/app.context'
+import { Position, SetupStatus, Strategy } from 'src/contexts/state'
+import { clearSetupWithoutCreate, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
+import { getStrategy } from 'src/utils/strategies'
+import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
 const Form = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {dispatch, state} = useApp()
-  const {selectedPosition: position} = state
+  const { dispatch, state } = useApp()
+  const { selectedPosition: position } = state
 
-  const {positionConfig, commonConfig} = getStrategy(position as Position)
+  const { positionConfig, commonConfig } = getStrategy(position as Position)
 
   const [open, setOpen] = React.useState(false)
 
@@ -54,7 +50,7 @@ const Form = () => {
   }, [position, positionConfig])
 
   const {
-    formState: {errors, isSubmitting, isValid},
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
     control,
     setError,
@@ -96,40 +92,44 @@ const Form = () => {
     revivalBack()
   }
 
-  const onSubmit: SubmitHandler<any> = React.useCallback(async (data: any) => {
-    // Get label by value for the token_out_address in the positionConfig
+  const onSubmit: SubmitHandler<any> = React.useCallback(
+    async (data: any) => {
+      // Get label by value for the token_out_address in the positionConfig
 
-    const tokenOutAddressLabel = (positionConfig as PositionConfig[])
-      ?.find((item: PositionConfig) => item?.function_name === data?.strategy)
-      ?.parameters.find((item: Config) => item?.name === 'token_out_address')
-      ?.options.find((item: any) => item?.value === data?.token_out_address)?.label ?? ''
+      // Object is possibly 'undefined'.  TS2532, disable this error
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const tokenOutAddressLabel =
+        positionConfig
+          ?.find((item: PositionConfig) => item?.function_name === data?.strategy)
+          ?.parameters?.find((item: Config) => item?.name === 'token_out_address')
+          ?.options?.find((item: any) => item?.value === data?.token_out_address)?.label ?? ''
 
-    const setup = {
-      id: data?.strategy,
-      name: data?.strategy,
-      description:
-        positionConfig?.find((item: PositionConfig) => item.function_name === data?.strategy)
-          ?.description ?? '',
-      percentage: data?.percentage,
-      blockchain: data?.blockchain,
-      protocol: data?.protocol,
-      position_id: data?.position_id,
-      position_name: position?.lptoken_name,
-      rewards_address: data?.rewards_address,
-      max_slippage: data?.max_slippage,
-      token_out_address: data?.token_out_address,
-      token_out_address_label: tokenOutAddressLabel,
-      bpt_address: data?.bpt_address
-    }
+      const setup = {
+        id: data?.strategy,
+        name: data?.strategy,
+        description:
+          positionConfig?.find((item: PositionConfig) => item.function_name === data?.strategy)
+            ?.description ?? '',
+        percentage: data?.percentage,
+        blockchain: data?.blockchain,
+        protocol: data?.protocol,
+        position_id: data?.position_id,
+        position_name: position?.lptoken_name,
+        rewards_address: data?.rewards_address,
+        max_slippage: data?.max_slippage,
+        token_out_address: data?.token_out_address,
+        token_out_address_label: tokenOutAddressLabel,
+        bpt_address: data?.bpt_address
+      }
 
+      dispatch(setSetupCreate(setup as Strategy))
 
-    dispatch(setSetupCreate(setup as Strategy))
+      dispatch(setSetupStatus('create' as SetupStatus))
 
-    dispatch(setSetupStatus('create' as SetupStatus))
-
-    dispatch(clearSetupWithoutCreate())
-
-  }, [positionConfig, dispatch])
+      dispatch(clearSetupWithoutCreate())
+    },
+    [positionConfig, dispatch, position]
+  )
 
   const specificParameters: Config[] =
     (positionConfig as PositionConfig[])?.find(
@@ -146,7 +146,7 @@ const Form = () => {
         <BoxWrapperColumn gap={2}>
           <BoxWrapperColumn gap={6}>
             <BoxWrapperColumn gap={2}>
-              <Title title={'Exit strategies'}/>
+              <Title title={'Exit strategies'} />
               <BoxWrapperColumn gap={2}>
                 <InputRadio
                   name={'strategy'}
@@ -172,9 +172,9 @@ const Form = () => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
-              <Title title={'Parameters'}/>
+              <Title title={'Parameters'} />
               {parameters.map((parameter: Config, index: number) => {
-                const {name, label = '', type, rules, options} = parameter
+                const { name, label = '', type, rules, options } = parameter
 
                 if (type === 'constant') {
                   return null
@@ -206,7 +206,7 @@ const Form = () => {
                 const onClickApplyMax = () => {
                   if (max !== undefined) {
                     clearErrors(name as any)
-                    setValue(name as any, max, {shouldValidate: true})
+                    setValue(name as any, max, { shouldValidate: true })
                   }
                 }
 
@@ -216,19 +216,19 @@ const Form = () => {
 
                   return (
                     <BoxWrapperColumn gap={2} key={index}>
-                      <BoxWrapperRow sx={{justifyContent: 'space-between'}}>
+                      <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
                         <BoxWrapperRow gap={2}>
-                          <Label title={label}/>
+                          <Label title={label} />
                           {name === 'max_slippage' ? (
                             <Tooltip
                               title={
-                                <CustomTypography variant="body2" sx={{color: 'common.white'}}>
+                                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
                                   Please enter a slippage from {min}% to {max}%
                                 </CustomTypography>
                               }
-                              sx={{ml: 1, cursor: 'pointer'}}
+                              sx={{ ml: 1, cursor: 'pointer' }}
                             >
-                              <InfoIcon sx={{fontSize: 24, cursor: 'pointer'}}/>
+                              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
                             </Tooltip>
                           ) : null}
                         </BoxWrapperRow>
@@ -242,16 +242,17 @@ const Form = () => {
                         </Button>
                       </BoxWrapperRow>
                       <PercentageText
-                        key={Date.now()}
+                        key={index}
                         name={name}
                         control={control}
                         rules={{
                           required: `Please fill in the field ${label}`,
                           validate: {
-                            required: (value) => {
-                              if (!value || value === 0) return `Please fill in the field ${label} with a value different than 0`
+                            required: (value: any) => {
+                              if (!value || value === 0)
+                                return `Please fill in the field ${label} with a value different than 0`
                             }
-                          },
+                          }
                         }}
                         minValue={min || 0}
                         maxValue={max || 100}
@@ -268,7 +269,7 @@ const Form = () => {
                 if (haveOptions) {
                   return (
                     <BoxWrapperColumn gap={2} key={index}>
-                      <Label title={label}/>
+                      <Label title={label} />
                       <InputRadio
                         name={name}
                         control={control}
@@ -294,7 +295,7 @@ const Form = () => {
             onClick={handleClickOpen}
             variant="contained"
             size="large"
-            sx={{height: '60px', marginTop: '30px'}}
+            sx={{ height: '60px', marginTop: '30px' }}
             disabled={isExecuteButtonDisabled}
             type={'submit'}
           >
@@ -302,7 +303,7 @@ const Form = () => {
           </Button>
         </BoxWrapperColumn>
       </form>
-      <Modal open={open} handleClose={handleClose}/>
+      <Modal open={open} handleClose={handleClose} />
     </>
   )
 }
