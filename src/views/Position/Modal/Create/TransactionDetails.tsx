@@ -72,45 +72,6 @@ export const TransactionDetails = () => {
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
   const formValue = state?.setup?.create?.value ?? null
 
-  const postData = async (data: any) => {
-    try {
-      setIsLoading(true)
-      const response = await fetch('/api/execute', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-
-      const body = await response.json()
-
-      // check if response is 200
-      if (!response.ok) {
-        throw new Error('Failed to execute transaction details')
-      }
-
-      const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
-
-      const isTransactionChecked = !!transaction && !!decodedTransaction
-      if (isTransactionChecked) {
-        dispatch(setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild))
-        dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
-
-        dispatch(setSetupTransactionCheck(isTransactionChecked))
-        dispatch(setSetupTransactionCheckStatus('success' as SetupItemStatus))
-
-        dispatch(setSetupStatus('transaction_check' as SetupStatus))
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
-      dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
-    }
-    setIsLoading(false)
-  }
-
   React.useEffect(() => {
     if (!formValue || isLoading) return
     const {
@@ -142,8 +103,49 @@ export const TransactionDetails = () => {
       }
     }
 
+    const postData = async (data: any) => {
+      try {
+        setIsLoading(true)
+        const response = await fetch('/api/execute', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+
+        const body = await response.json()
+
+        // check if response is 200
+        if (!response.ok) {
+          throw new Error('Failed to execute transaction details')
+        }
+
+        const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
+
+        const isTransactionChecked = !!transaction && !!decodedTransaction
+        if (isTransactionChecked) {
+          dispatch(
+            setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
+          )
+          dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
+
+          dispatch(setSetupTransactionCheck(isTransactionChecked))
+          dispatch(setSetupTransactionCheckStatus('success' as SetupItemStatus))
+
+          dispatch(setSetupStatus('transaction_check' as SetupStatus))
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
+        dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
+      }
+      setIsLoading(false)
+    }
+
     postData(parameters)
-  }, [formValue, isLoading, postData])
+  }, [formValue, isLoading, dispatch])
 
   const parameters = React.useMemo(() => {
     if (!transactionBuildValue) return []
