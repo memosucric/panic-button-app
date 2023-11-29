@@ -5,7 +5,7 @@ import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import Link from 'next/link'
-import { BLOCKCHAIN, DAO, getDAOFilePath } from 'src/config/strategies/manager'
+import {BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath} from 'src/config/strategies/manager'
 import { Position } from 'src/contexts/state'
 import { getStrategy } from 'src/utils/strategies'
 
@@ -18,7 +18,7 @@ const Card = (props: PositionProps) => {
   const { position } = props
   const { position_id: positionId, protocol, blockchain, lptoken_name: positionName } = position
 
-  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN)
+  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN, 'execute' as EXECUTION_TYPE)
 
   const { positionConfig } = getStrategy(position as Position)
   const areAnyStrategies = positionConfig?.length > 0

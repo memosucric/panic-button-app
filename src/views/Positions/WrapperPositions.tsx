@@ -9,6 +9,8 @@ import Loading from 'src/components/Loading'
 import { TextField, IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { Position, Status } from 'src/contexts/state'
+import {HEADER_HEIGHT} from "src/components/Layout/Header"
+import {FOOTER_HEIGHT} from "src/components/Layout/Footer"
 
 interface SearchPositionProps {
   onChange: (value: string) => void
@@ -64,7 +66,7 @@ const WrapperPositions = () => {
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === Status.Loading ? <Loading /> : null}
+        {status === Status.Loading ? <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} /> : null}
         {status === Status.Finished ? (
           <PaperSection title="Positions">
             <SearchPosition onChange={onChange} />

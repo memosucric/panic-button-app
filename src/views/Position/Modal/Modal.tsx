@@ -6,14 +6,16 @@ import * as React from 'react'
 import { styled } from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import { Stepper } from './Stepper'
 import CustomTypography from 'src/components/CustomTypography'
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import { SetupDetails } from './Create/SetupDetails'
 import { TransactionDetails } from './Create/TransactionDetails'
-import { Manual } from './Simulation/Manual'
+import { TransactionCheck } from './Create/TransactionCheck'
 import { Tenderly } from './Simulation/Tenderly'
 import { Confirm } from './Confirm/Confirm'
+import { Stepper } from './Stepper'
+import { useApp } from 'src/contexts/app.context'
+import { Strategy } from 'src/contexts/state'
 
 interface ModalProps {
   open: boolean
@@ -25,8 +27,17 @@ const BoxWrapper = styled(Box)(() => ({
   borderRadius: '8px'
 }))
 
+const BoxWrapperRowStyled = styled(BoxWrapperRow)(() => ({
+  justifyContent: 'flex-start',
+  borderBottom: '1px solid #B6B6B6'
+}))
+
 export const Modal = (props: ModalProps) => {
   const { open, handleClose } = props
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { dispatch, state } = useApp()
+
+  const createValue: Maybe<Strategy> = state?.setup?.create?.value || null
 
   return (
     <Dialog
@@ -48,53 +59,40 @@ export const Modal = (props: ModalProps) => {
         </BoxWrapperRow>
 
         <BoxWrapperColumn sx={{ paddingRight: '10%', paddingLeft: '10%' }} gap={2}>
-          <BoxWrapperRow
-            sx={{ justifyContent: 'flex-start', borderBottom: '1px solid #B6B6B6' }}
-            gap={2}
-          >
+          <BoxWrapperRowStyled gap={2}>
             <CustomTypography variant="h6">Confirm exit strategy execution</CustomTypography>
-          </BoxWrapperRow>
+          </BoxWrapperRowStyled>
           <BoxWrapperRow gap={2} sx={{ justifyContent: 'space-between', alignItems: 'self-start' }}>
             <BoxWrapperColumn
               sx={{ width: '60%', justifyContent: 'flex-start', height: '100%' }}
               gap={2}
             >
               <BoxWrapper>
-                <BoxWrapperRow
-                  sx={{ justifyContent: 'flex-start', borderBottom: '1px solid #B6B6B6' }}
-                  gap={2}
-                >
+                <BoxWrapperRowStyled gap={2}>
                   <CustomTypography variant="body2" sx={{ m: 3 }}>
-                    Create
+                    {createValue?.description ?? 'Create'}
                   </CustomTypography>
-                </BoxWrapperRow>
+                </BoxWrapperRowStyled>
 
                 <SetupDetails />
                 <TransactionDetails />
+                <TransactionCheck />
               </BoxWrapper>
               <BoxWrapper>
-                <BoxWrapperRow
-                  sx={{ justifyContent: 'flex-start', borderBottom: '1px solid #B6B6B6' }}
-                  gap={2}
-                >
+                <BoxWrapperRowStyled gap={2}>
                   <CustomTypography variant="body2" sx={{ m: 3 }}>
                     Simulation
                   </CustomTypography>
-                </BoxWrapperRow>
-
-                <Manual />
+                </BoxWrapperRowStyled>
                 <Tenderly />
               </BoxWrapper>
 
               <BoxWrapper>
-                <BoxWrapperRow
-                  sx={{ justifyContent: 'flex-start', borderBottom: '1px solid #B6B6B6' }}
-                  gap={2}
-                >
+                <BoxWrapperRowStyled gap={2}>
                   <CustomTypography variant="body2" sx={{ m: 3 }}>
                     Confirm
                   </CustomTypography>
-                </BoxWrapperRow>
+                </BoxWrapperRowStyled>
 
                 <Confirm />
               </BoxWrapper>

@@ -20,9 +20,10 @@ import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { useApp } from 'src/contexts/app.context'
-import { ExecuteStrategyStatus, Position, Strategy } from 'src/contexts/state'
-import { setStrategy, setStrategyStatus } from 'src/contexts/reducers'
-import { getStrategy } from '../../../utils/strategies'
+import { Position, SetupStatus, Strategy } from 'src/contexts/state'
+import { clearSetupWithoutCreate, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
+import { getStrategy } from 'src/utils/strategies'
+import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
 const Form = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,7 +50,7 @@ const Form = () => {
   }, [position, positionConfig])
 
   const {
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
     control,
     setError,
@@ -83,38 +84,52 @@ const Form = () => {
 
   const handleClickOpen = () => {
     setOpen(true)
+    neutralizeBack(handleClose)
   }
 
   const handleClose = () => {
     setOpen(false)
+    revivalBack()
   }
 
-  const onSubmit: SubmitHandler<any> = async (data: any) => {
-    const exitArguments = {
-      rewards_address: data?.rewards_address,
-      max_slippage: data?.max_slippage,
-      token_out_address: data?.token_out_address,
-      bpt_address: data?.bpt_address
-    }
+  const onSubmit: SubmitHandler<any> = React.useCallback(
+    async (data: any) => {
+      // Get label by value for the token_out_address in the positionConfig
 
-    const strategy = {
-      id: data?.strategy,
-      name: data?.strategy,
-      description:
-        positionConfig.find((item: PositionConfig) => item.function_name === data?.strategy)
-          ?.description ?? '',
-      percentage: data?.percentage,
-      blockchain: data?.blockchain,
-      protocol: data?.protocol,
-      position_id: data?.position_id,
-      position_name: position?.lptoken_name,
-      ...exitArguments
-    }
+      // Object is possibly 'undefined'.  TS2532, disable this error
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const tokenOutAddressLabel =
+        positionConfig
+          ?.find((item: PositionConfig) => item?.function_name === data?.strategy)
+          ?.parameters?.find((item: Config) => item?.name === 'token_out_address')
+          ?.options?.find((item: any) => item?.value === data?.token_out_address)?.label ?? ''
 
-    dispatch(setStrategy(strategy as Strategy))
+      const setup = {
+        id: data?.strategy,
+        name: data?.strategy,
+        description:
+          positionConfig?.find((item: PositionConfig) => item.function_name === data?.strategy)
+            ?.description ?? '',
+        percentage: data?.percentage,
+        blockchain: data?.blockchain,
+        protocol: data?.protocol,
+        position_id: data?.position_id,
+        position_name: position?.lptoken_name,
+        rewards_address: data?.rewards_address,
+        max_slippage: data?.max_slippage,
+        token_out_address: data?.token_out_address,
+        token_out_address_label: tokenOutAddressLabel,
+        bpt_address: data?.bpt_address
+      }
 
-    dispatch(setStrategyStatus('create' as ExecuteStrategyStatus))
-  }
+      dispatch(setSetupCreate(setup as Strategy))
+
+      dispatch(setSetupStatus('create' as SetupStatus))
+
+      dispatch(clearSetupWithoutCreate())
+    },
+    [positionConfig, dispatch, position]
+  )
 
   const specificParameters: Config[] =
     (positionConfig as PositionConfig[])?.find(
@@ -123,8 +138,7 @@ const Form = () => {
 
   const parameters = [...commonConfig, ...specificParameters]
 
-  const isExecuteButtonDisabled =
-    Object.keys(errors).length > 0 || isSubmitting || !isDirty || !isValid
+  const isExecuteButtonDisabled = isSubmitting || !isValid
 
   return (
     <>
@@ -209,7 +223,7 @@ const Form = () => {
                             <Tooltip
                               title={
                                 <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                  Please enter a slippage from {min}% to {max}%’
+                                  Please enter a slippage from {min}% to {max}%
                                 </CustomTypography>
                               }
                               sx={{ ml: 1, cursor: 'pointer' }}
@@ -228,10 +242,18 @@ const Form = () => {
                         </Button>
                       </BoxWrapperRow>
                       <PercentageText
-                        key={Date.now()}
+                        key={index}
                         name={name}
                         control={control}
-                        rules={{ required: `Please fill in the field ${label}` }}
+                        rules={{
+                          required: `Please fill in the field ${label}`,
+                          validate: {
+                            required: (value: any) => {
+                              if (!value || value === 0)
+                                return `Please fill in the field ${label} with a value different than 0`
+                            }
+                          }
+                        }}
                         minValue={min || 0}
                         maxValue={max || 100}
                         placeholder={

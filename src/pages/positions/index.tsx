@@ -27,7 +27,7 @@ const PositionsPage = (props: PositionsPageProps): ReactElement => {
     dispatch(addPositions(positions))
 
     dispatch(updateStatus('Finished' as Status))
-  }, [dispatch, positions])
+  }, [dispatch, positions, values])
 
   return <WrapperPositions />
 }

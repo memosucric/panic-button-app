@@ -14,7 +14,8 @@
     "lint:tsc": "tsc -p tsconfig.json",
     "prepare": "husky install",
     "commit": "git-cz",
-    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts"
+    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts",
+    "submodule:sync": "git submodule update --remote"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",

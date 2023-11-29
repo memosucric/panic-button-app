@@ -8,16 +8,12 @@ import {
   getDAOFilePath,
   getStrategyByPositionId
 } from 'src/config/strategies/manager'
-import { PossibleExecutionTypeValues } from 'src/views/Position/Form/Types'
 import * as path from 'path'
+import { EXECUTION_TYPE } from 'src/config/strategies/manager'
 
 type Status = {
-  data: {
-    status: boolean
-    link?: Maybe<string>
-    message?: Maybe<string>
-    error?: Maybe<Error>
-  }
+  data?: Maybe<any>
+  error?: Maybe<Error>
 }
 
 // Create a mapper for DAOs
@@ -67,7 +63,7 @@ export default withApiAuthRequired(async function handler(
     exit_arguments
   } = req.body as {
     strategy: Maybe<string>
-    execution_type: PossibleExecutionTypeValues
+    execution_type: EXECUTION_TYPE
     percentage: Maybe<number>
     position_id: Maybe<string>
     protocol: Maybe<string>
@@ -80,37 +76,32 @@ export default withApiAuthRequired(async function handler(
     }
   }
 
-  const parameters: string[] = []
+  const parameters: any[] = []
 
   // Add the rest of the parameters if needed
-  if (dao) {
-    parameters.push('--dao')
-
-    parameters.push(DAO_MAPPER[dao])
-  }
-
-  if (blockchain) {
-    parameters.push('--blockchain')
-    parameters.push(`${blockchain.toLowerCase()}`)
-  }
-
-  if (execution_type === 'Simulate') {
-    parameters.push('--simulate')
-  }
-
-  if (protocol) {
-    parameters.push('--protocol')
-    parameters.push(`${protocol}`)
-  }
-
   if (percentage) {
     parameters.push('--percentage')
     parameters.push(`${percentage}`)
   }
 
-  if (strategy) {
-    parameters.push('--exitStrategy')
+  if (dao) {
+    parameters.push('--dao')
+    parameters.push(DAO_MAPPER[dao])
+  }
+
+  if (blockchain) {
+    parameters.push('--blockchain')
+    parameters.push(`${blockchain.toUpperCase()}`)
+  }
+
+  if(strategy) {
+    parameters.push('--exit-strategy')
     parameters.push(`${strategy}`)
+  }
+
+  if (protocol) {
+    parameters.push('--protocol')
+    parameters.push(`${protocol}`)
   }
 
   let exitArguments = {}
@@ -149,71 +140,70 @@ export default withApiAuthRequired(async function handler(
   }
 
   if (Object.keys(exitArguments).length > 0) {
-    parameters.push('--exitArguments')
+    parameters.push('--exit-arguments')
     parameters.push(`[${JSON.stringify(exitArguments)}]`)
   }
 
-  const DAOFilePath = getDAOFilePath(dao as DAO, blockchain as unknown as BLOCKCHAIN)
+  const DAOFilePath = getDAOFilePath(dao as DAO, blockchain as BLOCKCHAIN, execution_type as EXECUTION_TYPE)
 
-  return new Promise<void>((resolve, reject) => {
-    try {
-      const scriptFile = path.resolve(process.cwd(), DAOFilePath)
+  console.log('Parameters', parameters)
+  console.log('DAOFilePath', DAOFilePath)
 
-      console.log('parameters', parameters)
-      const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
+  if(execution_type === 'transaction_builder') {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        const scriptFile = path.resolve(process.cwd(), DAOFilePath)
 
-      let buffer = ''
-      python.stdout.on('data', function (data) {
-        buffer += data.toString()
+        const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
 
-        if (buffer.indexOf('DEBUGGER READY') !== -1) {
-          console.log('DEBUGGER READY')
-          console.log('after connect_client')
-        }
-      })
+        let buffer = ''
+        python.stdout.on('data', function (data) {
+          buffer += data.toString()
 
-      python.stderr.on('data', function (data) {
-        console.log(data.toString())
-      })
+          if (buffer.indexOf('DEBUGGER READY') !== -1) {
+            console.log('DEBUGGER READY')
+            console.log('after connect_client')
+          }
+        })
 
-      python.on('error', function (data) {
-        console.log('DEBUG PROGRAM ERROR:')
-        console.error('ERROR: ', data.toString())
-        res.status(500).json({ data: { status: false, error: new Error('Internal Server Error') } })
+        python.stderr.on('data', function (data) {
+          console.log(data.toString())
+        })
+
+        python.on('error', function (data) {
+          console.log('DEBUG PROGRAM ERROR:')
+          console.error('ERROR: ', data.toString())
+          res.status(500).json({ data: { status: false, error: new Error('Internal Server Error') } })
+          reject()
+        })
+
+        python.on('exit', function (code) {
+          console.log('Debug Program Exit', code)
+
+          // destroy python process
+          python.kill()
+
+          let response = undefined
+          console.log('Buffer', buffer)
+          try {
+            response = JSON.parse(buffer)
+          } catch (e) {
+            console.log('Error with buffer, is not a valid json object', e, buffer)
+          }
+
+          const status = response?.status ?? 500
+          const data = response?.tx_data ?? {}
+
+          res.status(+status).json({ data  })
+          resolve()
+        })
+      } catch (error) {
+        console.error('ERROR: ', error)
+        res.status(500).json({ error: error as Error })
         reject()
-      })
+      }
+    })
+  }
 
-      python.on('exit', function (code) {
-        console.log('Debug Program Exit', code)
-
-        // destroy python process
-        python.kill()
-
-        let response: {
-          status?: string
-          link?: string
-          message?: string
-        } = {}
-        try {
-          response = JSON.parse(buffer.replace(/'/g, '"'))
-        } catch (e) {
-          console.log('Error with buffer, is not a valid json object', e, buffer)
-        }
-
-        const status = response?.status ?? 500
-        const link = response?.link ?? ''
-        const message = response?.message ?? ''
-
-        console.log('status', status)
-        console.log('link', link)
-        console.log('message', message)
-        res.status(+status).json({ data: { status: true, link, message } })
-        resolve()
-      })
-    } catch (error) {
-      console.error('ERROR: ', error)
-      res.status(500).json({ data: { status: false, error: error as Error } })
-      reject()
-    }
-  })
+  return res.status(500).json({ data: { error: new Error('Internal Server Error') } })
 })
