@@ -7,15 +7,16 @@ import Paper from '@mui/material/Paper'
 import CustomTypography from 'src/components/CustomTypography'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { useApp } from 'src/contexts/app.context'
+import {SetupStatus} from "src/contexts/state";
 
 const steps = [
   {
     key: 'create',
-    label: 'Create'
+    label: 'Setup details'
   },
   {
     key: 'transaction_build',
-    label: 'Transaction build'
+    label: 'Transaction details'
   },
   {
     key: 'transaction_check',
@@ -35,15 +36,15 @@ export const Stepper = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
-  const { strategy } = state
-  const { status } = strategy
+  const status = state?.setup?.status ?? 'create' as SetupStatus
   const activeStep = React.useMemo(() =>
     steps.findIndex((step) => {
       return step.key === status
     }),
     [status])
 
-  console.log('activeStep', activeStep, status)
+  console.log('activeStep', activeStep)
+  console.log('status', status, state?.setup?.status)
   return (
     <Box sx={{ backgroundColor: 'white', borderRadius: '8px' }}>
       <BoxWrapperRow

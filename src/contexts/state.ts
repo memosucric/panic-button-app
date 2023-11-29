@@ -3,16 +3,6 @@ export enum Status {
   Finished = 'Finished'
 }
 
-export enum ExecuteStrategyStatus {
-  Loading = 'loading',
-  Create = 'create',
-  TransactionBuild = 'transaction_build',
-  TransactionCheck = 'transaction_check',
-  Simulation = 'simulation',
-  Confirm = 'confirm',
-  Error = 'error'
-}
-
 export type Position = {
   position_id: string
   dao: string
@@ -42,15 +32,48 @@ export type TransactionBuild = {
   decodedTransaction: any
 }
 
+export enum SetupItemStatus {
+  NotDone = 'not done',
+  Failed = 'failed',
+  Success = 'success'
+}
+
+export enum SetupStatus {
+  Loading = 'loading',
+  Create = 'create',
+  TransactionBuild = 'transaction_build',
+  TransactionCheck = 'transaction_check',
+  Simulation = 'simulation',
+  Confirm = 'confirm',
+  Error = 'error'
+}
+
 export const initialState: InitialState = {
   status: Status.Loading,
   positions: [],
   selectedPosition: null,
-  strategy: {
-    status: ExecuteStrategyStatus.Loading,
-    create: null,
-    transactionBuild: null,
-    transactionCheck: null
+  setup: {
+    status: SetupStatus.Loading,
+    create: {
+      value: null,
+      status: SetupItemStatus.NotDone
+    },
+    transactionBuild: {
+      value: null,
+      status: SetupItemStatus.NotDone
+    },
+    transactionCheck: {
+      value: null,
+      status: SetupItemStatus.NotDone
+    },
+    simulation: {
+      value: null,
+      status: SetupItemStatus.NotDone
+    },
+    confirm: {
+      value: null,
+      status: SetupItemStatus.NotDone
+    }
   }
 }
 
@@ -58,10 +81,27 @@ export type InitialState = {
   status: Status
   positions: Position[]
   selectedPosition: Maybe<Position>
-  strategy: {
-    status: ExecuteStrategyStatus
-    create: Maybe<Strategy>
-    transactionBuild: Maybe<TransactionBuild>
-    transactionCheck: Maybe<boolean>
+  setup: {
+    status: SetupStatus
+    create: {
+      value: Maybe<Strategy>
+      status: SetupItemStatus
+    },
+    transactionBuild: {
+      value: Maybe<TransactionBuild>
+      status: SetupItemStatus
+    },
+    transactionCheck: {
+      value: Maybe<boolean>
+      status: SetupItemStatus
+    },
+    simulation: {
+      value: Maybe<boolean>
+      status: SetupItemStatus
+    },
+    confirm: {
+      value: Maybe<boolean>
+      status: SetupItemStatus
+    }
   }
 }

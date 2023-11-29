@@ -20,8 +20,14 @@ import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { useApp } from 'src/contexts/app.context'
-import { ExecuteStrategyStatus, Position, Strategy } from 'src/contexts/state'
-import {clearExecutionStage, setStrategy, setStrategyStatus} from 'src/contexts/reducers'
+import {ExecuteStrategyStatus, Position, SetupItemStatus, SetupStatus, Strategy} from 'src/contexts/state'
+import {
+  clearExecutionStage, clearSetupWithoutCreate,
+  setSetupCreate, setSetupCreateStatus,
+  setSetupStatus,
+  setStrategy,
+  setStrategyStatus
+} from 'src/contexts/reducers'
 import { getStrategy } from '../../../utils/strategies'
 
 const Form = () => {
@@ -97,7 +103,7 @@ const Form = () => {
       bpt_address: data?.bpt_address
     }
 
-    const strategy = {
+    const setup = {
       id: data?.strategy,
       name: data?.strategy,
       description:
@@ -111,11 +117,12 @@ const Form = () => {
       ...exitArguments
     }
 
-    dispatch(setStrategy(strategy as Strategy))
+    dispatch(setSetupCreate(setup as Strategy))
 
-    dispatch(setStrategyStatus('create' as ExecuteStrategyStatus))
+    dispatch(setSetupStatus('create' as SetupStatus))
 
-    dispatch(clearExecutionStage())
+    dispatch(clearSetupWithoutCreate())
+
   }
 
   const specificParameters: Config[] =

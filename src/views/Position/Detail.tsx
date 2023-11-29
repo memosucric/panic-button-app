@@ -30,7 +30,8 @@ const Detail = () => {
         backgroundColor: 'custom.grey.light',
         borderRadius: '8px',
         padding: '30px 30px',
-        width: '400px'
+        minWidth: '400px',
+        width: '800px'
       }}
     >
       <BoxWrapperColumn gap={2}>

@@ -59,12 +59,11 @@ export const SetupDetails = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
-  const { strategy } = state
-  const { create } = strategy
+  const createValue = state?.setup?.create?.value || {}
 
   //filter value by LABEL_MAPPER and sort by order
-  const parameters = create
-    ? Object.keys(create)
+  const parameters = createValue
+    ? Object.keys(createValue)
         .filter((key) => LABEL_MAPPER[key as keyof typeof LABEL_MAPPER])
         .sort((a, b) => {
           return (
@@ -76,7 +75,7 @@ export const SetupDetails = () => {
           return {
             key,
             label: LABEL_MAPPER[key as keyof typeof LABEL_MAPPER].label,
-            value: create && create[key as keyof typeof create]
+            value: createValue && createValue[key as keyof typeof createValue]
           }
         })
         .filter(({ value }) => value)
@@ -118,7 +117,7 @@ export const SetupDetails = () => {
                         <TableCell align="right">
                           <BoxWrapperColumn gap={2}>
                             <span>{valueToDisplay}</span>
-                          {key === 'max_slippage' && +value > 10 ? <Alert severity="warning">The user selected a max slippage greater than 10%!</Alert> : null}
+                          {key === 'max_slippage' && +value > 10 ? <Alert severity="warning">High slippage amount is selected</Alert> : null}
                           </BoxWrapperColumn>
                         </TableCell>
                       </TableRow>

@@ -1,4 +1,4 @@
-import { ExecuteStrategyStatus, Position, Status, Strategy, TransactionBuild } from './state'
+import {Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild} from './state'
 
 export enum ActionType {
   UpdateStatus,
@@ -6,11 +6,19 @@ export enum ActionType {
   ClearPositions,
   SetSelectedPosition,
   ClearSelectedPosition,
-  SetStrategy,
-  SetStrategyStatus,
-  SetTransactionBuild,
-  SetTransactionCheck,
-  ClearExecutionStage
+  SetSetupCreate,
+  SetSetupCreateStatus,
+  SetSetupTransactionBuild,
+  SetSetupTransactionBuildStatus,
+  SetSetupTransactionCheck,
+  SetSetupTransactionCheckStatus,
+  SetSetupSimulation,
+  SetSetupSimulationStatus,
+  SetSetupConfirm,
+  SetSetupConfirmStatus,
+  SetSetupStatus,
+  ClearSetup,
+  ClearSetupWithoutCreate
 }
 
 export interface UpdateStatus {
@@ -36,28 +44,66 @@ export interface ClearSelectedPosition {
   type: ActionType.ClearSelectedPosition
 }
 
-export interface SetStrategy {
-  type: ActionType.SetStrategy
+export interface SetSetupCreate {
+  type: ActionType.SetSetupCreate
   payload: Strategy
 }
 
-export interface SetStrategyStatus {
-  type: ActionType.SetStrategyStatus
-  payload: ExecuteStrategyStatus
+export interface SetSetupCreateStatus {
+  type: ActionType.SetSetupCreateStatus
+  payload: SetupItemStatus
 }
 
-export interface SetTransactionBuild {
-  type: ActionType.SetTransactionBuild
+export interface SetSetupTransactionBuild {
+  type: ActionType.SetSetupTransactionBuild
   payload: TransactionBuild
 }
 
-export interface SetTransactionCheck {
-  type: ActionType.SetTransactionCheck
+export interface SetSetupTransactionBuildStatus {
+  type: ActionType.SetSetupTransactionBuildStatus
+  payload: SetupItemStatus
+}
+
+export interface SetSetupTransactionCheck {
+  type: ActionType.SetSetupTransactionCheck
   payload: boolean
 }
 
-export interface ClearExecutionStage {
-  type: ActionType.ClearExecutionStage
+export interface SetSetupTransactionCheckStatus {
+  type: ActionType.SetSetupTransactionCheckStatus
+  payload: SetupItemStatus
+}
+
+export interface SetSetupSimulation {
+  type: ActionType.SetSetupSimulation
+  payload: boolean
+}
+
+export interface SetSetupSimulationStatus {
+  type: ActionType.SetSetupSimulationStatus
+  payload: SetupItemStatus
+}
+
+export interface SetSetupConfirm {
+  type: ActionType.SetSetupConfirm
+  payload: boolean
+}
+
+export interface SetSetupConfirmStatus {
+  type: ActionType.SetSetupConfirmStatus
+  payload: SetupItemStatus
+}
+
+export interface SetSetupStatus {
+  type: ActionType.SetSetupStatus
+  payload: SetupStatus
+}
+
+export interface ClearSetup {
+  type: ActionType.ClearSetup
+}
+export interface ClearSetupWithoutCreate {
+  type: ActionType.ClearSetupWithoutCreate
 }
 
 export type Actions =
@@ -66,8 +112,16 @@ export type Actions =
   | ClearPositions
   | SetSelectedPosition
   | ClearSelectedPosition
-  | SetStrategy
-  | SetStrategyStatus
-  | SetTransactionBuild
-  | SetTransactionCheck
-  | ClearExecutionStage
+  | SetSetupCreate
+  | SetSetupCreateStatus
+  | SetSetupTransactionBuild
+  | SetSetupTransactionBuildStatus
+  | SetSetupTransactionCheck
+  | SetSetupTransactionCheckStatus
+  | SetSetupSimulation
+  | SetSetupSimulationStatus
+  | SetSetupConfirm
+  | SetSetupConfirmStatus
+  | SetSetupStatus
+  | ClearSetup
+  | ClearSetupWithoutCreate
