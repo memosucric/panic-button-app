@@ -1,8 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-ethereum.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import GnosisDao_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-gnosis.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import GnosisLTD_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLTD-ethereum.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import GnosisLTD_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLTD-gnosis.json'
 
 export type DAO =
@@ -33,7 +39,8 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     config: GnosisDao_ethereum,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
-    transactionBuilderFilePath: 'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
+    transactionBuilderFilePath:
+      'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
   },
   {
     name: 'Gnosis Ltd',
@@ -41,7 +48,8 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     config: GnosisLTD_ethereum,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
-    transactionBuilderFilePath: 'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
+    transactionBuilderFilePath:
+      'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
   },
   {
     name: 'Gnosis DAO',
@@ -49,7 +57,8 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     config: GnosisDao_gnosis,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
-    transactionBuilderFilePath: 'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
+    transactionBuilderFilePath:
+      'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
   },
   {
     name: 'Gnosis Ltd',
@@ -57,7 +66,8 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     config: GnosisLTD_gnosis,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
-    transactionBuilderFilePath: 'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
+    transactionBuilderFilePath:
+      'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
   }
 ]
 
