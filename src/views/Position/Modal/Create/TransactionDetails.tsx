@@ -1,23 +1,31 @@
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import {AccordionSummary, Alert, Box, Table, TableBody, TableCell, TableContainer, TableRow} from '@mui/material'
+import {
+  AccordionSummary,
+  Alert,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow
+} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CustomTypography from 'src/components/CustomTypography'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import * as React from 'react'
-import {AccordionWrapper} from 'src/components/Accordion/AccordionWrapper'
-import {useApp} from "src/contexts/app.context"
-import {useMutation} from "react-query"
-import BoxWrapperColumn from "src/components/Wrappers/BoxWrapperColumn"
-import Loading from "src/components/Loading"
+import { AccordionWrapper } from 'src/components/Accordion/AccordionWrapper'
+import { useApp } from 'src/contexts/app.context'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import Loading from 'src/components/Loading'
 import {
   setSetupStatus,
   setSetupTransactionBuild,
   setSetupTransactionBuildStatus,
   setSetupTransactionCheck,
   setSetupTransactionCheckStatus
-} from "src/contexts/reducers";
-import {SetupItemStatus, SetupStatus, TransactionBuild} from "src/contexts/state";
-import {shortenAddress} from "src/utils/string";
+} from 'src/contexts/reducers'
+import { SetupItemStatus, SetupStatus, TransactionBuild } from 'src/contexts/state'
+import { shortenAddress } from 'src/utils/string'
 
 const LABEL_MAPPER = {
   value: {
@@ -54,28 +62,9 @@ const LABEL_MAPPER = {
   }
 }
 
-const fetchTransactionDetail = async (parameters: any) => {
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(parameters),
-  };
-
-  const response = await fetch('/api/execute', options)
-
-  if (!response.ok) {
-    throw new Error('Failed to execute transaction details')
-  }
-
-  const data = await response.json()
-  return data
-}
-
 export const TransactionDetails = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {dispatch, state} = useApp()
+  const { dispatch, state } = useApp()
 
   const [isLoading, setIsLoading] = React.useState(false)
 
@@ -83,8 +72,47 @@ export const TransactionDetails = () => {
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
   const formValue = state?.setup?.create?.value ?? null
 
+  const postData = async (data: any) => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/execute', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+
+      const body = await response.json()
+
+      // check if response is 200
+      if (!response.ok) {
+        throw new Error('Failed to execute transaction details')
+      }
+
+      const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
+
+      const isTransactionChecked = !!transaction && !!decodedTransaction
+      if (isTransactionChecked) {
+        dispatch(setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild))
+        dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
+
+        dispatch(setSetupTransactionCheck(isTransactionChecked))
+        dispatch(setSetupTransactionCheckStatus('success' as SetupItemStatus))
+
+        dispatch(setSetupStatus('transaction_check' as SetupStatus))
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
+      dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
+    }
+    setIsLoading(false)
+  }
+
   React.useEffect(() => {
-    if(!formValue || isLoading) return
+    if (!formValue || isLoading) return
     const {
       name: strategy,
       percentage,
@@ -114,53 +142,12 @@ export const TransactionDetails = () => {
       }
     }
 
-    postData(parameters);
-  }, [formValue])
-
-  const postData = async (data: any) => {
-    try {
-      setIsLoading(true)
-      const response = await fetch('/api/execute', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      const body = await response.json();
-
-      // check if response is 200
-      if (!response.ok) {
-        throw new Error('Failed to execute transaction details')
-      }
-
-      const {transaction, decoded_transaction: decodedTransaction} = body?.data ?? {}
-
-      const isTransactionChecked = !!transaction && !!decodedTransaction
-      if(isTransactionChecked) {
-        dispatch(setSetupTransactionBuild({transaction, decodedTransaction} as TransactionBuild))
-        dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
-
-        dispatch(setSetupTransactionCheck(isTransactionChecked))
-        dispatch(setSetupTransactionCheckStatus('success' as SetupItemStatus))
-
-        dispatch(setSetupStatus('transaction_check' as SetupStatus))
-      }
-
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
-      dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
-    }
-    setIsLoading(false)
-  };
+    postData(parameters)
+  }, [formValue, isLoading, postData])
 
   const parameters = React.useMemo(() => {
     if (!transactionBuildValue) return []
-    const {transaction} = transactionBuildValue
+    const { transaction } = transactionBuildValue
 
     return Object.keys(transaction)
       .filter((key) => LABEL_MAPPER[key as keyof typeof LABEL_MAPPER])
@@ -177,15 +164,14 @@ export const TransactionDetails = () => {
           value: transaction[key as keyof typeof transaction]
         }
       })
-      .filter(({value}) => value)
+      .filter(({ value }) => value)
   }, [transactionBuildValue])
 
-
   return (
-    <BoxWrapperRow gap={2} sx={{m: 3, backgroundColor: 'custom.grey.light'}}>
-      <AccordionWrapper sx={{width: '100%'}}>
+    <BoxWrapperRow gap={2} sx={{ m: 3, backgroundColor: 'custom.grey.light' }}>
+      <AccordionWrapper sx={{ width: '100%' }}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon/>}
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
@@ -193,28 +179,31 @@ export const TransactionDetails = () => {
             <CustomTypography variant={'body2'}>Transaction details</CustomTypography>
           </BoxWrapperRow>
         </AccordionSummary>
-        <AccordionDetails sx={{justifyContent: 'flex-start', display: 'flex'}}>
-          <BoxWrapperColumn sx={{width: '100%'}} gap={2}>
-            {isLoading && <Loading minHeight={'120px'}/>}
+        <AccordionDetails sx={{ justifyContent: 'flex-start', display: 'flex' }}>
+          <BoxWrapperColumn sx={{ width: '100%' }} gap={2}>
+            {isLoading && <Loading minHeight={'120px'} />}
             {transactionBuildValue && parameters?.length > 0 && !isLoading && (
               <>
                 <TableContainer>
-                  <Table sx={{minWidth: 350}}>
+                  <Table sx={{ minWidth: 350 }}>
                     <TableBody>
-                      {parameters.map(({label, value, key}, index) => {
+                      {parameters.map(({ label, value, key }, index) => {
                         if (!value || !label) return null
 
                         return (
                           <TableRow
                             key={index}
-                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                           >
                             <TableCell component="th" scope="row">
                               {label}
                             </TableCell>
                             <TableCell align="right">
-                              {key === 'to' || key === 'from' ?
-                                <span title={value}>{shortenAddress(value)}</span> : value}
+                              {key === 'to' || key === 'from' ? (
+                                <span title={value}>{shortenAddress(value)}</span>
+                              ) : (
+                                value
+                              )}
                             </TableCell>
                           </TableRow>
                         )
@@ -224,27 +213,34 @@ export const TransactionDetails = () => {
                 </TableContainer>
               </>
             )}
-            {transactionBuildValue && transactionBuildValue?.decodedTransaction && !isLoading &&
-              (
-                <BoxWrapperColumn sx={{
+            {transactionBuildValue && transactionBuildValue?.decodedTransaction && !isLoading && (
+              <BoxWrapperColumn
+                sx={{
                   width: '100%',
                   justifyContent: 'flex-start',
                   alignItems: 'flex-start',
                   fontSize: '0.8rem'
-                }}>
-                  <CustomTypography variant={'body2'}>
-                    Decoded Transaction
-                  </CustomTypography>
-                  <Box sx={{ width: '-webkit-fill-available;', overflow: 'auto', maxHeight: '400px', padding: '16px'}}>
-                    <pre id="json">
-                      <code>{JSON.stringify(transactionBuildValue?.decodedTransaction, null, 2)}</code>
-                    </pre>
-                  </Box>
-                </BoxWrapperColumn>
-              )
-            }
+                }}
+              >
+                <CustomTypography variant={'body2'}>Decoded Transaction</CustomTypography>
+                <Box
+                  sx={{
+                    width: '-webkit-fill-available;',
+                    overflow: 'auto',
+                    maxHeight: '400px',
+                    padding: '16px'
+                  }}
+                >
+                  <pre id="json">
+                    <code>
+                      {JSON.stringify(transactionBuildValue?.decodedTransaction, null, 2)}
+                    </code>
+                  </pre>
+                </Box>
+              </BoxWrapperColumn>
+            )}
 
-            {transactionBuildStatus === 'failed' as SetupItemStatus && !isLoading && (
+            {transactionBuildStatus === ('failed' as SetupItemStatus) && !isLoading && (
               <BoxWrapperRow>
                 <Alert severity="error">There was an error decoding the transaction</Alert>
               </BoxWrapperRow>
