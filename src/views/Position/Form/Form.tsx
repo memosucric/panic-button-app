@@ -27,6 +27,7 @@ import {
   setSetupStatus,
 } from 'src/contexts/reducers'
 import {getStrategy} from 'src/utils/strategies'
+import {neutralizeBack, revivalBack} from "src/utils/modal"
 
 const Form = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -87,10 +88,12 @@ const Form = () => {
 
   const handleClickOpen = () => {
     setOpen(true)
+    neutralizeBack(handleClose)
   }
 
   const handleClose = () => {
     setOpen(false)
+    revivalBack()
   }
 
   const onSubmit: SubmitHandler<any> = React.useCallback(async (data: any) => {
@@ -242,7 +245,14 @@ const Form = () => {
                         key={Date.now()}
                         name={name}
                         control={control}
-                        rules={{required: `Please fill in the field ${label}`}}
+                        rules={{
+                          required: `Please fill in the field ${label}`,
+                          validate: {
+                            required: (value) => {
+                              if (!value || value === 0) return `Please fill in the field ${label} with a value different than 0`
+                            }
+                          },
+                        }}
                         minValue={min || 0}
                         maxValue={max || 100}
                         placeholder={
