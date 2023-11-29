@@ -1,5 +1,5 @@
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { Button } from '@mui/material'
+import {useForm, SubmitHandler} from 'react-hook-form'
+import {Button} from '@mui/material'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
 
@@ -11,31 +11,29 @@ import {
   PositionConfig
 } from 'src/config/strategies/manager'
 import InputRadio from './InputRadio'
-import { Label } from './Label'
-import { Title } from './Title'
+import {Label} from './Label'
+import {Title} from './Title'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import { PercentageText } from './PercentageText'
-import { Modal } from '../Modal/Modal'
+import {PercentageText} from './PercentageText'
+import {Modal} from '../Modal/Modal'
 import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
-import { useApp } from 'src/contexts/app.context'
-import {ExecuteStrategyStatus, Position, SetupItemStatus, SetupStatus, Strategy} from 'src/contexts/state'
+import {useApp} from 'src/contexts/app.context'
+import {Position, SetupStatus, Strategy} from 'src/contexts/state'
 import {
-  clearExecutionStage, clearSetupWithoutCreate,
-  setSetupCreate, setSetupCreateStatus,
+  clearSetupWithoutCreate,
+  setSetupCreate,
   setSetupStatus,
-  setStrategy,
-  setStrategyStatus
 } from 'src/contexts/reducers'
-import { getStrategy } from '../../../utils/strategies'
+import {getStrategy} from 'src/utils/strategies'
 
 const Form = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { dispatch, state } = useApp()
-  const { selectedPosition: position } = state
+  const {dispatch, state} = useApp()
+  const {selectedPosition: position} = state
 
-  const { positionConfig, commonConfig } = getStrategy(position as Position)
+  const {positionConfig, commonConfig} = getStrategy(position as Position)
 
   const [open, setOpen] = React.useState(false)
 
@@ -55,7 +53,7 @@ const Form = () => {
   }, [position, positionConfig])
 
   const {
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: {errors, isSubmitting, isValid},
     handleSubmit,
     control,
     setError,
@@ -95,18 +93,19 @@ const Form = () => {
     setOpen(false)
   }
 
-  const onSubmit: SubmitHandler<any> = async (data: any) => {
+  const onSubmit: SubmitHandler<any> = React.useCallback(async (data: any) => {
     // Get label by value for the token_out_address in the positionConfig
-    const tokenOutAddressLabel = positionConfig
-      .find((item: PositionConfig) => item.function_name === data?.strategy)
-      ?.parameters.find((item: Config) => item.name === 'token_out_address')
-      ?.options.find((item: any) => item.value === data?.token_out_address)?.label
+
+    const tokenOutAddressLabel = (positionConfig as PositionConfig[])
+      ?.find((item: PositionConfig) => item?.function_name === data?.strategy)
+      ?.parameters.find((item: Config) => item?.name === 'token_out_address')
+      ?.options.find((item: any) => item?.value === data?.token_out_address)?.label ?? ''
 
     const setup = {
       id: data?.strategy,
       name: data?.strategy,
       description:
-        positionConfig.find((item: PositionConfig) => item.function_name === data?.strategy)
+        positionConfig?.find((item: PositionConfig) => item.function_name === data?.strategy)
           ?.description ?? '',
       percentage: data?.percentage,
       blockchain: data?.blockchain,
@@ -127,7 +126,7 @@ const Form = () => {
 
     dispatch(clearSetupWithoutCreate())
 
-  }
+  }, [positionConfig, dispatch])
 
   const specificParameters: Config[] =
     (positionConfig as PositionConfig[])?.find(
@@ -144,7 +143,7 @@ const Form = () => {
         <BoxWrapperColumn gap={2}>
           <BoxWrapperColumn gap={6}>
             <BoxWrapperColumn gap={2}>
-              <Title title={'Exit strategies'} />
+              <Title title={'Exit strategies'}/>
               <BoxWrapperColumn gap={2}>
                 <InputRadio
                   name={'strategy'}
@@ -170,9 +169,9 @@ const Form = () => {
             </BoxWrapperColumn>
 
             <BoxWrapperColumn gap={2}>
-              <Title title={'Parameters'} />
+              <Title title={'Parameters'}/>
               {parameters.map((parameter: Config, index: number) => {
-                const { name, label = '', type, rules, options } = parameter
+                const {name, label = '', type, rules, options} = parameter
 
                 if (type === 'constant') {
                   return null
@@ -204,7 +203,7 @@ const Form = () => {
                 const onClickApplyMax = () => {
                   if (max !== undefined) {
                     clearErrors(name as any)
-                    setValue(name as any, max, { shouldValidate: true })
+                    setValue(name as any, max, {shouldValidate: true})
                   }
                 }
 
@@ -214,19 +213,19 @@ const Form = () => {
 
                   return (
                     <BoxWrapperColumn gap={2} key={index}>
-                      <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+                      <BoxWrapperRow sx={{justifyContent: 'space-between'}}>
                         <BoxWrapperRow gap={2}>
-                          <Label title={label} />
+                          <Label title={label}/>
                           {name === 'max_slippage' ? (
                             <Tooltip
                               title={
-                                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
+                                <CustomTypography variant="body2" sx={{color: 'common.white'}}>
                                   Please enter a slippage from {min}% to {max}%
                                 </CustomTypography>
                               }
-                              sx={{ ml: 1, cursor: 'pointer' }}
+                              sx={{ml: 1, cursor: 'pointer'}}
                             >
-                              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
+                              <InfoIcon sx={{fontSize: 24, cursor: 'pointer'}}/>
                             </Tooltip>
                           ) : null}
                         </BoxWrapperRow>
@@ -243,7 +242,7 @@ const Form = () => {
                         key={Date.now()}
                         name={name}
                         control={control}
-                        rules={{ required: `Please fill in the field ${label}` }}
+                        rules={{required: `Please fill in the field ${label}`}}
                         minValue={min || 0}
                         maxValue={max || 100}
                         placeholder={
@@ -259,7 +258,7 @@ const Form = () => {
                 if (haveOptions) {
                   return (
                     <BoxWrapperColumn gap={2} key={index}>
-                      <Label title={label} />
+                      <Label title={label}/>
                       <InputRadio
                         name={name}
                         control={control}
@@ -285,7 +284,7 @@ const Form = () => {
             onClick={handleClickOpen}
             variant="contained"
             size="large"
-            sx={{ height: '60px', marginTop: '30px' }}
+            sx={{height: '60px', marginTop: '30px'}}
             disabled={isExecuteButtonDisabled}
             type={'submit'}
           >
@@ -293,7 +292,7 @@ const Form = () => {
           </Button>
         </BoxWrapperColumn>
       </form>
-      <Modal open={open} handleClose={handleClose} />
+      <Modal open={open} handleClose={handleClose}/>
     </>
   )
 }
