@@ -15,6 +15,7 @@ import {Tenderly} from './Simulation/Tenderly'
 import {Confirm} from './Confirm/Confirm'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import {Stepper} from "./Stepper";
+import {useApp} from "../../../contexts/app.context";
 
 const queryClient = new QueryClient()
 
@@ -35,6 +36,9 @@ const BoxWrapperRowStyled = styled(BoxWrapperRow)(() => ({
 
 export const Modal = (props: ModalProps) => {
   const {open, handleClose} = props
+  const {dispatch, state} = useApp()
+
+  const createValue = state?.setup?.create?.value || {}
 
   return (
     <Dialog
@@ -68,7 +72,7 @@ export const Modal = (props: ModalProps) => {
                 <BoxWrapper>
                   <BoxWrapperRowStyled gap={2}>
                     <CustomTypography variant="body2" sx={{m: 3}}>
-                      Create
+                      {createValue?.description ?? 'Create'}
                     </CustomTypography>
                   </BoxWrapperRowStyled>
 

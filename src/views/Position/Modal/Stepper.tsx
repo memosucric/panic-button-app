@@ -12,7 +12,7 @@ import {SetupStatus} from "src/contexts/state";
 const steps = [
   {
     key: 'create',
-    label: 'Setup details'
+    label: 'Overview'
   },
   {
     key: 'transaction_build',
@@ -43,8 +43,6 @@ export const Stepper = () => {
     }),
     [status])
 
-  console.log('activeStep', activeStep)
-  console.log('status', status, state?.setup?.status)
   return (
     <Box sx={{ backgroundColor: 'white', borderRadius: '8px' }}>
       <BoxWrapperRow

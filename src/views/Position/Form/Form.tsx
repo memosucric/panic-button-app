@@ -96,12 +96,11 @@ const Form = () => {
   }
 
   const onSubmit: SubmitHandler<any> = async (data: any) => {
-    const exitArguments = {
-      rewards_address: data?.rewards_address,
-      max_slippage: data?.max_slippage,
-      token_out_address: data?.token_out_address,
-      bpt_address: data?.bpt_address
-    }
+    // Get label by value for the token_out_address in the positionConfig
+    const tokenOutAddressLabel = positionConfig
+      .find((item: PositionConfig) => item.function_name === data?.strategy)
+      ?.parameters.find((item: Config) => item.name === 'token_out_address')
+      ?.options.find((item: any) => item.value === data?.token_out_address)?.label
 
     const setup = {
       id: data?.strategy,
@@ -114,8 +113,13 @@ const Form = () => {
       protocol: data?.protocol,
       position_id: data?.position_id,
       position_name: position?.lptoken_name,
-      ...exitArguments
+      rewards_address: data?.rewards_address,
+      max_slippage: data?.max_slippage,
+      token_out_address: data?.token_out_address,
+      token_out_address_label: tokenOutAddressLabel,
+      bpt_address: data?.bpt_address
     }
+
 
     dispatch(setSetupCreate(setup as Strategy))
 
@@ -132,8 +136,7 @@ const Form = () => {
 
   const parameters = [...commonConfig, ...specificParameters]
 
-  const isExecuteButtonDisabled =
-    Object.keys(errors).length > 0 || isSubmitting || !isDirty || !isValid
+  const isExecuteButtonDisabled = isSubmitting || !isValid
 
   return (
     <>

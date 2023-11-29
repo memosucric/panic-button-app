@@ -19,6 +19,7 @@ export type Strategy = {
   rewards_address: Maybe<string>
   max_slippage: Maybe<number>
   token_out_address: Maybe<string>
+  token_out_address_label: Maybe<string>
   bpt_address: Maybe<string>
   percentage: Maybe<number>
   blockchain: Maybe<string>

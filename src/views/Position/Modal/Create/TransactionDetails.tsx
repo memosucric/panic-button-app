@@ -196,7 +196,7 @@ export const TransactionDetails = () => {
         <AccordionDetails sx={{justifyContent: 'flex-start', display: 'flex'}}>
           <BoxWrapperColumn sx={{width: '100%'}} gap={2}>
             {isLoading && <Loading minHeight={'120px'}/>}
-            {transactionBuildValue && parameters?.length > 0 && (
+            {transactionBuildValue && parameters?.length > 0 && !isLoading && (
               <>
                 <TableContainer>
                   <Table sx={{minWidth: 350}}>
@@ -224,7 +224,7 @@ export const TransactionDetails = () => {
                 </TableContainer>
               </>
             )}
-            {transactionBuildValue && transactionBuildValue?.decodedTransaction &&
+            {transactionBuildValue && transactionBuildValue?.decodedTransaction && !isLoading &&
               (
                 <BoxWrapperColumn sx={{
                   width: '100%',
@@ -244,7 +244,7 @@ export const TransactionDetails = () => {
               )
             }
 
-            {transactionBuildStatus === 'failed' as SetupItemStatus && (
+            {transactionBuildStatus === 'failed' as SetupItemStatus && !isLoading && (
               <BoxWrapperRow>
                 <Alert severity="error">There was an error decoding the transaction</Alert>
               </BoxWrapperRow>
