@@ -1,7 +1,6 @@
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import {
   AccordionSummary,
-  Alert,
   Box,
   Table,
   TableBody,
@@ -16,7 +15,6 @@ import * as React from 'react'
 import { AccordionWrapper } from 'src/components/Accordion/AccordionWrapper'
 import { useApp } from 'src/contexts/app.context'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
-import Loading from 'src/components/Loading'
 import {
   setSetupStatus,
   setSetupTransactionBuild,
@@ -62,6 +60,18 @@ const LABEL_MAPPER = {
   }
 }
 
+const WaitingDecodingTransaction = () => {
+  return (
+    <BoxWrapperColumn
+      sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', padding: '16px' }}
+    >
+      <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
+        Waiting for decoding transaction process...
+      </CustomTypography>
+    </BoxWrapperColumn>
+  )
+}
+
 export const TransactionDetails = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
@@ -71,6 +81,9 @@ export const TransactionDetails = () => {
   const transactionBuildValue = state?.setup?.transactionBuild?.value ?? null
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
   const formValue = state?.setup?.create?.value ?? null
+
+  const [error, setError] = React.useState<Maybe<Error>>(null)
+  const [expanded, setExpanded] = React.useState('panel1')
 
   React.useEffect(() => {
     if (!formValue) return
@@ -120,7 +133,9 @@ export const TransactionDetails = () => {
 
         // check if response is 200
         if (!response.ok) {
-          throw new Error('Failed to execute transaction details')
+          const errorMessage =
+            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          throw new Error(errorMessage)
         }
 
         const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
@@ -139,8 +154,8 @@ export const TransactionDetails = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error)
+        setError(error as Error)
         dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
-        dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
       }
       setIsLoading(false)
     }
@@ -170,9 +185,17 @@ export const TransactionDetails = () => {
       .filter(({ value }) => value)
   }, [transactionBuildValue])
 
+  const handleChange = (panel: any) => (event: any, newExpanded: any) => {
+    setExpanded(newExpanded ? panel : false)
+  }
+
   return (
     <BoxWrapperRow gap={2} sx={{ m: 3, backgroundColor: 'custom.grey.light' }}>
-      <AccordionWrapper sx={{ width: '100%' }}>
+      <AccordionWrapper
+        expanded={expanded === 'panel1'}
+        onChange={handleChange('panel1')}
+        sx={{ width: '100%' }}
+      >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -184,7 +207,7 @@ export const TransactionDetails = () => {
         </AccordionSummary>
         <AccordionDetails sx={{ justifyContent: 'flex-start', display: 'flex' }}>
           <BoxWrapperColumn sx={{ width: '100%' }} gap={2}>
-            {isLoading && <Loading minHeight={'120px'} />}
+            {isLoading && <WaitingDecodingTransaction />}
             {transactionBuildValue && parameters?.length > 0 && !isLoading && (
               <>
                 <TableContainer>
@@ -231,7 +254,9 @@ export const TransactionDetails = () => {
                     width: '-webkit-fill-available;',
                     overflow: 'auto',
                     maxHeight: '400px',
-                    padding: '16px'
+                    padding: '16px',
+                    marginTop: '16px',
+                    marginBottom: '16px'
                   }}
                 >
                   <pre id="json">
@@ -244,8 +269,12 @@ export const TransactionDetails = () => {
             )}
 
             {transactionBuildStatus === ('failed' as SetupItemStatus) && !isLoading && (
-              <BoxWrapperRow>
-                <Alert severity="error">There was an error decoding the transaction</Alert>
+              <BoxWrapperRow sx={{ justifyContent: 'flex-start' }}>
+                <CustomTypography variant={'body2'} sx={{ color: 'red' }}>
+                  {error?.message && typeof error?.message === 'string'
+                    ? error?.message
+                    : 'Error decoding transaction'}
+                </CustomTypography>
               </BoxWrapperRow>
             )}
           </BoxWrapperColumn>
