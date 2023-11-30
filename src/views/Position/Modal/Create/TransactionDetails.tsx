@@ -73,7 +73,8 @@ export const TransactionDetails = () => {
   const formValue = state?.setup?.create?.value ?? null
 
   React.useEffect(() => {
-    if (!formValue || isLoading) return
+    if (!formValue) return
+
     const {
       name: strategy,
       percentage,
@@ -145,7 +146,7 @@ export const TransactionDetails = () => {
     }
 
     postData(parameters)
-  }, [formValue, isLoading, dispatch])
+  }, [formValue])
 
   const parameters = React.useMemo(() => {
     if (!transactionBuildValue) return []
