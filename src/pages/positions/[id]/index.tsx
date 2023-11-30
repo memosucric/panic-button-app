@@ -11,12 +11,23 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
-import {HEADER_HEIGHT} from "src/components/Layout/Header";
-import {FOOTER_HEIGHT} from "src/components/Layout/Footer";
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
+import CustomTypography from '../../../components/CustomTypography'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
   position: Maybe<Position>
+}
+
+const PositionDoesntExist = () => {
+  return (
+    <BoxContainerWrapper>
+      <CustomTypography variant="h3" align="center" style={{ marginTop: '35vh' }}>
+        Position doesn't exist, please try again.
+      </CustomTypography>
+    </BoxContainerWrapper>
+  )
 }
 
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
@@ -38,12 +49,15 @@ const PositionIndex = (props: PositionIndexProps): ReactElement => {
 
   return (
     <>
-      {status === 'Loading' && <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`}  />}
-      {status === 'Finished' && (
+      {status === 'Loading' && (
+        <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+      )}
+      {status === 'Finished' && position && (
         <BoxContainerWrapper>
           <PositionDetail />
         </BoxContainerWrapper>
       )}
+      {status === 'Finished' && !position && <PositionDoesntExist />}
     </>
   )
 }

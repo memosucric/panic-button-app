@@ -28,8 +28,8 @@ export const TransactionCheck = () => {
         <Tooltip
           title={
             <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua.
+              Perform a simulation using a local eth_call. If it is valid, it proceeds to decode the
+              transaction. If not, it will return an error.
             </CustomTypography>
           }
           sx={{ ml: 1, cursor: 'pointer' }}
