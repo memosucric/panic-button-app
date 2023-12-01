@@ -94,7 +94,7 @@ export default withApiAuthRequired(async function handler(
     parameters.push(`${blockchain.toUpperCase()}`)
   }
 
-  if(strategy) {
+  if (strategy) {
     parameters.push('--exit-strategy')
     parameters.push(`${strategy}`)
   }
@@ -144,12 +144,16 @@ export default withApiAuthRequired(async function handler(
     parameters.push(`[${JSON.stringify(exitArguments)}]`)
   }
 
-  const DAOFilePath = getDAOFilePath(dao as DAO, blockchain as BLOCKCHAIN, execution_type as EXECUTION_TYPE)
+  const DAOFilePath = getDAOFilePath(
+    dao as DAO,
+    blockchain as BLOCKCHAIN,
+    execution_type as EXECUTION_TYPE
+  )
 
   console.log('Parameters', parameters)
   console.log('DAOFilePath', DAOFilePath)
 
-  if(execution_type === 'transaction_builder') {
+  if (execution_type === 'transaction_builder') {
     return new Promise<void>((resolve, reject) => {
       try {
         const scriptFile = path.resolve(process.cwd(), DAOFilePath)
@@ -173,7 +177,9 @@ export default withApiAuthRequired(async function handler(
         python.on('error', function (data) {
           console.log('DEBUG PROGRAM ERROR:')
           console.error('ERROR: ', data.toString())
-          res.status(500).json({ data: { status: false, error: new Error('Internal Server Error') } })
+          res
+            .status(500)
+            .json({ data: { status: false, error: new Error('Internal Server Error') } })
           reject()
         })
 
@@ -192,9 +198,13 @@ export default withApiAuthRequired(async function handler(
           }
 
           const status = response?.status ?? 500
-          const data = response?.tx_data ?? {}
 
-          res.status(+status).json({ data  })
+          const body = {
+            data: status === 200 ? response?.tx_data ?? {} : {},
+            error: status !== 200 ? response?.message ?? {} : {}
+          }
+
+          res.status(+status).json({ ...body })
           resolve()
         })
       } catch (error) {

@@ -34,6 +34,7 @@ const Form = () => {
 
   const [open, setOpen] = React.useState(false)
 
+  const [keyIndex, setKeyIndex] = React.useState(1)
   // If we don't do this, the application will rerender every time
   const defaultValues: DEFAULT_VALUES_TYPE = React.useMemo(() => {
     return {
@@ -158,6 +159,7 @@ const Form = () => {
                     setValue('rewards_address', null)
                     setValue('token_out_address', null)
                     setValue('bpt_address', null)
+                    setKeyIndex(keyIndex + 1)
                   }}
                   options={positionConfig.map((item: PositionConfig) => {
                     return {
@@ -215,7 +217,7 @@ const Form = () => {
                     name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
 
                   return (
-                    <BoxWrapperColumn gap={2} key={index}>
+                    <BoxWrapperColumn gap={2} key={`${index}_${keyIndex}`}>
                       <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
                         <BoxWrapperRow gap={2}>
                           <Label title={label} />
@@ -242,7 +244,6 @@ const Form = () => {
                         </Button>
                       </BoxWrapperRow>
                       <PercentageText
-                        key={index}
                         name={name}
                         control={control}
                         rules={{
