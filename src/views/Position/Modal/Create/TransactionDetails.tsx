@@ -131,8 +131,19 @@ export const TransactionDetails = () => {
 
         const body = await response.json()
 
-        // check if response is 200
-        if (!response.ok) {
+        const { status } = response
+
+        // check if response is 422
+        if (status === 422) {
+          const errorMessage =
+            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          dispatch(setSetupTransactionCheck(false))
+          dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
+
+          throw new Error(errorMessage)
+        }
+
+        if (status === 500) {
           const errorMessage =
             typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
           throw new Error(errorMessage)
@@ -140,7 +151,8 @@ export const TransactionDetails = () => {
 
         const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
 
-        const isTransactionChecked = !!transaction && !!decodedTransaction
+        // Here we check for the code 200
+        const isTransactionChecked = !!transaction && !!decodedTransaction && status === 200
         if (isTransactionChecked) {
           dispatch(
             setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
