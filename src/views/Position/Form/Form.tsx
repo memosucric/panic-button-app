@@ -253,7 +253,7 @@ const Form = () => {
                         name={name}
                         control={control}
                         rules={{
-                          required: `Please fill in the field ${label}`,
+                          required: `Please enter a value between ${min}% and ${max}%`,
                           validate: {
                             required: (value: any) => {
                               if (!value || value === 0)
