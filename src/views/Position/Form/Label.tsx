@@ -14,7 +14,8 @@ export const Label = ({ title }: FormLabelProps) => {
         fontWeight: 500,
         fontSize: 18,
         lineHeight: '18px',
-        color: 'custom.grey.dark'
+        color: 'custom.grey.dark',
+        textTransform: 'capitalize'
       }}
     >
       {title}
