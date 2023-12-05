@@ -257,7 +257,7 @@ const Form = () => {
                           validate: {
                             required: (value: any) => {
                               if (!value || value === 0)
-                                return `Please fill in the field ${label} with a value different than 0`
+                                return `Please enter a value between ${min}% and ${max}%`
                             }
                           }
                         }}
