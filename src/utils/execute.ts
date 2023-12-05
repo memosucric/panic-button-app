@@ -1,7 +1,16 @@
-import path from "path";
-import {spawn} from "child_process";
+import path from 'path'
+import { spawn } from 'child_process'
 
-export const TransactionBuilderPromise = (filePath: string, parameters: any) => {
+interface TransactionBuilderReturn {
+  status: number
+  data: any
+  error?: Error
+}
+
+export const TransactionBuilderPromise = (
+  filePath: string,
+  parameters: any
+): Promise<TransactionBuilderReturn> => {
   return new Promise((resolve, reject) => {
     try {
       const scriptFile = path.resolve(process.cwd(), filePath)
@@ -20,13 +29,12 @@ export const TransactionBuilderPromise = (filePath: string, parameters: any) => 
 
       python.stderr.on('data', function (data) {
         console.log(data.toString())
-        reject({ status: 500, error: new Error(data.toString())})
       })
 
       python.on('error', function (data) {
         console.log('DEBUG PROGRAM ERROR:')
         console.error('ERROR: ', data.toString())
-        reject({ status: 500, error: new Error('Internal Server Error') } )
+        reject({ status: 500, error: new Error(data.toString()) })
       })
 
       python.on('exit', function (code) {
@@ -44,13 +52,23 @@ export const TransactionBuilderPromise = (filePath: string, parameters: any) => 
         }
 
         const status = response?.status ?? 500
-        const data = response?.tx_data ?? {}
 
-        resolve({ status, data})
+        const body = {
+          data: status === 200 ? response?.tx_data ?? {} : {},
+          error: status !== 200 ? response?.message ?? {} : {}
+        }
+
+        resolve({
+          status: +status,
+          ...body
+        })
       })
     } catch (error) {
-      console.error('ERROR: ', error)
-      reject({ status: 500, error: error as Error})
+      console.error('ERROR Reject: ', error)
+      reject({
+        status: 500,
+        error: error as Error
+      })
     }
   })
 }

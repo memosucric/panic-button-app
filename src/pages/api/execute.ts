@@ -1,5 +1,4 @@
 import { withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import {
@@ -8,8 +7,8 @@ import {
   getDAOFilePath,
   getStrategyByPositionId
 } from 'src/config/strategies/manager'
-import * as path from 'path'
 import { EXECUTION_TYPE } from 'src/config/strategies/manager'
+import { TransactionBuilderPromise } from 'src/utils/execute'
 
 type Status = {
   data?: Maybe<any>
@@ -154,66 +153,24 @@ export default withApiAuthRequired(async function handler(
   console.log('DAOFilePath', DAOFilePath)
 
   if (execution_type === 'transaction_builder') {
-    return new Promise<void>((resolve, reject) => {
-      try {
-        const scriptFile = path.resolve(process.cwd(), DAOFilePath)
+    try {
+      const {
+        status = 500,
+        data = {},
+        error
+      } = await TransactionBuilderPromise(DAOFilePath, parameters)
 
-        const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
-
-        let buffer = ''
-        python.stdout.on('data', function (data) {
-          buffer += data.toString()
-
-          if (buffer.indexOf('DEBUGGER READY') !== -1) {
-            console.log('DEBUGGER READY')
-            console.log('after connect_client')
-          }
-        })
-
-        python.stderr.on('data', function (data) {
-          console.log(data.toString())
-        })
-
-        python.on('error', function (data) {
-          console.log('DEBUG PROGRAM ERROR:')
-          console.error('ERROR: ', data.toString())
-          res
-            .status(500)
-            .json({ data: { status: false, error: new Error('Internal Server Error') } })
-          reject()
-        })
-
-        python.on('exit', function (code) {
-          console.log('Debug Program Exit', code)
-
-          // destroy python process
-          python.kill()
-
-          let response = undefined
-          console.log('Buffer', buffer)
-          try {
-            response = JSON.parse(buffer)
-          } catch (e) {
-            console.log('Error with buffer, is not a valid json object', e, buffer)
-          }
-
-          const status = response?.status ?? 500
-
-          const body = {
-            data: status === 200 ? response?.tx_data ?? {} : {},
-            error: status !== 200 ? response?.message ?? {} : {}
-          }
-
-          res.status(+status).json({ ...body })
-          resolve()
-        })
-      } catch (error) {
+      if (error) {
         console.error('ERROR: ', error)
-        res.status(500).json({ error: error as Error })
-        reject()
+        return res.status(status).json({ error: error as Error })
       }
-    })
+
+      return res.status(status).json(data)
+    } catch (error) {
+      console.error('ERROR Reject: ', error)
+      return res.status(500).json({ error: error as Error })
+    }
   }
 
-  return res.status(500).json({ data: { error: new Error('Internal Server Error') } })
+  return res.status(500).json({ error: new Error('Internal Server Error') })
 })
