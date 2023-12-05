@@ -24,6 +24,9 @@ import {
 } from 'src/contexts/reducers'
 import { SetupItemStatus, SetupStatus, TransactionBuild } from 'src/contexts/state'
 import { shortenAddress } from 'src/utils/string'
+import { formatUnits } from 'ethers'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 
 const LABEL_MAPPER = {
   value: {
@@ -227,6 +230,12 @@ export const TransactionDetails = () => {
                     <TableBody>
                       {parameters.map(({ label, value, key }, index) => {
                         if (!value || !label) return null
+                        let valueInGwei = null
+                        const isGasKey =
+                          key === 'gas' || key === 'maxFeePerGas' || key === 'maxPriorityFeePerGas'
+                        if (isGasKey) {
+                          valueInGwei = `${formatUnits(value, 'gwei')} gwei`
+                        }
 
                         return (
                           <TableRow
@@ -238,7 +247,30 @@ export const TransactionDetails = () => {
                             </TableCell>
                             <TableCell align="right">
                               {key === 'to' || key === 'from' ? (
-                                <span title={value}>{shortenAddress(value)}</span>
+                                <BoxWrapperRow gap={1}>
+                                  <CustomTypography variant={'body2'} title={value}>
+                                    {shortenAddress(value)}
+                                  </CustomTypography>
+                                  <ContentCopyIcon
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(value)
+                                    }}
+                                  />
+                                  <OpenInNewIcon
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                      console.log('blockchain', formValue?.blockchain)
+                                      const url =
+                                        formValue?.blockchain === 'Ethereum'
+                                          ? `https://etherscan.io/address/${value}`
+                                          : `https://gnosisscan.io/address/${value}`
+                                      window.open(url, '_blank')
+                                    }}
+                                  />
+                                </BoxWrapperRow>
+                              ) : isGasKey ? (
+                                valueInGwei
                               ) : (
                                 value
                               )}
@@ -282,7 +314,7 @@ export const TransactionDetails = () => {
 
             {transactionBuildStatus === ('failed' as SetupItemStatus) && !isLoading && (
               <BoxWrapperRow sx={{ justifyContent: 'flex-start' }}>
-                <CustomTypography variant={'body2'} sx={{ color: 'red' }}>
+                <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
                   {error?.message && typeof error?.message === 'string'
                     ? error?.message
                     : 'Error decoding transaction'}

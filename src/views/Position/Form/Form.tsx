@@ -21,7 +21,7 @@ import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { useApp } from 'src/contexts/app.context'
 import { Position, SetupStatus, Strategy } from 'src/contexts/state'
-import { clearSetupWithoutCreate, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
+import { clearSetup, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
 import { getStrategy } from 'src/utils/strategies'
 import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
@@ -83,6 +83,10 @@ const Form = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues])
 
+  React.useEffect(() => {
+    dispatch(clearSetup())
+  }, [dispatch])
+
   const handleClickOpen = () => {
     setOpen(true)
     neutralizeBack(handleClose)
@@ -126,8 +130,6 @@ const Form = () => {
       dispatch(setSetupCreate(setup as Strategy))
 
       dispatch(setSetupStatus('create' as SetupStatus))
-
-      dispatch(clearSetupWithoutCreate())
     },
     [positionConfig, dispatch, position]
   )
