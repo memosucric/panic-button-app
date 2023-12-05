@@ -160,6 +160,12 @@ const Form = () => {
                     setValue('token_out_address', null)
                     setValue('bpt_address', null)
                     setKeyIndex(keyIndex + 1)
+
+                    clearErrors('percentage')
+                    clearErrors('max_slippage')
+                    clearErrors('rewards_address')
+                    clearErrors('token_out_address')
+                    clearErrors('bpt_address')
                   }}
                   options={positionConfig.map((item: PositionConfig) => {
                     return {
@@ -197,7 +203,7 @@ const Form = () => {
                     if (!value) {
                       setError(name as any, {
                         type: 'manual',
-                        message: `Please fill in the field ${label}`
+                        message: `Please enter a value between ${min}% and ${max}%`
                       })
                     } else {
                       clearErrors(label as any)
