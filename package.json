@@ -28,6 +28,7 @@
     "@mui/material": "5.14.8",
     "clsx": "^2.0.0",
     "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
     "framer-motion": "^10.16.5",
     "next": "13.4.12",
     "numbro": "^2.4.0",
