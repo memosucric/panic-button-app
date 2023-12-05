@@ -26,10 +26,10 @@ const PositionDoesntExist = () => {
   return (
     <BoxWrapperColumn gap={4} sx={{ alignItems: 'center' }}>
       <CustomTypography variant="h3" align="center" style={{ marginTop: '35vh' }}>
-        Position doesn't exist, please go back to the positions page
+        Position doesn't exist
       </CustomTypography>
       <Button variant="contained" color="primary" href="/positions" sx={{ width: '300px' }}>
-        Go to Positions Page
+        Go to Home page
       </Button>
     </BoxWrapperColumn>
   )
