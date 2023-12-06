@@ -14,6 +14,8 @@ import Loading from 'src/components/Loading'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 import CustomTypography from '../../../components/CustomTypography'
+import Button from '@mui/material/Button'
+import BoxWrapperColumn from '../../../components/Wrappers/BoxWrapperColumn'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
@@ -22,11 +24,14 @@ interface PositionIndexProps {
 
 const PositionDoesntExist = () => {
   return (
-    <BoxContainerWrapper>
+    <BoxWrapperColumn gap={4} sx={{ alignItems: 'center' }}>
       <CustomTypography variant="h3" align="center" style={{ marginTop: '35vh' }}>
-        Position doesn't exist, please try again.
+        Position doesn't exist
       </CustomTypography>
-    </BoxContainerWrapper>
+      <Button variant="contained" color="primary" href="/positions" sx={{ width: '300px' }}>
+        Go to Home page
+      </Button>
+    </BoxWrapperColumn>
   )
 }
 

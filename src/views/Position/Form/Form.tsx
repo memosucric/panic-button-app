@@ -21,7 +21,7 @@ import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
 import { useApp } from 'src/contexts/app.context'
 import { Position, SetupStatus, Strategy } from 'src/contexts/state'
-import { clearSetupWithoutCreate, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
+import { clearSetup, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
 import { getStrategy } from 'src/utils/strategies'
 import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
@@ -83,6 +83,10 @@ const Form = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues])
 
+  React.useEffect(() => {
+    dispatch(clearSetup())
+  }, [dispatch])
+
   const handleClickOpen = () => {
     setOpen(true)
     neutralizeBack(handleClose)
@@ -126,8 +130,6 @@ const Form = () => {
       dispatch(setSetupCreate(setup as Strategy))
 
       dispatch(setSetupStatus('create' as SetupStatus))
-
-      dispatch(clearSetupWithoutCreate())
     },
     [positionConfig, dispatch, position]
   )
@@ -160,6 +162,12 @@ const Form = () => {
                     setValue('token_out_address', null)
                     setValue('bpt_address', null)
                     setKeyIndex(keyIndex + 1)
+
+                    clearErrors('percentage')
+                    clearErrors('max_slippage')
+                    clearErrors('rewards_address')
+                    clearErrors('token_out_address')
+                    clearErrors('bpt_address')
                   }}
                   options={positionConfig.map((item: PositionConfig) => {
                     return {
@@ -197,7 +205,7 @@ const Form = () => {
                     if (!value) {
                       setError(name as any, {
                         type: 'manual',
-                        message: `Please fill in the field ${label}`
+                        message: `Please enter a value between ${min}% and ${max}%`
                       })
                     } else {
                       clearErrors(label as any)
@@ -247,11 +255,11 @@ const Form = () => {
                         name={name}
                         control={control}
                         rules={{
-                          required: `Please fill in the field ${label}`,
+                          required: `Please enter a value between ${min}% and ${max}%`,
                           validate: {
                             required: (value: any) => {
                               if (!value || value === 0)
-                                return `Please fill in the field ${label} with a value different than 0`
+                                return `Please enter a value between ${min}% and ${max}%`
                             }
                           }
                         }}
