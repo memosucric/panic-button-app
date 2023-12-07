@@ -83,10 +83,6 @@ const Form = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues])
 
-  React.useEffect(() => {
-    dispatch(clearSetup())
-  }, [dispatch])
-
   const handleClickOpen = () => {
     setOpen(true)
     neutralizeBack(handleClose)
@@ -100,6 +96,9 @@ const Form = () => {
   const onSubmit: SubmitHandler<any> = React.useCallback(
     async (data: any) => {
       // Get label by value for the token_out_address in the positionConfig
+
+      // First clear the stage just in case
+      dispatch(clearSetup())
 
       // Object is possibly 'undefined'.  TS2532, disable this error
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

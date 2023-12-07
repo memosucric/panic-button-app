@@ -2,6 +2,7 @@ import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import {
   AccordionSummary,
   Box,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -65,13 +66,11 @@ const LABEL_MAPPER = {
 
 const WaitingDecodingTransaction = () => {
   return (
-    <BoxWrapperColumn
-      sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', padding: '16px' }}
-    >
+    <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
         Waiting for decoding transaction process...
       </CustomTypography>
-    </BoxWrapperColumn>
+    </Box>
   )
 }
 
@@ -176,7 +175,7 @@ export const TransactionDetails = () => {
     }
 
     postData(parameters)
-  }, [formValue])
+  }, [formValue, dispatch])
 
   const parameters = React.useMemo(() => {
     if (!transactionBuildValue) return []
@@ -221,11 +220,11 @@ export const TransactionDetails = () => {
           </BoxWrapperRow>
         </AccordionSummary>
         <AccordionDetails sx={{ justifyContent: 'flex-start', display: 'flex' }}>
-          <BoxWrapperColumn sx={{ width: '100%' }} gap={2}>
+          <Box sx={{ width: '100%' }} gap={2}>
             {isLoading && <WaitingDecodingTransaction />}
             {transactionBuildValue && parameters?.length > 0 && !isLoading && (
               <>
-                <TableContainer>
+                <TableContainer sx={{ marginBottom: '30px' }}>
                   <Table sx={{ minWidth: 350 }}>
                     <TableBody>
                       {parameters.map(({ label, value, key }, index) => {
@@ -247,27 +246,47 @@ export const TransactionDetails = () => {
                             </TableCell>
                             <TableCell align="right">
                               {key === 'to' || key === 'from' ? (
-                                <BoxWrapperRow gap={1}>
+                                <BoxWrapperRow gap={1} sx={{ justifyContent: 'flex-end' }}>
                                   <CustomTypography variant={'body2'} title={value}>
                                     {shortenAddress(value)}
                                   </CustomTypography>
-                                  <ContentCopyIcon
-                                    sx={{ cursor: 'pointer' }}
+                                  <IconButton
+                                    edge="end"
+                                    color="inherit"
                                     onClick={() => {
                                       navigator.clipboard.writeText(value)
                                     }}
-                                  />
-                                  <OpenInNewIcon
-                                    sx={{ cursor: 'pointer' }}
+                                  >
+                                    <ContentCopyIcon
+                                      sx={{
+                                        cursor: 'pointer',
+                                        width: '1rem',
+                                        height: '1rem',
+                                        color: 'black',
+                                        ':hover': { color: 'grey', transition: '0.2s' }
+                                      }}
+                                    />
+                                  </IconButton>
+                                  <IconButton
+                                    edge="end"
+                                    color="inherit"
                                     onClick={() => {
-                                      console.log('blockchain', formValue?.blockchain)
                                       const url =
                                         formValue?.blockchain === 'Ethereum'
                                           ? `https://etherscan.io/address/${value}`
                                           : `https://gnosisscan.io/address/${value}`
                                       window.open(url, '_blank')
                                     }}
-                                  />
+                                  >
+                                    <OpenInNewIcon
+                                      sx={{
+                                        cursor: 'pointer',
+                                        width: '1rem',
+                                        height: '1rem',
+                                        color: 'black'
+                                      }}
+                                    />
+                                  </IconButton>
                                 </BoxWrapperRow>
                               ) : isGasKey ? (
                                 valueInGwei
@@ -321,7 +340,7 @@ export const TransactionDetails = () => {
                 </CustomTypography>
               </BoxWrapperRow>
             )}
-          </BoxWrapperColumn>
+          </Box>
         </AccordionDetails>
       </AccordionWrapper>
     </BoxWrapperRow>

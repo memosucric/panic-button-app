@@ -1,16 +1,16 @@
 import path from 'path'
 import { spawn } from 'child_process'
 
-interface TransactionBuilderReturn {
+interface CommonExecuteReturn {
   status: number
-  data: any
-  error?: Error
+  data: Maybe<any>
+  error: Maybe<string>
 }
 
-export const TransactionBuilderPromise = (
+export const CommonExecutePromise = (
   filePath: string,
   parameters: any
-): Promise<TransactionBuilderReturn> => {
+): Promise<CommonExecuteReturn> => {
   return new Promise((resolve, reject) => {
     try {
       const scriptFile = path.resolve(process.cwd(), filePath)
@@ -51,11 +51,11 @@ export const TransactionBuilderPromise = (
           console.log('Error with buffer, is not a valid json object', e, buffer)
         }
 
-        const status = response?.status ?? 500
+        const { status = 500, tx_data = null, sim_data = null, message = null } = response ?? {}
 
         const body = {
-          data: status === 200 ? response?.tx_data ?? {} : {},
-          error: status !== 200 ? response?.message ?? {} : {}
+          data: status === 200 ? tx_data || sim_data : null,
+          error: status !== 200 ? message : null
         }
 
         resolve({
@@ -67,7 +67,7 @@ export const TransactionBuilderPromise = (
       console.error('ERROR Reject: ', error)
       reject({
         status: 500,
-        error: error as Error
+        error: (error as Error)?.message
       })
     }
   })

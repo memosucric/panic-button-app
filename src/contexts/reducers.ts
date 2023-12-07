@@ -1,17 +1,32 @@
-import {InitialState, Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild} from './state'
+import {
+  InitialState,
+  Position,
+  SetupItemStatus,
+  SetupStatus,
+  Status,
+  Strategy,
+  TransactionBuild
+} from './state'
 import {
   Actions,
   ActionType,
   AddPositions,
   ClearPositions,
   ClearSelectedPosition,
-  ClearSetup, ClearSetupWithoutCreate,
-  SetSelectedPosition, SetSetupConfirm,
+  ClearSetup,
+  ClearSetupWithoutCreate,
+  SetSelectedPosition,
+  SetSetupConfirm,
   SetSetupConfirmStatus,
   SetSetupCreate,
-  SetSetupCreateStatus, SetSetupSimulation, SetSetupSimulationStatus,
+  SetSetupCreateStatus,
+  SetSetupSimulation,
+  SetSetupSimulationStatus,
   SetSetupStatus,
-  SetSetupTransactionBuild, SetSetupTransactionBuildStatus, SetSetupTransactionCheck, SetSetupTransactionCheckStatus,
+  SetSetupTransactionBuild,
+  SetSetupTransactionBuildStatus,
+  SetSetupTransactionCheck,
+  SetSetupTransactionCheckStatus,
   UpdateStatus
 } from './actions'
 
@@ -249,12 +264,16 @@ export const setSetupCreateStatus = (status: SetupItemStatus): SetSetupCreateSta
   payload: status
 })
 
-export const setSetupTransactionBuild = (transactionBuild: TransactionBuild): SetSetupTransactionBuild => ({
+export const setSetupTransactionBuild = (
+  transactionBuild: TransactionBuild
+): SetSetupTransactionBuild => ({
   type: ActionType.SetSetupTransactionBuild,
   payload: transactionBuild
 })
 
-export const setSetupTransactionBuildStatus = (status: SetupItemStatus): SetSetupTransactionBuildStatus => ({
+export const setSetupTransactionBuildStatus = (
+  status: SetupItemStatus
+): SetSetupTransactionBuildStatus => ({
   type: ActionType.SetSetupTransactionBuildStatus,
   payload: status
 })
@@ -264,12 +283,14 @@ export const setSetupTransactionCheck = (transactionCheck: boolean): SetSetupTra
   payload: transactionCheck
 })
 
-export const setSetupTransactionCheckStatus = (status: SetupItemStatus): SetSetupTransactionCheckStatus => ({
+export const setSetupTransactionCheckStatus = (
+  status: SetupItemStatus
+): SetSetupTransactionCheckStatus => ({
   type: ActionType.SetSetupTransactionCheckStatus,
   payload: status
 })
 
-export const setSetupSimulation = (simulation: boolean): SetSetupSimulation => ({
+export const setSetupSimulation = (simulation: any): SetSetupSimulation => ({
   type: ActionType.SetSetupSimulation,
   payload: simulation
 })

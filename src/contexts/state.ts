@@ -87,19 +87,19 @@ export type InitialState = {
     create: {
       value: Maybe<Strategy>
       status: SetupItemStatus
-    },
+    }
     transactionBuild: {
       value: Maybe<TransactionBuild>
       status: SetupItemStatus
-    },
+    }
     transactionCheck: {
       value: Maybe<boolean>
       status: SetupItemStatus
-    },
+    }
     simulation: {
-      value: Maybe<boolean>
+      value: Maybe<any>
       status: SetupItemStatus
-    },
+    }
     confirm: {
       value: Maybe<boolean>
       status: SetupItemStatus
