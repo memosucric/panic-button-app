@@ -6,8 +6,6 @@ import { useApp } from 'src/contexts/app.context'
 import { setSetupSimulation, setSetupSimulationStatus, setSetupStatus } from 'src/contexts/reducers'
 import { SetupItemStatus, SetupStatus } from 'src/contexts/state'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
-import Tooltip from '@mui/material/Tooltip'
-import InfoIcon from '@mui/icons-material/Info'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import { Box } from '@mui/material'
 
@@ -94,15 +92,7 @@ export const Tenderly = () => {
     }
 
     setIsLoading(false)
-  }, [
-    blockchain,
-    transaction,
-    decodedTransaction,
-    transactionBuildStatus,
-    transactionCheckStatus,
-    dispatch,
-    isDisabled
-  ])
+  }, [blockchain, transaction, dispatch, isDisabled])
 
   const color =
     simulationStatus === ('success' as SetupItemStatus)
@@ -123,17 +113,6 @@ export const Tenderly = () => {
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
           <BoxWrapperRow gap={1}>
             <CustomTypography variant={'body2'}>Simulation</CustomTypography>
-            <Tooltip
-              title={
-                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel egestas dolor,
-                  nec dignissim metus.
-                </CustomTypography>
-              }
-              sx={{ ml: 1, cursor: 'pointer' }}
-            >
-              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
-            </Tooltip>
           </BoxWrapperRow>
           <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
             {simulationStatus}
