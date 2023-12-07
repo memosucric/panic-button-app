@@ -3,6 +3,7 @@ import {
   AccordionSummary,
   Alert,
   Box,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +19,9 @@ import * as React from 'react'
 import { AccordionWrapper } from 'src/components/Accordion/AccordionWrapper'
 import { useApp } from 'src/contexts/app.context'
 import { shortenAddress } from 'src/utils/string'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import { Strategy } from 'src/contexts/state'
 
 const LABEL_MAPPER = {
   description: {
@@ -108,10 +112,52 @@ export const SetupDetails = () => {
                     } else if (key === 'token_out_address') {
                       valueToDisplay = (
                         <BoxWrapperColumn>
-                          <span title={value}>{shortenAddress(value)}</span>
-                          <span>
+                          <BoxWrapperRow gap={1} sx={{ justifyContent: 'flex-end' }}>
+                            <CustomTypography variant={'body2'} title={value}>
+                              {shortenAddress(value)}
+                            </CustomTypography>
+                            <IconButton
+                              edge="end"
+                              color="inherit"
+                              onClick={() => {
+                                navigator.clipboard.writeText(value)
+                              }}
+                            >
+                              <ContentCopyIcon
+                                sx={{
+                                  cursor: 'pointer',
+                                  width: '1rem',
+                                  height: '1rem',
+                                  color: 'black',
+                                  ':hover': { color: 'grey', transition: '0.2s' }
+                                }}
+                              />
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              color="inherit"
+                              onClick={() => {
+                                const url =
+                                  createValue &&
+                                  (createValue as Strategy)?.blockchain === 'Ethereum'
+                                    ? `https://etherscan.io/address/${value}`
+                                    : `https://gnosisscan.io/address/${value}`
+                                window.open(url, '_blank')
+                              }}
+                            >
+                              <OpenInNewIcon
+                                sx={{
+                                  cursor: 'pointer',
+                                  width: '1rem',
+                                  height: '1rem',
+                                  color: 'black'
+                                }}
+                              />
+                            </IconButton>
+                          </BoxWrapperRow>
+                          <CustomTypography variant={'body2'}>
                             {createValue['token_out_address_label' as keyof typeof createValue]}
-                          </span>
+                          </CustomTypography>
                         </BoxWrapperColumn>
                       )
                     } else {

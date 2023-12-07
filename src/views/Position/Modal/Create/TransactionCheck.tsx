@@ -11,9 +11,14 @@ export const TransactionCheck = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
-  const transactionCheckValue = state?.setup?.transactionCheck?.value || null
   const transactionCheckStatus = state?.setup?.transactionCheck?.status || null
 
+  const color =
+    transactionCheckStatus === ('success' as SetupItemStatus)
+      ? 'green'
+      : transactionCheckStatus === ('failed' as SetupItemStatus)
+        ? 'red'
+        : 'black'
   return (
     <AccordionBoxWrapper
       gap={2}
@@ -37,22 +42,9 @@ export const TransactionCheck = () => {
           <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
         </Tooltip>
       </BoxWrapperRow>
-      {transactionCheckStatus === ('success' as SetupItemStatus) && (
-        <CustomTypography variant={'body2'} sx={{ color: 'green' }}>
-          Success
-        </CustomTypography>
-      )}
-      {transactionCheckValue === null &&
-        transactionCheckStatus === ('not done' as SetupItemStatus) && (
-          <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
-            Pending
-          </CustomTypography>
-        )}
-      {transactionCheckStatus === ('failed' as SetupItemStatus) && (
-        <CustomTypography variant={'body2'} sx={{ color: 'red' }}>
-          Failed
-        </CustomTypography>
-      )}
+      <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
+        {transactionCheckStatus}
+      </CustomTypography>
     </AccordionBoxWrapper>
   )
 }

@@ -1,5 +1,4 @@
 import { withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import {
@@ -8,12 +7,12 @@ import {
   getDAOFilePath,
   getStrategyByPositionId
 } from 'src/config/strategies/manager'
-import * as path from 'path'
 import { EXECUTION_TYPE } from 'src/config/strategies/manager'
+import { CommonExecutePromise } from 'src/utils/execute'
 
 type Status = {
   data?: Maybe<any>
-  error?: Maybe<Error>
+  error?: Maybe<string>
 }
 
 // Create a mapper for DAOs
@@ -52,37 +51,13 @@ export default withApiAuthRequired(async function handler(
     return
   }
 
-  // Get the strategy from the body, if not found, return an error
-  const {
-    strategy,
-    execution_type,
-    percentage,
-    position_id,
-    protocol,
-    blockchain,
-    exit_arguments
-  } = req.body as {
-    strategy: Maybe<string>
+  // Get common parameters from the body
+  const { execution_type, blockchain } = req.body as {
     execution_type: EXECUTION_TYPE
-    percentage: Maybe<number>
-    position_id: Maybe<string>
-    protocol: Maybe<string>
     blockchain: Maybe<BLOCKCHAIN>
-    exit_arguments: {
-      rewards_address: Maybe<string>
-      max_slippage: Maybe<number>
-      token_out_address: Maybe<string>
-      bpt_address: Maybe<string>
-    }
   }
 
   const parameters: any[] = []
-
-  // Add the rest of the parameters if needed
-  if (percentage) {
-    parameters.push('--percentage')
-    parameters.push(`${percentage}`)
-  }
 
   if (dao) {
     parameters.push('--dao')
@@ -94,126 +69,134 @@ export default withApiAuthRequired(async function handler(
     parameters.push(`${blockchain.toUpperCase()}`)
   }
 
-  if (strategy) {
-    parameters.push('--exit-strategy')
-    parameters.push(`${strategy}`)
-  }
-
-  if (protocol) {
-    parameters.push('--protocol')
-    parameters.push(`${protocol}`)
-  }
-
-  let exitArguments = {}
-
-  // Add CONSTANTS from the strategy
-  if (protocol) {
-    const { positionConfig } = getStrategyByPositionId(
-      dao as DAO,
-      blockchain as unknown as BLOCKCHAIN,
-      protocol,
-      position_id as string
-    )
-    const positionConfigItemFound = positionConfig?.find(
-      (positionConfigItem) => positionConfigItem.function_name === strategy
-    )
-
-    positionConfigItemFound?.parameters?.forEach((parameter) => {
-      if (parameter.type === 'constant') {
-        exitArguments = {
-          ...exitArguments,
-          [parameter.name]: parameter.value
-        }
-      }
-    })
-  }
-
-  // Add the rest of the parameters if needed
-  for (const key in exit_arguments) {
-    const value = exit_arguments[key as keyof typeof exit_arguments]
-    if (value) {
-      exitArguments = {
-        ...exitArguments,
-        [key]: value
-      }
-    }
-  }
-
-  if (Object.keys(exitArguments).length > 0) {
-    parameters.push('--exit-arguments')
-    parameters.push(`[${JSON.stringify(exitArguments)}]`)
-  }
-
-  const DAOFilePath = getDAOFilePath(
+  const filePath = getDAOFilePath(
     dao as DAO,
     blockchain as BLOCKCHAIN,
     execution_type as EXECUTION_TYPE
   )
 
-  console.log('Parameters', parameters)
-  console.log('DAOFilePath', DAOFilePath)
+  console.log('FilePath', filePath)
 
   if (execution_type === 'transaction_builder') {
-    return new Promise<void>((resolve, reject) => {
-      try {
-        const scriptFile = path.resolve(process.cwd(), DAOFilePath)
+    try {
+      // Build de arguments for the transaction builder
 
-        const python = spawn(`python3`, [`${scriptFile}`, ...parameters])
-
-        let buffer = ''
-        python.stdout.on('data', function (data) {
-          buffer += data.toString()
-
-          if (buffer.indexOf('DEBUGGER READY') !== -1) {
-            console.log('DEBUGGER READY')
-            console.log('after connect_client')
-          }
-        })
-
-        python.stderr.on('data', function (data) {
-          console.log(data.toString())
-        })
-
-        python.on('error', function (data) {
-          console.log('DEBUG PROGRAM ERROR:')
-          console.error('ERROR: ', data.toString())
-          res
-            .status(500)
-            .json({ data: { status: false, error: new Error('Internal Server Error') } })
-          reject()
-        })
-
-        python.on('exit', function (code) {
-          console.log('Debug Program Exit', code)
-
-          // destroy python process
-          python.kill()
-
-          let response = undefined
-          console.log('Buffer', buffer)
-          try {
-            response = JSON.parse(buffer)
-          } catch (e) {
-            console.log('Error with buffer, is not a valid json object', e, buffer)
-          }
-
-          const status = response?.status ?? 500
-
-          const body = {
-            data: status === 200 ? response?.tx_data ?? {} : {},
-            error: status !== 200 ? response?.message ?? {} : {}
-          }
-
-          res.status(+status).json({ ...body })
-          resolve()
-        })
-      } catch (error) {
-        console.error('ERROR: ', error)
-        res.status(500).json({ error: error as Error })
-        reject()
+      // Get the strategy from the body, if not found, return an error
+      const { strategy, percentage, position_id, protocol, exit_arguments } = req.body as {
+        strategy: Maybe<string>
+        percentage: Maybe<number>
+        position_id: Maybe<string>
+        protocol: Maybe<string>
+        exit_arguments: {
+          rewards_address: Maybe<string>
+          max_slippage: Maybe<number>
+          token_out_address: Maybe<string>
+          bpt_address: Maybe<string>
+        }
       }
-    })
+
+      // Add the rest of the parameters if needed
+      if (percentage) {
+        parameters.push('--percentage')
+        parameters.push(`${percentage}`)
+      }
+
+      if (strategy) {
+        parameters.push('--exit-strategy')
+        parameters.push(`${strategy}`)
+      }
+
+      if (protocol) {
+        parameters.push('--protocol')
+        parameters.push(`${protocol}`)
+      }
+
+      let exitArguments = {}
+
+      // Add CONSTANTS from the strategy
+      if (protocol) {
+        const { positionConfig } = getStrategyByPositionId(
+          dao as DAO,
+          blockchain as unknown as BLOCKCHAIN,
+          protocol,
+          position_id as string
+        )
+        const positionConfigItemFound = positionConfig?.find(
+          (positionConfigItem) => positionConfigItem.function_name === strategy
+        )
+
+        positionConfigItemFound?.parameters?.forEach((parameter) => {
+          if (parameter.type === 'constant') {
+            exitArguments = {
+              ...exitArguments,
+              [parameter.name]: parameter.value
+            }
+          }
+        })
+      }
+
+      // Add the rest of the parameters if needed
+      for (const key in exit_arguments) {
+        const value = exit_arguments[key as keyof typeof exit_arguments]
+        if (value) {
+          exitArguments = {
+            ...exitArguments,
+            [key]: value
+          }
+        }
+      }
+
+      if (Object.keys(exitArguments).length > 0) {
+        parameters.push('--exit-arguments')
+        parameters.push(`[${JSON.stringify(exitArguments)}]`)
+      }
+
+      console.log('Parameters', parameters)
+
+      // Execute the transaction builder
+      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+
+      if (error && status !== 200) {
+        console.error('ERROR: ', error)
+        return res.status(status).json({ data, error })
+      }
+
+      return res.status(status).json({ data, error })
+    } catch (error) {
+      console.error('ERROR Reject: ', error)
+      return res.status(500).json({ error: (error as Error)?.message })
+    }
   }
 
-  return res.status(500).json({ data: { error: new Error('Internal Server Error') } })
+  if (execution_type === 'simulate') {
+    try {
+      // Build de arguments for the transaction builder
+
+      // Get the strategy from the body, if not found, return an error
+      const { transaction } = req.body as {
+        transaction: Maybe<any>
+      }
+
+      // Add the rest of the parameters if needed
+      if (transaction) {
+        parameters.push('--transaction')
+        parameters.push(`${JSON.stringify(transaction)}`)
+      }
+
+      // Execute the transaction builder
+      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+
+      if (error && status !== 200) {
+        console.error('ERROR: ', error)
+        return res.status(status).json({ data, error })
+      }
+
+      return res.status(status).json({ data, error })
+    } catch (error) {
+      console.error('ERROR Reject: ', error)
+      return res.status(500).json({ error: (error as Error)?.message })
+    }
+  }
+
+  return res.status(500).json({ error: 'Internal Server Error' })
 })
