@@ -118,7 +118,7 @@ export const Tenderly = () => {
             {simulationStatus}
           </CustomTypography>
         </BoxWrapperRow>
-        <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+        <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap={'20px'}>
           {isLoading && <WaitingSimulatingTransaction />}
           {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
             <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
