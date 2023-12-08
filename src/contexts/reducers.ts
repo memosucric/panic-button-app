@@ -27,6 +27,7 @@ import {
   SetSetupTransactionBuildStatus,
   SetSetupTransactionCheck,
   SetSetupTransactionCheckStatus,
+  UpdateEnvNetworkData,
   UpdateStatus
 } from './actions'
 
@@ -225,6 +226,11 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+    case ActionType.UpdateEnvNetworkData:
+      return {
+        ...state,
+        envNetworkData: action.payload
+      }
     default:
       return state
   }
@@ -300,7 +306,7 @@ export const setSetupSimulationStatus = (status: SetupItemStatus): SetSetupSimul
   payload: status
 })
 
-export const setSetupConfirm = (confirm: boolean): SetSetupConfirm => ({
+export const setSetupConfirm = (confirm: { txHash: any }): SetSetupConfirm => ({
   type: ActionType.SetSetupConfirm,
   payload: confirm
 })
@@ -321,4 +327,9 @@ export const clearSetup = (): ClearSetup => ({
 
 export const clearSetupWithoutCreate = (): ClearSetupWithoutCreate => ({
   type: ActionType.ClearSetupWithoutCreate
+})
+
+export const updateEnvNetworkData = (data: any): UpdateEnvNetworkData => ({
+  type: ActionType.UpdateEnvNetworkData,
+  payload: data
 })

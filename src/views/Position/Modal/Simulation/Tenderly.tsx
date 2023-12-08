@@ -13,7 +13,7 @@ const WaitingSimulatingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
-        Trying to simulate transaction...
+        Simulating transaction...
       </CustomTypography>
     </Box>
   )
@@ -111,14 +111,12 @@ export const Tenderly = () => {
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <BoxWrapperRow gap={1}>
-            <CustomTypography variant={'body2'}>Simulation</CustomTypography>
-          </BoxWrapperRow>
+          <CustomTypography variant={'body2'}>Simulation</CustomTypography>
           <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
             {simulationStatus}
           </CustomTypography>
         </BoxWrapperRow>
-        <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+        <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap={'20px'}>
           {isLoading && <WaitingSimulatingTransaction />}
           {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
             <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>

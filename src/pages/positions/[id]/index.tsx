@@ -8,7 +8,12 @@ import PositionDetail from 'src/views/Position/WrappedPosition'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
+import {
+  clearSelectedPosition,
+  setSelectedPosition,
+  updateEnvNetworkData,
+  updateStatus
+} from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
@@ -20,6 +25,7 @@ import BoxWrapperColumn from '../../../components/Wrappers/BoxWrapperColumn'
 interface PositionIndexProps {
   positionId: Maybe<string>
   position: Maybe<Position>
+  ENV_NETWORK_DATA: any
 }
 
 const PositionDoesntExist = () => {
@@ -36,7 +42,7 @@ const PositionDoesntExist = () => {
 }
 
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
-  const { position } = props
+  const { position, ENV_NETWORK_DATA } = props
 
   const { dispatch, state } = useApp()
   const { status } = state
@@ -48,6 +54,8 @@ const PositionIndex = (props: PositionIndexProps): ReactElement => {
     } else {
       dispatch(setSelectedPosition(position))
     }
+
+    dispatch(updateEnvNetworkData(ENV_NETWORK_DATA))
 
     dispatch(updateStatus('Finished' as Status))
   }, [position, dispatch])
@@ -101,10 +109,21 @@ const getServerSideProps = async (context: {
 
   const position = positionDW && positionDW.dao === dao ? positionDW : null
 
+  const ENV_NETWORK_DATA = {
+    MODE: process.env.MODE,
+    ETHEREUM_RPC_ENDPOINT: process.env.ETHEREUM_RPC_ENDPOINT,
+    GNOSIS_RPC_ENDPOINT: process.env.GNOSIS_RPC_ENDPOINT,
+    LOCAL_FORK_HOST_ETHEREUM: process.env.LOCAL_FORK_HOST_ETHEREUM,
+    LOCAL_FORK_PORT_ETHEREUM: process.env.LOCAL_FORK_PORT_ETHEREUM,
+    LOCAL_FORK_HOST_GNOSIS: process.env.LOCAL_FORK_HOST_GNOSIS,
+    LOCAL_FORK_PORT_GNOSIS: process.env.LOCAL_FORK_PORT_GNOSIS
+  }
+
   return {
     props: {
       positionId: id,
-      position
+      position,
+      ENV_NETWORK_DATA
     }
   }
 }

@@ -51,10 +51,16 @@ export const CommonExecutePromise = (
           console.log('Error with buffer, is not a valid json object', e, buffer)
         }
 
-        const { status = 500, tx_data = null, sim_data = null, message = null } = response ?? {}
+        const {
+          status = 500,
+          tx_data = null,
+          tx_hash = null,
+          sim_data = null,
+          message = null
+        } = response ?? {}
 
         const body = {
-          data: status === 200 ? tx_data || sim_data : null,
+          data: status === 200 ? tx_data || sim_data || { tx_hash } : null,
           error: status !== 200 ? message : null
         }
 

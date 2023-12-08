@@ -168,7 +168,7 @@ export default withApiAuthRequired(async function handler(
     }
   }
 
-  if (execution_type === 'simulate') {
+  if (execution_type === 'simulate' || execution_type === 'execute') {
     try {
       // Build de arguments for the transaction builder
 
