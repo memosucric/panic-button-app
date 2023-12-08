@@ -20,7 +20,11 @@ const WaitingExecutingTransaction = () => {
   )
 }
 
-export const Confirm = () => {
+interface ConfirmProps {
+  handleClose: () => void
+}
+
+export const Confirm = ({ handleClose }: ConfirmProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
@@ -178,7 +182,7 @@ export const Confirm = () => {
               Open transaction
             </Button>
           )}
-          <Button variant="contained" size="small" onClick={() => console.log('close modal')}>
+          <Button variant="contained" size="small" onClick={() => handleClose()}>
             Cancel
           </Button>
           {!isLoading && (

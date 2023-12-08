@@ -78,7 +78,7 @@ export const Modal = (props: ModalProps) => {
                 <TransactionDetails />
                 <TransactionCheck />
                 <Tenderly />
-                <Confirm />
+                <Confirm handleClose={handleClose} />
               </BoxWrapper>
             </BoxWrapperColumn>
 
