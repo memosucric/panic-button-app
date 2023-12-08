@@ -53,6 +53,7 @@ export const initialState: InitialState = {
   status: Status.Loading,
   positions: [],
   selectedPosition: null,
+  envNetworkData: null,
   setup: {
     status: SetupStatus.Loading,
     create: {
@@ -82,6 +83,7 @@ export type InitialState = {
   status: Status
   positions: Position[]
   selectedPosition: Maybe<Position>
+  envNetworkData: Maybe<any>
   setup: {
     status: SetupStatus
     create: {
@@ -101,7 +103,7 @@ export type InitialState = {
       status: SetupItemStatus
     }
     confirm: {
-      value: Maybe<boolean>
+      value: Maybe<any>
       status: SetupItemStatus
     }
   }

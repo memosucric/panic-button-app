@@ -1,4 +1,4 @@
-import {Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild} from './state'
+import { Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild } from './state'
 
 export enum ActionType {
   UpdateStatus,
@@ -18,7 +18,8 @@ export enum ActionType {
   SetSetupConfirmStatus,
   SetSetupStatus,
   ClearSetup,
-  ClearSetupWithoutCreate
+  ClearSetupWithoutCreate,
+  UpdateEnvNetworkData
 }
 
 export interface UpdateStatus {
@@ -76,7 +77,7 @@ export interface SetSetupTransactionCheckStatus {
 
 export interface SetSetupSimulation {
   type: ActionType.SetSetupSimulation
-  payload: boolean
+  payload: any
 }
 
 export interface SetSetupSimulationStatus {
@@ -86,7 +87,7 @@ export interface SetSetupSimulationStatus {
 
 export interface SetSetupConfirm {
   type: ActionType.SetSetupConfirm
-  payload: boolean
+  payload: any
 }
 
 export interface SetSetupConfirmStatus {
@@ -104,6 +105,11 @@ export interface ClearSetup {
 }
 export interface ClearSetupWithoutCreate {
   type: ActionType.ClearSetupWithoutCreate
+}
+
+export interface UpdateEnvNetworkData {
+  type: ActionType.UpdateEnvNetworkData
+  payload: any
 }
 
 export type Actions =
@@ -125,3 +131,4 @@ export type Actions =
   | SetSetupStatus
   | ClearSetup
   | ClearSetupWithoutCreate
+  | UpdateEnvNetworkData

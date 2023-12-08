@@ -78,15 +78,6 @@ export const Modal = (props: ModalProps) => {
                 <TransactionDetails />
                 <TransactionCheck />
                 <Tenderly />
-              </BoxWrapper>
-
-              <BoxWrapper>
-                <BoxWrapperRowStyled gap={2}>
-                  <CustomTypography variant="body2" sx={{ m: 3 }}>
-                    Confirm
-                  </CustomTypography>
-                </BoxWrapperRowStyled>
-
                 <Confirm />
               </BoxWrapper>
             </BoxWrapperColumn>
