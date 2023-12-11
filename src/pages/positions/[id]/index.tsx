@@ -110,13 +110,13 @@ const getServerSideProps = async (context: {
   const position = positionDW && positionDW.dao === dao ? positionDW : null
 
   const ENV_NETWORK_DATA = {
-    MODE: process.env.MODE,
-    ETHEREUM_RPC_ENDPOINT: process.env.ETHEREUM_RPC_ENDPOINT,
-    GNOSIS_RPC_ENDPOINT: process.env.GNOSIS_RPC_ENDPOINT,
-    LOCAL_FORK_HOST_ETHEREUM: process.env.LOCAL_FORK_HOST_ETHEREUM,
-    LOCAL_FORK_PORT_ETHEREUM: process.env.LOCAL_FORK_PORT_ETHEREUM,
-    LOCAL_FORK_HOST_GNOSIS: process.env.LOCAL_FORK_HOST_GNOSIS,
-    LOCAL_FORK_PORT_GNOSIS: process.env.LOCAL_FORK_PORT_GNOSIS
+    MODE: process?.env?.MODE ?? 'development',
+    ETHEREUM_RPC_ENDPOINT: process?.env?.ETHEREUM_RPC_ENDPOINT,
+    GNOSIS_RPC_ENDPOINT: process?.env?.GNOSIS_RPC_ENDPOINT,
+    LOCAL_FORK_HOST_ETHEREUM: process?.env?.LOCAL_FORK_HOST_ETHEREUM ?? 'anvil_ethereum',
+    LOCAL_FORK_PORT_ETHEREUM: process?.env?.LOCAL_FORK_PORT_ETHEREUM ?? 8546,
+    LOCAL_FORK_HOST_GNOSIS: process?.env?.LOCAL_FORK_HOST_GNOSIS ?? 'anvil_gnosis',
+    LOCAL_FORK_PORT_GNOSIS: process?.env?.LOCAL_FORK_PORT_GNOSIS ?? 8547
   }
 
   return {
