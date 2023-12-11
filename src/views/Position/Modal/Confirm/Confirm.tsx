@@ -100,30 +100,32 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       }
 
       // create custom rpc provider with ethers to wait for transaction
-      const {
-        MODE,
-        ETHEREUM_RPC_ENDPOINT,
-        GNOSIS_RPC_ENDPOINT,
-        LOCAL_FORK_PORT_ETHEREUM,
-        LOCAL_FORK_PORT_GNOSIS
-      } = ENV_NETWORK_DATA
+      const { MODE, ETHEREUM_RPC_ENDPOINT, GNOSIS_RPC_ENDPOINT } = ENV_NETWORK_DATA
 
-      let url = blockchain === 'Ethereum' ? ETHEREUM_RPC_ENDPOINT : GNOSIS_RPC_ENDPOINT
-      if (MODE === 'development') {
-        url =
-          blockchain === 'Ethereum'
-            ? `https://panic.karpatkey.dev:${LOCAL_FORK_PORT_ETHEREUM}`
-            : `https://panic.karpatkey.dev:${LOCAL_FORK_PORT_GNOSIS}`
+      if (MODE === 'production') {
+        const url = blockchain === 'Ethereum' ? ETHEREUM_RPC_ENDPOINT : GNOSIS_RPC_ENDPOINT
+
+        const provider = new ethers.JsonRpcProvider(url)
+
+        const receipt: Maybe<TransactionReceipt> = await provider.waitForTransaction(tx_hash)
+        if (!receipt) {
+          throw new Error('Transaction reverted')
+        }
+
+        const { hash, status } = receipt
+
+        if (!status) {
+          throw new Error('Transaction reverted')
+        }
+
+        if (!hash) {
+          throw new Error('Error trying to execute transaction')
+        }
       }
-      const provider = new ethers.JsonRpcProvider(url)
 
-      const receipt: Maybe<TransactionReceipt> = await provider.waitForTransaction(tx_hash)
-      const hash = receipt?.hash ?? null
-      if (!hash) {
-        throw new Error('Error trying to execute transaction')
-      }
+      // TODO, we need to check if the transaction was reverted or not in the development environment (fork blockchain)
 
-      dispatch(setSetupConfirm({ txHash: hash }))
+      dispatch(setSetupConfirm({ txHash: tx_hash }))
       dispatch(setSetupConfirmStatus('success' as SetupItemStatus))
       dispatch(setSetupStatus('confirm' as SetupStatus))
     } catch (err) {
