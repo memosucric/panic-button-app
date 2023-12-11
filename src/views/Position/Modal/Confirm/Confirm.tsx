@@ -154,7 +154,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <CustomTypography variant={'body2'}>Confirm</CustomTypography>
+          <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
           <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
             {confirmStatus}
           </CustomTypography>
