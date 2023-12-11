@@ -95,37 +95,37 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
 
       const { tx_hash } = body?.data ?? {}
 
-      if (tx_hash) {
-        // create custom rpc provider with ethers to wait for transaction
-        const {
-          MODE,
-          ETHEREUM_RPC_ENDPOINT,
-          GNOSIS_RPC_ENDPOINT,
-          LOCAL_FORK_PORT_ETHEREUM,
-          LOCAL_FORK_PORT_GNOSIS
-        } = ENV_NETWORK_DATA
-
-        let url = blockchain === 'Ethereum' ? ETHEREUM_RPC_ENDPOINT : GNOSIS_RPC_ENDPOINT
-        if (MODE === 'development') {
-          url =
-            blockchain === 'Ethereum'
-              ? `http://localhost:${LOCAL_FORK_PORT_ETHEREUM}`
-              : `http://localhost:${LOCAL_FORK_PORT_GNOSIS}`
-        }
-        const provider = new ethers.JsonRpcProvider(url)
-
-        const receipt: Maybe<TransactionReceipt> = await provider.waitForTransaction(tx_hash)
-        const hash = receipt?.hash ?? null
-        if (!hash) {
-          throw new Error('Error trying to execute transaction')
-        } else {
-          dispatch(setSetupConfirm({ txHash: hash }))
-          dispatch(setSetupConfirmStatus('success' as SetupItemStatus))
-          dispatch(setSetupStatus('confirm' as SetupStatus))
-        }
-      } else {
+      if (!tx_hash) {
         throw new Error('Error trying to execute transaction')
       }
+
+      // create custom rpc provider with ethers to wait for transaction
+      const {
+        MODE,
+        ETHEREUM_RPC_ENDPOINT,
+        GNOSIS_RPC_ENDPOINT,
+        LOCAL_FORK_PORT_ETHEREUM,
+        LOCAL_FORK_PORT_GNOSIS
+      } = ENV_NETWORK_DATA
+
+      let url = blockchain === 'Ethereum' ? ETHEREUM_RPC_ENDPOINT : GNOSIS_RPC_ENDPOINT
+      if (MODE === 'development') {
+        url =
+          blockchain === 'Ethereum'
+            ? `https://panic.karpatkey.dev:${LOCAL_FORK_PORT_ETHEREUM}`
+            : `https://panic.karpatkey.dev:${LOCAL_FORK_PORT_GNOSIS}`
+      }
+      const provider = new ethers.JsonRpcProvider(url)
+
+      const receipt: Maybe<TransactionReceipt> = await provider.waitForTransaction(tx_hash)
+      const hash = receipt?.hash ?? null
+      if (!hash) {
+        throw new Error('Error trying to execute transaction')
+      }
+
+      dispatch(setSetupConfirm({ txHash: hash }))
+      dispatch(setSetupConfirmStatus('success' as SetupItemStatus))
+      dispatch(setSetupStatus('confirm' as SetupStatus))
     } catch (err) {
       console.error('Error fetching data:', err)
       setError(err as Error)
