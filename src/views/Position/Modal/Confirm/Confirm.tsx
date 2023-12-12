@@ -66,6 +66,10 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
         throw new Error('Invalid transaction, please check the transaction and try again.')
       }
 
+      dispatch(setSetupConfirm(null))
+      dispatch(setSetupConfirmStatus('not done' as SetupItemStatus))
+      dispatch(setSetupStatus('simulation' as SetupStatus))
+
       setIsLoading(true)
 
       const parameters = {
@@ -154,7 +158,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <CustomTypography variant={'body2'}>Confirm</CustomTypography>
+          <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
           <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
             {confirmStatus}
           </CustomTypography>
