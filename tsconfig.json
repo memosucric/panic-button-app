@@ -9,7 +9,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "react": ["./node_modules/@types/react"],
-      "src/*": ["./src/*"]
+      "src": ["./src/*"]
     },
     "types": ["./src/types/additional.d.ts"]
   },
@@ -26,8 +26,9 @@
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
     "compilerOptions": {
       "module": "commonjs"
-    }
+    },
+    "require": ["tsconfig-paths/register"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["./**/*", "./roles_royce/**/*"],
   "exclude": ["node_modules"]
 }

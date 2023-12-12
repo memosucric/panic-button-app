@@ -1,23 +1,24 @@
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
-import { PositionType } from 'src/contexts/types'
 import { Divider } from '@mui/material'
-import { getStrategies, DAO } from 'src/config/strategiesManager'
-import Form from 'src/views/Position/Form'
+import Form from 'src/views/Position/Form/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
 import NoStrategies from 'src/views/Position/NoStrategies'
+import { useApp } from 'src/contexts/app.context'
+import { getStrategy } from 'src/utils/strategies'
+import { Position } from 'src/contexts/state'
 
-interface DetailProps {
-  selectedValue: PositionType
-}
+const Detail = () => {
+  const { state } = useApp()
+  const { selectedPosition: position, status } = state
 
-const Detail = (props: DetailProps) => {
-  const { selectedValue } = props
+  if (status !== 'Finished' || !position) {
+    return null
+  }
 
-  const { protocol, blockchain, lptoken_name: positionName } = selectedValue
-
-  const strategies = getStrategies(selectedValue.dao as DAO)
+  const { positionConfig } = getStrategy(position as Position)
+  const areAnyStrategies = positionConfig?.length > 0
 
   return (
     <BoxWrapperColumn
@@ -29,22 +30,23 @@ const Detail = (props: DetailProps) => {
         backgroundColor: 'custom.grey.light',
         borderRadius: '8px',
         padding: '30px 30px',
-        width: '400px'
+        minWidth: '400px',
+        width: '800px'
       }}
     >
       <BoxWrapperColumn gap={2}>
         <BoxWrapperColumn gap={1}>
-          <Primary title={'Information'} />
+          <Primary title={'Overview'} />
           <Divider sx={{ borderBottomWidth: 5 }} />
         </BoxWrapperColumn>
         <BoxWrapperColumn gap={2}>
-          <Secondary title={`Blockchain:`} subtitle={blockchain} />
-          <Secondary title={`Protocol:`} subtitle={protocol} />
-          <Secondary title={`Position:`} subtitle={positionName} />
+          <Secondary title={`Blockchain:`} subtitle={position?.blockchain} />
+          <Secondary title={`Protocol:`} subtitle={position?.protocol} />
+          <Secondary title={`Position:`} subtitle={position?.lptoken_name} />
         </BoxWrapperColumn>
       </BoxWrapperColumn>
       <BoxWrapperColumn gap={2}>
-        {strategies ? <Form strategies={strategies} /> : <NoStrategies />}
+        {areAnyStrategies ? <Form /> : <NoStrategies />}
       </BoxWrapperColumn>
     </BoxWrapperColumn>
   )

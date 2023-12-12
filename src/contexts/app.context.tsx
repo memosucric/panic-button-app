@@ -1,49 +1,22 @@
 import React, { createContext, useReducer } from 'react'
-import { positionReducer, selectedPositionReducer, statusReducer } from './reducers'
-import {
-  InitialStateType,
-  PositionActionsType,
-  SelectedPositionActionsType,
-  StatusActionsType
-} from './types'
-
-const initialState: InitialStateType = {
-  positions: {
-    status: 'loading',
-    values: [],
-    selectedValue: null
-  }
-}
+import { Actions } from './actions'
+import { initialState, InitialState } from './state'
+import { mainReducer } from './reducers'
 
 const AppContext = createContext<{
-  state: InitialStateType
-  dispatch: React.Dispatch<PositionActionsType | SelectedPositionActionsType | StatusActionsType>
+  state: InitialState
+  dispatch: React.Dispatch<Actions>
 }>({
   state: initialState,
-  dispatch: () => null
+  dispatch: () => undefined
 })
-
-const mainReducer = (
-  initialState: InitialStateType,
-  action: PositionActionsType | SelectedPositionActionsType | StatusActionsType
-) => {
-  const { positions } = initialState
-  const { selectedValue, status, values } = positions
-  return {
-    positions: {
-      values: positionReducer(values, action as PositionActionsType),
-      selectedValue: selectedPositionReducer(selectedValue, action as SelectedPositionActionsType),
-      status: statusReducer(status, action as StatusActionsType)
-    }
-  }
-}
 
 interface AppProviderProps {
   children: React.ReactNode
 }
 
 const AppProvider = ({ children }: AppProviderProps) => {
-  const [state, dispatch] = useReducer(mainReducer, initialState)
+  const [state, dispatch] = useReducer(mainReducer, initialState, undefined)
 
   return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>
 }

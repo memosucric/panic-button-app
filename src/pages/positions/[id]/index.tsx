@@ -3,50 +3,75 @@ import { ReactElement } from 'react'
 import PageLayout from 'src/components/Layout/Layout'
 import { useApp } from 'src/contexts/app.context'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
-import { PositionType, Types } from 'src/contexts/types'
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import PositionDetail from 'src/views/Position/WrappedPosition'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
+import {
+  clearSelectedPosition,
+  setSelectedPosition,
+  updateEnvNetworkData,
+  updateStatus
+} from 'src/contexts/reducers'
+import { Position, Status } from 'src/contexts/state'
+import Loading from 'src/components/Loading'
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
+import CustomTypography from '../../../components/CustomTypography'
+import Button from '@mui/material/Button'
+import BoxWrapperColumn from '../../../components/Wrappers/BoxWrapperColumn'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
-  position: Maybe<PositionType>
+  position: Maybe<Position>
+  ENV_NETWORK_DATA: any
+}
+
+const PositionDoesntExist = () => {
+  return (
+    <BoxWrapperColumn gap={4} sx={{ alignItems: 'center' }}>
+      <CustomTypography variant="h3" align="center" style={{ marginTop: '35vh' }}>
+        Position doesn't exist
+      </CustomTypography>
+      <Button variant="contained" color="primary" href="/positions" sx={{ width: '300px' }}>
+        Go to Home page
+      </Button>
+    </BoxWrapperColumn>
+  )
 }
 
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
-  const { position } = props
+  const { position, ENV_NETWORK_DATA } = props
 
-  const { dispatch } = useApp()
+  const { dispatch, state } = useApp()
+  const { status } = state
 
   React.useEffect(() => {
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'loading'
-    })
+    dispatch(updateStatus('Loading' as Status))
     if (!position) {
-      dispatch({
-        type: Types.ClearPositionSelected,
-        payload: null
-      })
+      dispatch(clearSelectedPosition())
     } else {
-      dispatch({
-        type: Types.UpdatePositionSelected,
-        payload: position
-      })
+      dispatch(setSelectedPosition(position))
     }
 
-    dispatch({
-      type: Types.UpdateStatus,
-      payload: 'idle'
-    })
+    dispatch(updateEnvNetworkData(ENV_NETWORK_DATA))
+
+    dispatch(updateStatus('Finished' as Status))
   }, [position, dispatch])
 
   return (
-    <BoxContainerWrapper>
-      <PositionDetail />
-    </BoxContainerWrapper>
+    <>
+      {status === 'Loading' && (
+        <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+      )}
+      {status === 'Finished' && position && (
+        <BoxContainerWrapper>
+          <PositionDetail />
+        </BoxContainerWrapper>
+      )}
+      {status === 'Finished' && !position && <PositionDoesntExist />}
+    </>
   )
 }
 
@@ -84,10 +109,21 @@ const getServerSideProps = async (context: {
 
   const position = positionDW && positionDW.dao === dao ? positionDW : null
 
+  const ENV_NETWORK_DATA = {
+    MODE: process?.env?.MODE ?? 'development',
+    ETHEREUM_RPC_ENDPOINT: process?.env?.ETHEREUM_RPC_ENDPOINT,
+    GNOSIS_RPC_ENDPOINT: process?.env?.GNOSIS_RPC_ENDPOINT,
+    LOCAL_FORK_HOST_ETHEREUM: process?.env?.LOCAL_FORK_HOST_ETHEREUM ?? 'anvil_ethereum',
+    LOCAL_FORK_PORT_ETHEREUM: process?.env?.LOCAL_FORK_PORT_ETHEREUM ?? 8546,
+    LOCAL_FORK_HOST_GNOSIS: process?.env?.LOCAL_FORK_HOST_GNOSIS ?? 'anvil_gnosis',
+    LOCAL_FORK_PORT_GNOSIS: process?.env?.LOCAL_FORK_PORT_GNOSIS ?? 8547
+  }
+
   return {
     props: {
       positionId: id,
-      position
+      position,
+      ENV_NETWORK_DATA
     }
   }
 }

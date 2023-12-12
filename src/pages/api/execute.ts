@@ -1,15 +1,24 @@
 import { withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { spawn } from 'child_process'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession, Session } from '@auth0/nextjs-auth0'
-import { DAO, getStrategies } from 'src/config/strategiesManager'
+import {
+  BLOCKCHAIN,
+  DAO,
+  getDAOFilePath,
+  getStrategyByPositionId
+} from 'src/config/strategies/manager'
+import { EXECUTION_TYPE } from 'src/config/strategies/manager'
+import { CommonExecutePromise } from 'src/utils/execute'
 
 type Status = {
-  data: {
-    status: boolean
-    trx?: Maybe<string>
-    error?: Maybe<Error>
-  }
+  data?: Maybe<any>
+  error?: Maybe<string>
+}
+
+// Create a mapper for DAOs
+const DAO_MAPPER: Record<string, string> = {
+  'Gnosis DAO': 'GnosisDAO',
+  'Gnosis Ltd': 'GnosisLtd'
 }
 
 export default withApiAuthRequired(async function handler(
@@ -42,51 +51,152 @@ export default withApiAuthRequired(async function handler(
     return
   }
 
-  // Get the strategy from the body, if not found, return an error
-  const { strategy, ...others } = req.body
-  const strategies = getStrategies(dao as DAO)
-  const strategyObject = strategies.find((s) => s.name === strategy)
-
-  if (!strategyObject || !strategyObject?.filePath || !others?.percentage) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
-    return
+  // Get common parameters from the body
+  const { execution_type, blockchain } = req.body as {
+    execution_type: EXECUTION_TYPE
+    blockchain: Maybe<BLOCKCHAIN>
   }
 
-  return new Promise<void>((resolve, reject) => {
+  const parameters: any[] = []
+
+  if (dao) {
+    parameters.push('--dao')
+    parameters.push(DAO_MAPPER[dao])
+  }
+
+  if (blockchain) {
+    parameters.push('--blockchain')
+    parameters.push(`${blockchain.toUpperCase()}`)
+  }
+
+  const filePath = getDAOFilePath(
+    dao as DAO,
+    blockchain as BLOCKCHAIN,
+    execution_type as EXECUTION_TYPE
+  )
+
+  console.log('FilePath', filePath)
+
+  if (execution_type === 'transaction_builder') {
     try {
-      let message: string
-      // spawn new child process to call the python script
-      const python = spawn('python3', [strategyObject.filePath, '-p', others.percentage])
+      // Build de arguments for the transaction builder
 
-      // collect data from script
-      python.stdout.on('data', (data) => {
-        console.log('Pipe data from python script ...')
-        message = data.toString()
-      })
-
-      // in close event we are sure that stream from child process is closed
-      python.on('close', (code) => {
-        console.log(`child process close all stdio with code ${code} and message: ${message}`)
-
-        const status = code === 120 || message?.includes('Success')
-        const match = message?.match(
-          /\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi
-        )
-        const trx = match ? match[0].substring(0, match[0].indexOf('|')) : null
-
-        const data = {
-          status,
-          trx
+      // Get the strategy from the body, if not found, return an error
+      const { strategy, percentage, position_id, protocol, exit_arguments } = req.body as {
+        strategy: Maybe<string>
+        percentage: Maybe<number>
+        position_id: Maybe<string>
+        protocol: Maybe<string>
+        exit_arguments: {
+          rewards_address: Maybe<string>
+          max_slippage: Maybe<number>
+          token_out_address: Maybe<string>
+          bpt_address: Maybe<string>
         }
+      }
 
-        // send data to browser
-        res.status(200).json({ data })
-        resolve()
-      })
+      // Add the rest of the parameters if needed
+      if (percentage) {
+        parameters.push('--percentage')
+        parameters.push(`${percentage}`)
+      }
+
+      if (strategy) {
+        parameters.push('--exit-strategy')
+        parameters.push(`${strategy}`)
+      }
+
+      if (protocol) {
+        parameters.push('--protocol')
+        parameters.push(`${protocol}`)
+      }
+
+      let exitArguments = {}
+
+      // Add CONSTANTS from the strategy
+      if (protocol) {
+        const { positionConfig } = getStrategyByPositionId(
+          dao as DAO,
+          blockchain as unknown as BLOCKCHAIN,
+          protocol,
+          position_id as string
+        )
+        const positionConfigItemFound = positionConfig?.find(
+          (positionConfigItem) => positionConfigItem.function_name === strategy
+        )
+
+        positionConfigItemFound?.parameters?.forEach((parameter) => {
+          if (parameter.type === 'constant') {
+            exitArguments = {
+              ...exitArguments,
+              [parameter.name]: parameter.value
+            }
+          }
+        })
+      }
+
+      // Add the rest of the parameters if needed
+      for (const key in exit_arguments) {
+        const value = exit_arguments[key as keyof typeof exit_arguments]
+        if (value) {
+          exitArguments = {
+            ...exitArguments,
+            [key]: value
+          }
+        }
+      }
+
+      if (Object.keys(exitArguments).length > 0) {
+        parameters.push('--exit-arguments')
+        parameters.push(`[${JSON.stringify(exitArguments)}]`)
+      }
+
+      console.log('Parameters', parameters)
+
+      // Execute the transaction builder
+      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+
+      if (error && status !== 200) {
+        console.error('ERROR: ', error)
+        return res.status(status).json({ data, error })
+      }
+
+      return res.status(status).json({ data, error })
     } catch (error) {
-      console.error('Error: ', error)
-      res.status(500).json({ data: { status: false, error: error as Error } })
-      reject()
+      console.error('ERROR Reject: ', error)
+      return res.status(500).json({ error: (error as Error)?.message })
     }
-  })
+  }
+
+  if (execution_type === 'simulate' || execution_type === 'execute') {
+    try {
+      // Build de arguments for the transaction builder
+
+      // Get the strategy from the body, if not found, return an error
+      const { transaction } = req.body as {
+        transaction: Maybe<any>
+      }
+
+      // Add the rest of the parameters if needed
+      if (transaction) {
+        parameters.push('--transaction')
+        parameters.push(`${JSON.stringify(transaction)}`)
+      }
+
+      // Execute the transaction builder
+      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+
+      if (error && status !== 200) {
+        console.error('ERROR: ', error)
+        return res.status(status).json({ data, error })
+      }
+
+      return res.status(status).json({ data, error })
+    } catch (error) {
+      console.error('ERROR Reject: ', error)
+      return res.status(500).json({ error: (error as Error)?.message })
+    }
+  }
+
+  return res.status(500).json({ error: 'Internal Server Error' })
 })

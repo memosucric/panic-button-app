@@ -4,22 +4,22 @@ import ErrorBoundaryWrapper from 'src/components/ErrorBoundary/ErrorBoundaryWrap
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
 import PaperSection from 'src/components/PaperSection'
-import EmptyData from 'src/components/EmptyData'
 import Detail from 'src/views/Position/Detail'
+import {HEADER_HEIGHT} from "src/components/Layout/Header";
+import {FOOTER_HEIGHT} from "src/components/Layout/Footer";
 
 const WrappedPosition = () => {
   const { state } = useApp()
-  const { positions } = state
-  const { selectedValue, status } = positions
+  const { selectedPosition: position, status } = state
+  const title = `${position?.lptoken_name} position details` ?? 'Card detail'
 
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === 'loading' ? <Loading /> : null}
-        {status === 'idle' ? (
-          <PaperSection title="Position detail">
-            {selectedValue ? <Detail selectedValue={selectedValue} /> : null}
-            {!selectedValue ? <EmptyData /> : null}
+        {status === 'Loading' ? <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`}  /> : null}
+        {status === 'Finished' ? (
+          <PaperSection title={title}>
+            <Detail />
           </PaperSection>
         ) : null}
       </BoxContainerWrapper>

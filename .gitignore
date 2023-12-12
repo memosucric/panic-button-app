@@ -45,3 +45,7 @@ google-credentials.json
 
 github
 github.pub
+
+src/scripts/__pycache__/
+
+positions.json
