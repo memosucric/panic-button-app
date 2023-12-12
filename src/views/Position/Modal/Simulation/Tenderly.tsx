@@ -43,11 +43,25 @@ export const Tenderly = () => {
     [blockchain, transaction, decodedTransaction, transactionBuildStatus, transactionCheckStatus]
   )
 
+  React.useEffect(() => {
+    if (
+      transactionBuildStatus === 'success' &&
+      transactionCheckStatus === 'success' &&
+      simulationStatus === 'not done'
+    ) {
+      onSimulate().then(() => console.log('Simulation finished'))
+    }
+  }, [transactionBuildStatus, transactionCheckStatus, simulationStatus])
+
   const onSimulate = React.useCallback(async () => {
     try {
       if (isDisabled) {
         throw new Error('Invalid transaction, please check the transaction and try again.')
       }
+
+      dispatch(setSetupSimulation(null))
+      dispatch(setSetupSimulationStatus('not done' as SetupItemStatus))
+      dispatch(setSetupStatus('transaction_check' as SetupStatus))
 
       setIsLoading(true)
 
@@ -82,6 +96,7 @@ export const Tenderly = () => {
         dispatch(setSetupSimulation({ shareUrl: share_url }))
         dispatch(setSetupSimulationStatus('success' as SetupItemStatus))
         dispatch(setSetupStatus('simulation' as SetupStatus))
+        window.open(share_url, '_blank')
       } else {
         throw new Error('Error trying to simulate transaction')
       }

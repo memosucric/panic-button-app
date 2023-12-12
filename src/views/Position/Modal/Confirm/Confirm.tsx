@@ -66,6 +66,10 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
         throw new Error('Invalid transaction, please check the transaction and try again.')
       }
 
+      dispatch(setSetupConfirm(null))
+      dispatch(setSetupConfirmStatus('not done' as SetupItemStatus))
+      dispatch(setSetupStatus('simulation' as SetupStatus))
+
       setIsLoading(true)
 
       const parameters = {

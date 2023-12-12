@@ -306,7 +306,7 @@ export const setSetupSimulationStatus = (status: SetupItemStatus): SetSetupSimul
   payload: status
 })
 
-export const setSetupConfirm = (confirm: { txHash: any }): SetSetupConfirm => ({
+export const setSetupConfirm = (confirm: Maybe<{ txHash: any }>): SetSetupConfirm => ({
   type: ActionType.SetSetupConfirm,
   payload: confirm
 })

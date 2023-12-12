@@ -88,7 +88,10 @@ export const TransactionDetails = () => {
   const [expanded, setExpanded] = React.useState('panel1')
 
   React.useEffect(() => {
-    if (!formValue) return
+    if (!formValue || transactionBuildStatus !== 'not done' || isLoading) {
+      console.log('Transaction details not executed')
+      return
+    }
 
     const {
       name: strategy,
