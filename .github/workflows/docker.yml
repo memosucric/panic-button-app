@@ -39,13 +39,15 @@ jobs:
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Build and Push image
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
-          file: ./Dockerfile
+          file: ./Dockerfile.main
+          cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:main
+          cache-to: type=inline
           
 
   docker_develop:
@@ -74,13 +76,15 @@ jobs:
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Build and Push image
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
-          file: ./Dockerfile
+          file: ./Dockerfile.dev
+          cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:develop
+          cache-to: type=inline
           
 
   update_main_deployment:
