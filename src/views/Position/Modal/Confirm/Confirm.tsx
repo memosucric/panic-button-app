@@ -188,9 +188,11 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
               Open transaction
             </Button>
           )}
-          <Button variant="contained" size="small" onClick={() => handleClose()}>
-            Cancel
-          </Button>
+          {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
+            <Button variant="contained" size="small" onClick={() => handleClose()}>
+              Cancel
+            </Button>
+          )}
           {!isLoading && (
             <Button variant="contained" disabled={isDisabled} size="small" onClick={onExecute}>
               Execute
