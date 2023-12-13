@@ -49,3 +49,5 @@ github.pub
 src/scripts/__pycache__/
 
 positions.json
+
+Dockerfile
