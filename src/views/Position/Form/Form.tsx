@@ -223,6 +223,8 @@ const Form = () => {
                   const isMaxButtonDisabled =
                     name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
 
+                  const isPercentageButton = name === 'percentage'
+
                   return (
                     <BoxWrapperColumn gap={2} key={`${index}_${keyIndex}`}>
                       <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
@@ -242,13 +244,15 @@ const Form = () => {
                           ) : null}
                         </BoxWrapperRow>
 
-                        <Button
-                          disabled={isMaxButtonDisabled}
-                          onClick={onClickApplyMax}
-                          variant="contained"
-                        >
-                          Max
-                        </Button>
+                        {isPercentageButton ? (
+                          <Button
+                            disabled={isMaxButtonDisabled}
+                            onClick={onClickApplyMax}
+                            variant="contained"
+                          >
+                            Max
+                          </Button>
+                        ) : null}
                       </BoxWrapperRow>
                       <PercentageText
                         name={name}
