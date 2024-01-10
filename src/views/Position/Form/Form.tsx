@@ -304,7 +304,7 @@ const CustomForm = (props: CustomFormProps) => {
           disabled={isExecuteButtonDisabled}
           type={'submit'}
         >
-          Execute
+          Submit
         </Button>
       </BoxWrapperColumn>
     </form>
