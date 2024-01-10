@@ -18,9 +18,9 @@ import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
-import CustomTypography from '../../../components/CustomTypography'
+import CustomTypography from 'src/components/CustomTypography'
 import Button from '@mui/material/Button'
-import BoxWrapperColumn from '../../../components/Wrappers/BoxWrapperColumn'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
@@ -118,6 +118,8 @@ const getServerSideProps = async (context: {
     LOCAL_FORK_HOST_GNOSIS: process?.env?.LOCAL_FORK_HOST_GNOSIS ?? 'anvil_gnosis',
     LOCAL_FORK_PORT_GNOSIS: process?.env?.LOCAL_FORK_PORT_GNOSIS ?? 8547
   }
+
+  console.log('reloading')
 
   return {
     props: {
