@@ -67,7 +67,7 @@ const LABEL_MAPPER = {
 const WaitingDecodingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
-      <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
+      <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
         Waiting for decoding transaction process...
       </CustomTypography>
     </Box>

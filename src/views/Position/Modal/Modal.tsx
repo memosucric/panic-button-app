@@ -14,8 +14,6 @@ import { TransactionCheck } from './Create/TransactionCheck'
 import { Tenderly } from './Simulation/Tenderly'
 import { Confirm } from './Confirm/Confirm'
 import { Stepper } from './Stepper'
-import { useApp } from 'src/contexts/app.context'
-import { Strategy } from 'src/contexts/state'
 
 interface ModalProps {
   open: boolean
@@ -34,10 +32,6 @@ const BoxWrapperRowStyled = styled(BoxWrapperRow)(() => ({
 
 export const Modal = (props: ModalProps) => {
   const { open, handleClose } = props
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { dispatch, state } = useApp()
-
-  const createValue: Maybe<Strategy> = state?.setup?.create?.value || null
 
   return (
     <Dialog
@@ -68,12 +62,6 @@ export const Modal = (props: ModalProps) => {
               gap={2}
             >
               <BoxWrapper>
-                <BoxWrapperRowStyled gap={2}>
-                  <CustomTypography variant="body2" sx={{ m: 3 }}>
-                    {createValue?.description ?? 'Create'}
-                  </CustomTypography>
-                </BoxWrapperRowStyled>
-
                 <SetupDetails />
                 <TransactionDetails />
                 <TransactionCheck />

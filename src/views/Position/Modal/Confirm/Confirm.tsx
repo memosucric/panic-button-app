@@ -13,7 +13,7 @@ import { ethers, TransactionReceipt } from 'ethers'
 const WaitingExecutingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
-      <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
+      <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
         Executing transaction...
       </CustomTypography>
     </Box>
@@ -48,16 +48,8 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       !transaction ||
       !decodedTransaction ||
       transactionBuildStatus !== 'success' ||
-      transactionCheckStatus !== 'success' ||
-      simulationStatus !== 'success',
-    [
-      blockchain,
-      transaction,
-      decodedTransaction,
-      transactionBuildStatus,
-      transactionCheckStatus,
-      simulationStatus
-    ]
+      transactionCheckStatus !== 'success',
+    [blockchain, transaction, decodedTransaction, transactionBuildStatus, transactionCheckStatus]
   )
 
   const onExecute = React.useCallback(async () => {
@@ -141,13 +133,6 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     setIsLoading(false)
   }, [blockchain, transaction, dispatch, isDisabled])
 
-  const color =
-    confirmStatus === ('success' as SetupItemStatus)
-      ? 'green'
-      : confirmStatus === ('failed' as SetupItemStatus)
-        ? 'red'
-        : 'black'
-
   return (
     <AccordionBoxWrapper
       gap={2}
@@ -157,48 +142,63 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       }}
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
-        <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+        <BoxWrapperColumn gap={2}>
           <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
-          <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
-            {confirmStatus}
+          <CustomTypography variant={'subtitle1'}>
+            You're about to create and confirm this transaction
           </CustomTypography>
-        </BoxWrapperRow>
-        <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap={'20px'}>
-          {isLoading && <WaitingExecutingTransaction />}
-          {confirmStatus === ('failed' as SetupItemStatus) && !isLoading && (
-            <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
-              {error?.message && typeof error?.message === 'string'
-                ? error?.message
-                : 'Error trying to execute transaction'}
-            </CustomTypography>
-          )}
-          {txHash && !isLoading && (
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => {
-                // open transaction hash in an explorer, if is ethereum in etherscan, if is gnosis in gnosisscan
-                const txUrl =
-                  blockchain === 'Ethereum'
-                    ? `https://etherscan.io/tx/${txHash}`
-                    : `https://gnosisscan.io/tx/${txHash}`
-                window.open(txUrl, '_blank')
-              }}
-            >
-              Open transaction
-            </Button>
-          )}
-          {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
-            <Button variant="contained" size="small" onClick={() => handleClose()}>
-              Cancel
-            </Button>
-          )}
-          {!isLoading && (
-            <Button variant="contained" disabled={isDisabled} size="small" onClick={onExecute}>
-              Execute
-            </Button>
-          )}
-        </BoxWrapperRow>
+        </BoxWrapperColumn>
+        <BoxWrapperColumn gap={'20px'}>
+          <BoxWrapperRow gap={'20px'}>
+            {isLoading && <WaitingExecutingTransaction />}
+            {confirmStatus === ('failed' as SetupItemStatus) && !isLoading && (
+              <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
+                {error?.message && typeof error?.message === 'string'
+                  ? error?.message
+                  : 'Error trying to execute transaction'}
+              </CustomTypography>
+            )}
+            {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
+              <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
+                The transaction will most likely fail.Please double check the transaction details if
+                you still want to execute it
+              </CustomTypography>
+            )}
+          </BoxWrapperRow>
+          <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap={'20px'}>
+            {txHash && !isLoading && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => {
+                  // open transaction hash in an explorer, if is ethereum in etherscan, if is gnosis in gnosisscan
+                  const txUrl =
+                    blockchain === 'Ethereum'
+                      ? `https://etherscan.io/tx/${txHash}`
+                      : `https://gnosisscan.io/tx/${txHash}`
+                  window.open(txUrl, '_blank')
+                }}
+              >
+                View on block explorer
+              </Button>
+            )}
+            {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
+              <Button variant="contained" size="small" onClick={() => handleClose()}>
+                Cancel
+              </Button>
+            )}
+            {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
+              <Button variant="contained" disabled={isDisabled} size="small" onClick={onExecute}>
+                Execute
+              </Button>
+            )}
+            {confirmStatus === ('success' as SetupItemStatus) && !isLoading && (
+              <Button variant="contained" size="small" onClick={() => handleClose()}>
+                Finish
+              </Button>
+            )}
+          </BoxWrapperRow>
+        </BoxWrapperColumn>
       </BoxWrapperColumn>
     </AccordionBoxWrapper>
   )

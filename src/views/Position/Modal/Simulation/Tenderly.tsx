@@ -12,7 +12,7 @@ import { Box } from '@mui/material'
 const WaitingSimulatingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
-      <CustomTypography variant={'body2'} sx={{ color: 'black' }}>
+      <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
         Simulating transaction...
       </CustomTypography>
     </Box>
@@ -47,7 +47,8 @@ export const Tenderly = () => {
     if (
       transactionBuildStatus === 'success' &&
       transactionCheckStatus === 'success' &&
-      simulationStatus === 'not done'
+      simulationStatus === 'not done' &&
+      !isLoading
     ) {
       onSimulate().then(() => console.log('Simulation finished'))
     }
@@ -59,11 +60,12 @@ export const Tenderly = () => {
         throw new Error('Invalid transaction, please check the transaction and try again.')
       }
 
+      setIsLoading(true)
+
       dispatch(setSetupSimulation(null))
       dispatch(setSetupSimulationStatus('not done' as SetupItemStatus))
-      dispatch(setSetupStatus('transaction_check' as SetupStatus))
 
-      setIsLoading(true)
+      dispatch(setSetupStatus('transaction_check' as SetupStatus))
 
       const parameters = {
         execution_type: 'simulate',
