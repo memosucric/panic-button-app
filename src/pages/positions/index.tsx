@@ -7,27 +7,29 @@ import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { updateStatus, addPositions } from 'src/contexts/reducers'
+import {updateStatus, addPositions, addDAOs, setSelectedDAO, clearSearch} from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 
 interface PositionsPageProps {
   positions: Position[]
+  DAOs: string[]
 }
 
 const PositionsPage = (props: PositionsPageProps): ReactElement => {
-  const { positions = [] } = props
-  const { dispatch, state } = useApp()
-  const values = state.positions.values
+  const { positions = [], DAOs } = props
+
+  const { dispatch } = useApp()
 
   React.useEffect(() => {
-    if (values.length > 0) return
-
     dispatch(updateStatus('Loading' as Status))
 
     dispatch(addPositions(positions))
+    dispatch(addDAOs(DAOs))
+    dispatch(setSelectedDAO(DAOs[0]))
+    dispatch(clearSearch())
 
     dispatch(updateStatus('Finished' as Status))
-  }, [dispatch, positions, values])
+  }, [dispatch])
 
   return <WrapperPositions />
 }
@@ -56,16 +58,13 @@ export const getServerSideProps = async (context: {
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
-    : ['']
-  const dao = roles?.[0] ?? ''
+    : []
+
+  const DAOs = roles
 
   const dataWarehouse = DataWarehouse.getInstance()
 
-  const allPositions: Position[] = await dataWarehouse.getPositions()
+  const positions: Position[] = await dataWarehouse.getPositions()
 
-  const positions = allPositions
-    .filter((position) => dao && position.dao === dao)
-    .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
-
-  return { props: { positions } }
+  return { props: { positions, DAOs } }
 }

@@ -52,7 +52,11 @@ export enum SetupStatus {
 export const initialState: InitialState = {
   status: Status.Loading,
   positions: [],
+  filteredPositions: [],
   selectedPosition: null,
+  search: null,
+  DAOs: [],
+  selectedDAO: null,
   envNetworkData: null,
   setup: {
     status: SetupStatus.Loading,
@@ -82,7 +86,11 @@ export const initialState: InitialState = {
 export type InitialState = {
   status: Status
   positions: Position[]
+  filteredPositions: Position[]
   selectedPosition: Maybe<Position>
+  search: Maybe<string>
+  DAOs: string[]
+  selectedDAO: Maybe<string>
   envNetworkData: Maybe<any>
   setup: {
     status: SetupStatus
