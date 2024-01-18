@@ -2,7 +2,6 @@ import 'src/scripts/dump/loadEnv'
 import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import * as fs from 'fs'
 import { Position } from 'src/contexts/state'
-
 ;(async () => {
   try {
     const dataWarehouse = DataWarehouse.getInstance()
