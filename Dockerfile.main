@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:21.0.0-alpine as builder
+FROM node:20.0.0-alpine as builder
 
 # Set working directory in the builder stage
 WORKDIR /app
@@ -23,10 +23,10 @@ RUN apk --no-cache add \
     apk del python3-dev musl-dev gcc g++
 
 # Install Node.js dependencies in the builder stage
-RUN yarn install --ignore-engines
+RUN yarn install
 
 # Runner stage
-FROM node:21.0.0-alpine
+FROM node:20.0.0-alpine
 
 # Set working directory in the runner stage
 WORKDIR /app
