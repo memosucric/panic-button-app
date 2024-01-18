@@ -63,8 +63,8 @@ export const CommonExecutePromise = (
         } = response ?? {}
 
         const body = {
-          data: status === 200 ? tx_data || sim_data || { tx_hash } : null,
-          error: status !== 200 ? message : null
+          data: +status === 200 ? tx_data || sim_data || { tx_hash } : null,
+          error: +status !== 200 ? message : null
         }
 
         resolve({

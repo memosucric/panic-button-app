@@ -25,14 +25,18 @@ import { clearSetup, setSetupCreate, setSetupStatus } from 'src/contexts/reducer
 import { getStrategy } from 'src/utils/strategies'
 import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
-const Form = () => {
+interface CustomFormProps {
+  handleClickOpen: () => void
+}
+
+const CustomForm = (props: CustomFormProps) => {
+  const { handleClickOpen } = props
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
   const { selectedPosition: position } = state
 
   const { positionConfig, commonConfig } = getStrategy(position as Position)
-
-  const [open, setOpen] = React.useState(false)
 
   const [keyIndex, setKeyIndex] = React.useState(1)
   // If we don't do this, the application will rerender every time
@@ -82,16 +86,6 @@ const Form = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues])
-
-  const handleClickOpen = () => {
-    setOpen(true)
-    neutralizeBack(handleClose)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-    revivalBack()
-  }
 
   const onSubmit: SubmitHandler<any> = React.useCallback(
     async (data: any) => {
@@ -143,178 +137,198 @@ const Form = () => {
   const isExecuteButtonDisabled = isSubmitting || !isValid
 
   return (
-    <>
-      <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
-        <BoxWrapperColumn gap={2}>
-          <BoxWrapperColumn gap={6}>
+    <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
+      <BoxWrapperColumn gap={2}>
+        <BoxWrapperColumn gap={6}>
+          <BoxWrapperColumn gap={2}>
+            <Title title={'Exit strategies'} />
             <BoxWrapperColumn gap={2}>
-              <Title title={'Exit strategies'} />
-              <BoxWrapperColumn gap={2}>
-                <InputRadio
-                  name={'strategy'}
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onChange={(e: any) => {
-                    // Clear fields
-                    setValue('percentage', null)
-                    setValue('max_slippage', null)
-                    setValue('rewards_address', null)
-                    setValue('token_out_address', null)
-                    setValue('bpt_address', null)
-                    setKeyIndex(keyIndex + 1)
+              <InputRadio
+                name={'strategy'}
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                onChange={(e: any) => {
+                  // Clear fields
+                  setValue('percentage', null)
+                  setValue('max_slippage', null)
+                  setValue('rewards_address', null)
+                  setValue('token_out_address', null)
+                  setValue('bpt_address', null)
+                  setKeyIndex(keyIndex + 1)
 
-                    clearErrors('percentage')
-                    clearErrors('max_slippage')
-                    clearErrors('rewards_address')
-                    clearErrors('token_out_address')
-                    clearErrors('bpt_address')
-                  }}
-                  options={positionConfig.map((item: PositionConfig) => {
-                    return {
-                      name: item.label,
-                      value: item.function_name.trim(),
-                      description: item.description
-                    }
-                  })}
-                  control={control}
-                />
-              </BoxWrapperColumn>
-            </BoxWrapperColumn>
-
-            <BoxWrapperColumn gap={2}>
-              <Title title={'Parameters'} />
-              {parameters.map((parameter: Config, index: number) => {
-                const { name, label = '', type, rules, options } = parameter
-
-                if (type === 'constant') {
-                  return null
-                }
-
-                let haveMinAndMaxRules = false
-                let onChange = undefined
-
-                const haveOptions = options?.length ?? 0 > 0
-                const min = rules?.min
-
-                const max = rules?.max
-                haveMinAndMaxRules = min !== undefined && max !== undefined
-
-                if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
-                  onChange = (values: any) => {
-                    const value = values?.floatValue
-                    if (!value) {
-                      setError(name as any, {
-                        type: 'manual',
-                        message: `Please enter a value between ${min}% and ${max}%`
-                      })
-                    } else {
-                      clearErrors(label as any)
-                    }
+                  clearErrors('percentage')
+                  clearErrors('max_slippage')
+                  clearErrors('rewards_address')
+                  clearErrors('token_out_address')
+                  clearErrors('bpt_address')
+                }}
+                options={positionConfig.map((item: PositionConfig) => {
+                  return {
+                    name: item.label,
+                    value: item.function_name.trim(),
+                    description: item.description
                   }
-                }
-
-                const onClickApplyMax = () => {
-                  if (max !== undefined) {
-                    clearErrors(name as any)
-                    setValue(name as any, max, { shouldValidate: true })
-                  }
-                }
-
-                if (haveMinAndMaxRules) {
-                  const isMaxButtonDisabled =
-                    name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
-
-                  const isPercentageButton = name === 'percentage'
-
-                  return (
-                    <BoxWrapperColumn gap={2} key={`${index}_${keyIndex}`}>
-                      <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-                        <BoxWrapperRow gap={2}>
-                          <Label title={label} />
-                          {name === 'max_slippage' ? (
-                            <Tooltip
-                              title={
-                                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                  Please enter a slippage from {min}% to {max}%
-                                </CustomTypography>
-                              }
-                              sx={{ ml: 1, cursor: 'pointer' }}
-                            >
-                              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
-                            </Tooltip>
-                          ) : null}
-                        </BoxWrapperRow>
-
-                        {isPercentageButton ? (
-                          <Button
-                            disabled={isMaxButtonDisabled}
-                            onClick={onClickApplyMax}
-                            variant="contained"
-                          >
-                            Max
-                          </Button>
-                        ) : null}
-                      </BoxWrapperRow>
-                      <PercentageText
-                        name={name}
-                        control={control}
-                        rules={{
-                          required: `Please enter a value between ${min}% and ${max}%`,
-                          validate: {
-                            required: (value: any) => {
-                              if (!value || value === 0)
-                                return `Please enter a value between ${min}% and ${max}%`
-                            }
-                          }
-                        }}
-                        minValue={min || 0}
-                        maxValue={max || 100}
-                        placeholder={
-                          PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
-                        }
-                        errors={errors}
-                        onChange={onChange}
-                      />
-                    </BoxWrapperColumn>
-                  )
-                }
-
-                if (haveOptions) {
-                  return (
-                    <BoxWrapperColumn gap={2} key={index}>
-                      <Label title={label} />
-                      <InputRadio
-                        name={name}
-                        control={control}
-                        options={
-                          options?.map((item) => {
-                            return {
-                              name: item?.label ?? '',
-                              value: item?.value ?? ''
-                            }
-                          }) ?? []
-                        }
-                      />
-                    </BoxWrapperColumn>
-                  )
-                }
-
-                return null
-              })}
+                })}
+                control={control}
+              />
             </BoxWrapperColumn>
           </BoxWrapperColumn>
 
-          <Button
-            onClick={handleClickOpen}
-            variant="contained"
-            size="large"
-            sx={{ height: '60px', marginTop: '30px' }}
-            disabled={isExecuteButtonDisabled}
-            type={'submit'}
-          >
-            Execute
-          </Button>
+          <BoxWrapperColumn gap={2}>
+            <Title title={'Parameters'} />
+            {parameters.map((parameter: Config, index: number) => {
+              const { name, label = '', type, rules, options } = parameter
+
+              if (type === 'constant') {
+                return null
+              }
+
+              let haveMinAndMaxRules = false
+              let onChange = undefined
+
+              const haveOptions = options?.length ?? 0 > 0
+              const min = rules?.min
+
+              const max = rules?.max
+              haveMinAndMaxRules = min !== undefined && max !== undefined
+
+              if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
+                onChange = (values: any) => {
+                  const value = values?.floatValue
+                  if (!value) {
+                    setError(name as any, {
+                      type: 'manual',
+                      message: `Please enter a value between ${min}% and ${max}%`
+                    })
+                  } else {
+                    clearErrors(label as any)
+                  }
+                }
+              }
+
+              const onClickApplyMax = () => {
+                if (max !== undefined) {
+                  clearErrors(name as any)
+                  setValue(name as any, max, { shouldValidate: true })
+                }
+              }
+
+              if (haveMinAndMaxRules) {
+                const isMaxButtonDisabled =
+                  name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
+
+                const isPercentageButton = name === 'percentage'
+
+                return (
+                  <BoxWrapperColumn gap={2} key={`${index}_${keyIndex}`}>
+                    <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+                      <BoxWrapperRow gap={2}>
+                        <Label title={label} />
+                        {name === 'max_slippage' ? (
+                          <Tooltip
+                            title={
+                              <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
+                                Please enter a slippage from {min}% to {max}%
+                              </CustomTypography>
+                            }
+                            sx={{ ml: 1, cursor: 'pointer' }}
+                          >
+                            <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
+                          </Tooltip>
+                        ) : null}
+                      </BoxWrapperRow>
+
+                      {isPercentageButton ? (
+                        <Button
+                          disabled={isMaxButtonDisabled}
+                          onClick={onClickApplyMax}
+                          variant="contained"
+                        >
+                          Max
+                        </Button>
+                      ) : null}
+                    </BoxWrapperRow>
+                    <PercentageText
+                      name={name}
+                      control={control}
+                      rules={{
+                        required: `Please enter a value between ${min}% and ${max}%`,
+                        validate: {
+                          required: (value: any) => {
+                            if (!value || value === 0)
+                              return `Please enter a value between ${min}% and ${max}%`
+                          }
+                        }
+                      }}
+                      minValue={min || 0}
+                      maxValue={max || 100}
+                      placeholder={
+                        PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
+                      }
+                      errors={errors}
+                      onChange={onChange}
+                    />
+                  </BoxWrapperColumn>
+                )
+              }
+
+              if (haveOptions) {
+                return (
+                  <BoxWrapperColumn gap={2} key={index}>
+                    <Label title={label} />
+                    <InputRadio
+                      name={name}
+                      control={control}
+                      options={
+                        options?.map((item) => {
+                          return {
+                            name: item?.label ?? '',
+                            value: item?.value ?? ''
+                          }
+                        }) ?? []
+                      }
+                    />
+                  </BoxWrapperColumn>
+                )
+              }
+
+              return null
+            })}
+          </BoxWrapperColumn>
         </BoxWrapperColumn>
-      </form>
+
+        <Button
+          onClick={handleClickOpen}
+          variant="contained"
+          size="large"
+          sx={{ height: '60px', marginTop: '30px' }}
+          disabled={isExecuteButtonDisabled}
+          type={'submit'}
+        >
+          Submit
+        </Button>
+      </BoxWrapperColumn>
+    </form>
+  )
+}
+
+const CustomFormMemoized = React.memo(CustomForm)
+
+const Form = () => {
+  const [open, setOpen] = React.useState(false)
+
+  const handleClickOpen = React.useCallback(() => {
+    setOpen(true)
+    neutralizeBack(handleClose)
+  }, [])
+
+  const handleClose = React.useCallback(() => {
+    setOpen(false)
+    revivalBack()
+  }, [])
+
+  return (
+    <>
+      <CustomFormMemoized handleClickOpen={handleClickOpen} />
       <Modal open={open} handleClose={handleClose} />
     </>
   )
