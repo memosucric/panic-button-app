@@ -28,7 +28,7 @@ RUN apk --no-cache add \
     apk del python3-dev musl-dev gcc g++
 
 # Runner stage
-FROM node:20.0.0-alpine
+FROM node:21.0.0-alpine
 
 # Set working directory in the runner stage
 WORKDIR /app
