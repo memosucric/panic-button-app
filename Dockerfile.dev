@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install Node.js dependencies in the builder stage
-RUN yarn install --ignore-engines
+RUN yarn install
 
 # Copy the rest of the app files into the builder stage
 COPY . .
