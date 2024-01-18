@@ -11,8 +11,8 @@ import { SearchOutlined } from '@mui/icons-material'
 import { Position, Status } from 'src/contexts/state'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
-import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from '../../config/strategies/manager'
-import { getStrategy } from '../../utils/strategies'
+import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from 'src/config/strategies/manager'
+import { getStrategy } from 'src/utils/strategies'
 
 interface SearchPositionProps {
   onChange: (value: string) => void
@@ -65,11 +65,6 @@ const WrapperPositions = () => {
     [positions]
   )
 
-  // const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN, 'execute' as EXECUTION_TYPE)
-  //
-  // const { positionConfig } = getStrategy(position as Position)
-  // const areAnyStrategies = positionConfig?.length > 0
-
   const filteredPositionsActive = filteredPositions
     .map((position: Position) => {
       const existDAOFilePath = !!getDAOFilePath(
@@ -86,7 +81,6 @@ const WrapperPositions = () => {
       }
     })
     .sort((a: Position, b: Position) => {
-      // sort by lptoken_name and should be active
       if (a.isActive && !b.isActive) return -1
       if (!a.isActive && b.isActive) return 1
       if (a.lptoken_name < b.lptoken_name) return -1
