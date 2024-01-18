@@ -14,7 +14,8 @@
     "lint:tsc": "tsc -p tsconfig.json",
     "prepare": "husky install",
     "commit": "git-cz",
-    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts"
+    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts",
+    "submodule:sync": "git submodule update --remote"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
@@ -27,6 +28,7 @@
     "@mui/material": "5.14.8",
     "clsx": "^2.1.0",
     "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
     "framer-motion": "^10.18.0",
     "next": "13.4.12",
     "numbro": "^2.4.0",

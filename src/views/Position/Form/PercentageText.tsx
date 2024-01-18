@@ -56,51 +56,54 @@ export const PercentageText = (props: ControlledTextFieldProps) => {
       control={control}
       rules={rules}
       defaultValue={(defaultValue as any) ?? ''}
-      render={({ field }) => (
-        <TextField
-          InputProps={{
-            inputComponent: PercentageNumberFormat as any
-          }}
-          inputProps={{
-            value: field?.value ? field?.value : null,
-            suffix: '%',
-            isAllowed: (values: any) => {
-              return (
-                (values.floatValue! >= minValue && values.floatValue! <= maxValue) ||
-                values.floatValue === undefined
-              )
-            },
-            onValueChange: (values: any) => {
-              if (onChange) onChange(values)
-              field.onChange(values.floatValue)
-            }
-          }}
-          value={field?.value ? field?.value : null}
-          error={!!errors[field.name]}
-          helperText={errors[field.name]?.message?.toString()}
-          sx={{
-            fontFamily: 'IBM Plex Sans',
-            fontStyle: 'normal',
-            fontWeight: 500,
-            fontSize: 18,
-            lineHeight: '18px',
-            color: 'custom.grey.dark',
-            width: '100%',
-            '& input[type=number]': {
-              MozAppearance: 'textfield'
-            },
-            '& input[type=number]::-webkit-outer-spin-button': {
-              WebkitAppearance: 'none',
-              margin: 0
-            },
-            '& input[type=number]::-webkit-inner-spin-button': {
-              WebkitAppearance: 'none',
-              margin: 0
-            }
-          }}
-          {...restProps}
-        />
-      )}
+      render={({ field }) => {
+        return (
+          <TextField
+            InputProps={{
+              inputComponent: PercentageNumberFormat as any
+            }}
+            inputProps={{
+              value: field?.value,
+              suffix: '%',
+              isAllowed: (values: any) => {
+                return (
+                  (values.floatValue! >= minValue && values.floatValue! <= maxValue) ||
+                  values.floatValue === undefined ||
+                  values.floatValue === null
+                )
+              },
+              onValueChange: (values: any) => {
+                if (onChange) onChange(values)
+                field.onChange(values.floatValue)
+              }
+            }}
+            value={field?.value}
+            error={!!errors[field.name]}
+            helperText={errors[field.name]?.message?.toString()}
+            sx={{
+              fontFamily: 'IBM Plex Sans',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              fontSize: 18,
+              lineHeight: '18px',
+              color: 'custom.grey.dark',
+              width: '100%',
+              '& input[type=number]': {
+                MozAppearance: 'textfield'
+              },
+              '& input[type=number]::-webkit-outer-spin-button': {
+                WebkitAppearance: 'none',
+                margin: 0
+              },
+              '& input[type=number]::-webkit-inner-spin-button': {
+                WebkitAppearance: 'none',
+                margin: 0
+              }
+            }}
+            {...restProps}
+          />
+        )
+      }}
     />
   )
 }

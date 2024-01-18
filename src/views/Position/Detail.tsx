@@ -1,42 +1,23 @@
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import * as React from 'react'
-import { PositionType } from 'src/contexts/types'
 import { Divider } from '@mui/material'
-import {
-  DAO,
-  getStrategyByPositionId,
-  BLOCKCHAIN,
-  ExecConfig,
-  getDAOFilePath
-} from 'src/config/strategies/manager'
 import Form from 'src/views/Position/Form/Form'
 import Primary from 'src/views/Position/Title/Primary'
 import Secondary from 'src/views/Position/Title/Secondary'
 import NoStrategies from 'src/views/Position/NoStrategies'
+import { useApp } from 'src/contexts/app.context'
+import { getStrategy } from 'src/utils/strategies'
+import { Position } from 'src/contexts/state'
 
-interface DetailProps {
-  position: PositionType
-}
+const Detail = () => {
+  const { state } = useApp()
+  const { selectedPosition: position, status } = state
 
-const Detail = (props: DetailProps) => {
-  const { position } = props
+  if (status !== 'Finished' || !position) {
+    return null
+  }
 
-  const {
-    dao,
-    position_id: positionId,
-    protocol,
-    blockchain,
-    lptoken_name: positionName
-  } = position
-
-  const config: ExecConfig = getStrategyByPositionId(
-    dao as DAO,
-    blockchain as unknown as BLOCKCHAIN,
-    protocol,
-    positionId
-  )
-  const { positionConfig } = config
-  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN)
+  const { positionConfig } = getStrategy(position as Position)
   const areAnyStrategies = positionConfig?.length > 0
 
   return (
@@ -49,7 +30,8 @@ const Detail = (props: DetailProps) => {
         backgroundColor: 'custom.grey.light',
         borderRadius: '8px',
         padding: '30px 30px',
-        width: '400px'
+        minWidth: '400px',
+        width: '800px'
       }}
     >
       <BoxWrapperColumn gap={2}>
@@ -58,18 +40,12 @@ const Detail = (props: DetailProps) => {
           <Divider sx={{ borderBottomWidth: 5 }} />
         </BoxWrapperColumn>
         <BoxWrapperColumn gap={2}>
-          <Secondary title={`Blockchain:`} subtitle={blockchain} />
-          <Secondary title={`Protocol:`} subtitle={protocol} />
-          <Secondary title={`Position:`} subtitle={positionName} />
+          <Secondary title={`Blockchain:`} subtitle={position?.blockchain} />
+          <Secondary title={`Protocol:`} subtitle={position?.protocol} />
+          <Secondary title={`Position:`} subtitle={position?.lptoken_name} />
         </BoxWrapperColumn>
       </BoxWrapperColumn>
-      <BoxWrapperColumn gap={2}>
-        {areAnyStrategies && existDAOFilePath ? (
-          <Form config={config} position={position} />
-        ) : (
-          <NoStrategies />
-        )}
-      </BoxWrapperColumn>
+      <BoxWrapperColumn gap={2}>{areAnyStrategies ? <Form /> : <NoStrategies />}</BoxWrapperColumn>
     </BoxWrapperColumn>
   )
 }

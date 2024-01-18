@@ -4,24 +4,24 @@ import ErrorBoundaryWrapper from 'src/components/ErrorBoundary/ErrorBoundaryWrap
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
 import PaperSection from 'src/components/PaperSection'
-import EmptyData from 'src/components/EmptyData'
 import Detail from 'src/views/Position/Detail'
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 
 const WrappedPosition = () => {
   const { state } = useApp()
-  const { positions } = state
-  const { selectedValue: position, status } = positions
-
-  const title = `${position?.lptoken_name} position details` ?? 'Card detail'
+  const { status } = state
+  const title = `Exit strategy configuration`
 
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === 'loading' ? <Loading /> : null}
-        {status === 'idle' ? (
+        {status === 'Loading' ? (
+          <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+        ) : null}
+        {status === 'Finished' ? (
           <PaperSection title={title}>
-            {position ? <Detail position={position} /> : null}
-            {!position ? <EmptyData /> : null}
+            <Detail />
           </PaperSection>
         ) : null}
       </BoxContainerWrapper>

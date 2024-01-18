@@ -13,7 +13,8 @@ const Homepage = (): ReactElement => {
   const { user, error, isLoading } = useUser()
   const { push } = useRouter()
 
-  if (isLoading) return <Loading />
+  if (isLoading)
+    return <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
   if (error) push('/500')
   if (!user) {
     return (

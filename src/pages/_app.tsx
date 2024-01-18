@@ -13,6 +13,8 @@ import Router from 'next/router'
 import * as React from 'react'
 import { AppProvider } from 'src/contexts/app.context'
 import Loading from 'src/components/Loading'
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -24,16 +26,16 @@ interface MyAppProps extends AppProps {
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
-  const [loading, setLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
 
   React.useEffect(() => {
     const start = () => {
       console.log('start')
-      setLoading(true)
+      setIsLoading(true)
     }
     const end = () => {
       console.log('finished')
-      setLoading(false)
+      setIsLoading(false)
     }
     Router.events.on('routeChangeStart', start)
     Router.events.on('routeChangeComplete', end)
@@ -57,7 +59,13 @@ export default function MyApp(props: MyAppProps) {
           <AppProvider>
             <NoSsr>
               <CssBaseline />
-              <Layout>{loading ? <Loading /> : <Component {...pageProps} />}</Layout>
+              <Layout>
+                {isLoading ? (
+                  <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+                ) : (
+                  <Component {...pageProps} />
+                )}
+              </Layout>
             </NoSsr>
           </AppProvider>
         </ThemeProvider>

@@ -37,6 +37,10 @@ interface FooterProps {
 
 const Footer = (props: FooterProps) => {
   const { disclaimerText } = props
+
+  const year = new Date()
+  const fullYear = year.getFullYear()
+
   return (
     <AnimatePresenceWrapper>
       <FooterWrapper>
@@ -55,7 +59,7 @@ const Footer = (props: FooterProps) => {
         ) : null}
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
           <BoxWrapperRow>
-            <CustomTypographyFooter>© 2023 karpatkey • &nbsp;</CustomTypographyFooter>
+            <CustomTypographyFooter>© {fullYear} karpatkey • &nbsp;</CustomTypographyFooter>
             <Link
               href={`https://drive.google.com/drive/folders/1-RaGdsneMJ1sznUkzBw2CCWlLlO_EAJB`}
               target="_blank"

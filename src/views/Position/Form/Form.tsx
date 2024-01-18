@@ -7,50 +7,55 @@ import {
   Config,
   DEFAULT_VALUES_KEYS,
   DEFAULT_VALUES_TYPE,
-  ExecConfig,
   PARAMETERS_CONFIG,
   PositionConfig
 } from 'src/config/strategies/manager'
-import { PositionType } from 'src/contexts/types'
-import { PossibleExecutionTypeValues } from './Types'
 import InputRadio from './InputRadio'
 import { Label } from './Label'
 import { Title } from './Title'
-import { trimAll } from 'src/utils/string'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { PercentageText } from './PercentageText'
-import { Modal } from '../Modal'
+import { Modal } from '../Modal/Modal'
 import Tooltip from '@mui/material/Tooltip'
 import CustomTypography from 'src/components/CustomTypography'
 import InfoIcon from '@mui/icons-material/Info'
-import { ChangeEvent } from 'react'
+import { useApp } from 'src/contexts/app.context'
+import { Position, SetupStatus, Strategy } from 'src/contexts/state'
+import { clearSetup, setSetupCreate, setSetupStatus } from 'src/contexts/reducers'
+import { getStrategy } from 'src/utils/strategies'
+import { neutralizeBack, revivalBack } from 'src/utils/modal'
 
-interface FormProps {
-  config: ExecConfig
-  position: PositionType
+interface CustomFormProps {
+  handleClickOpen: () => void
 }
 
-const Form = (props: FormProps) => {
-  const { config, position } = props
-  const { commonConfig, positionConfig } = config
+const CustomForm = (props: CustomFormProps) => {
+  const { handleClickOpen } = props
 
-  const [open, setOpen] = React.useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { dispatch, state } = useApp()
+  const { selectedPosition: position } = state
 
-  const defaultValues: DEFAULT_VALUES_TYPE = {
-    position_id: position?.position_id ?? null,
-    blockchain: position?.blockchain ?? null,
-    protocol: position?.protocol ?? null,
-    execution_type: 'Simulate' as PossibleExecutionTypeValues,
-    strategy: positionConfig[0]?.function_name ?? null,
-    percentage: null,
-    rewards_address: null,
-    max_slippage: null,
-    token_out_address: null,
-    bpt_address: null
-  }
+  const { positionConfig, commonConfig } = getStrategy(position as Position)
+
+  const [keyIndex, setKeyIndex] = React.useState(1)
+  // If we don't do this, the application will rerender every time
+  const defaultValues: DEFAULT_VALUES_TYPE = React.useMemo(() => {
+    return {
+      position_id: position?.position_id ?? null,
+      blockchain: position?.blockchain ?? null,
+      protocol: position?.protocol ?? null,
+      strategy: positionConfig[0]?.function_name?.trim(),
+      percentage: null,
+      rewards_address: null,
+      max_slippage: null,
+      token_out_address: null,
+      bpt_address: null
+    }
+  }, [position, positionConfig])
 
   const {
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
     control,
     setError,
@@ -59,49 +64,68 @@ const Form = (props: FormProps) => {
     watch
   } = useForm<any>({
     defaultValues,
-    mode: 'onChange'
+    mode: 'all'
   })
 
   const watchStrategy = watch('strategy')
   const watchMaxSlippage = watch('max_slippage')
   const watchPercentage = watch('percentage')
 
-  const refSubmitButton = React.useRef<HTMLButtonElement>(null)
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const triggerSubmit = () => {
-    refSubmitButton?.current?.click()
-  }
-
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  const onSubmit: SubmitHandler<any> = async (data: any) => {
-    const exitArguments = {
-      rewards_address: data?.rewards_address,
-      max_slippage: data?.max_slippage,
-      token_out_address: data?.token_out_address,
-      bpt_address: data?.bpt_address
+  // We need to do this, because the react hook form default values are not working properly
+  React.useEffect(() => {
+    if (defaultValues) {
+      setValue('position_id', position?.position_id ?? null)
+      setValue('blockchain', position?.blockchain ?? null)
+      setValue('protocol', position?.protocol ?? null)
+      setValue('strategy', positionConfig[0]?.function_name ?? null)
+      setValue('percentage', null)
+      setValue('rewards_address', null)
+      setValue('max_slippage', null)
+      setValue('token_out_address', null)
+      setValue('bpt_address', null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValues])
 
-    const params = {
-      position_id: data?.position_id,
-      blockchain: data?.blockchain,
-      protocol: data?.protocol,
-      strategy: data?.strategy,
-      execution_type: data?.execution_type,
-      percentage: data?.percentage,
-      exit_arguments: exitArguments
-    }
+  const onSubmit: SubmitHandler<any> = React.useCallback(
+    async (data: any) => {
+      // Get label by value for the token_out_address in the positionConfig
 
-    const body = JSON.stringify(trimAll(params))
-    console.log('body', body)
-  }
+      // First clear the stage just in case
+      dispatch(clearSetup())
+
+      // Object is possibly 'undefined'.  TS2532, disable this error
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const tokenOutAddressLabel =
+        positionConfig
+          ?.find((item: PositionConfig) => item?.function_name === data?.strategy)
+          ?.parameters?.find((item: Config) => item?.name === 'token_out_address')
+          ?.options?.find((item: any) => item?.value === data?.token_out_address)?.label ?? ''
+
+      const setup = {
+        id: data?.strategy,
+        name: data?.strategy,
+        description:
+          positionConfig?.find((item: PositionConfig) => item.function_name === data?.strategy)
+            ?.description ?? '',
+        percentage: data?.percentage,
+        blockchain: data?.blockchain,
+        protocol: data?.protocol,
+        position_id: data?.position_id,
+        position_name: position?.lptoken_name,
+        rewards_address: data?.rewards_address,
+        max_slippage: data?.max_slippage,
+        token_out_address: data?.token_out_address,
+        token_out_address_label: tokenOutAddressLabel,
+        bpt_address: data?.bpt_address
+      }
+
+      dispatch(setSetupCreate(setup as Strategy))
+
+      dispatch(setSetupStatus('create' as SetupStatus))
+    },
+    [positionConfig, dispatch, position]
+  )
 
   const specificParameters: Config[] =
     (positionConfig as PositionConfig[])?.find(
@@ -110,101 +134,110 @@ const Form = (props: FormProps) => {
 
   const parameters = [...commonConfig, ...specificParameters]
 
-  const isExecuteButtonDisabled =
-    Object.keys(errors).length > 0 || isSubmitting || !isDirty || !isValid
+  const isExecuteButtonDisabled = isSubmitting || !isValid
 
   return (
-    <>
-      <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
-        <BoxWrapperColumn gap={2}>
-          <BoxWrapperColumn gap={6}>
+    <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
+      <BoxWrapperColumn gap={2}>
+        <BoxWrapperColumn gap={6}>
+          <BoxWrapperColumn gap={2}>
+            <Title title={'Exit strategies'} />
             <BoxWrapperColumn gap={2}>
-              <Title title={'Exit strategies'} />
-              <BoxWrapperColumn gap={2}>
-                <InputRadio
-                  name={'strategy'}
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    // Clear fields
-                    setValue('percentage', null, { shouldValidate: true })
-                    setValue('max_slippage', null, { shouldValidate: true })
-                    setValue('rewards_address', null, { shouldValidate: true })
-                    setValue('token_out_address', null, { shouldValidate: true })
-                    setValue('bpt_address', null, { shouldValidate: true })
-                  }}
-                  options={positionConfig.map((item: PositionConfig) => {
-                    return {
-                      name: item.label,
-                      value: item.function_name,
-                      description: item.description
-                    }
-                  })}
-                  control={control}
-                />
-              </BoxWrapperColumn>
+              <InputRadio
+                name={'strategy'}
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                onChange={(e: any) => {
+                  // Clear fields
+                  setValue('percentage', null)
+                  setValue('max_slippage', null)
+                  setValue('rewards_address', null)
+                  setValue('token_out_address', null)
+                  setValue('bpt_address', null)
+                  setKeyIndex(keyIndex + 1)
+
+                  clearErrors('percentage')
+                  clearErrors('max_slippage')
+                  clearErrors('rewards_address')
+                  clearErrors('token_out_address')
+                  clearErrors('bpt_address')
+                }}
+                options={positionConfig.map((item: PositionConfig) => {
+                  return {
+                    name: item.label,
+                    value: item.function_name.trim(),
+                    description: item.description
+                  }
+                })}
+                control={control}
+              />
             </BoxWrapperColumn>
+          </BoxWrapperColumn>
 
-            <BoxWrapperColumn gap={2}>
-              <Title title={'Parameters'} />
-              {parameters.map((parameter: Config, index: number) => {
-                const { name, label = '', type, rules, options } = parameter
+          <BoxWrapperColumn gap={2}>
+            <Title title={'Parameters'} />
+            {parameters.map((parameter: Config, index: number) => {
+              const { name, label = '', type, rules, options } = parameter
 
-                if (type === 'constant') {
-                  return null
-                }
+              if (type === 'constant') {
+                return null
+              }
 
-                let haveMinAndMaxRules = false
-                let onChange = undefined
-                const haveOptions = !!options?.length
+              let haveMinAndMaxRules = false
+              let onChange = undefined
 
-                const min = rules?.min
-                const max = rules?.max
-                haveMinAndMaxRules = min !== undefined && max !== undefined
+              const haveOptions = options?.length ?? 0 > 0
+              const min = rules?.min
 
-                if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
-                  onChange = (values: any) => {
-                    const value = values?.floatValue
-                    if (!value) {
-                      setError(name as any, {
-                        type: 'manual',
-                        message: `Please fill in the field ${label}`
-                      })
-                    } else {
-                      clearErrors(label as any)
-                    }
+              const max = rules?.max
+              haveMinAndMaxRules = min !== undefined && max !== undefined
+
+              if ((name === 'percentage' || name === 'max_slippage') && type === 'input') {
+                onChange = (values: any) => {
+                  const value = values?.floatValue
+                  if (!value) {
+                    setError(name as any, {
+                      type: 'manual',
+                      message: `Please enter a value between ${min}% and ${max}%`
+                    })
+                  } else {
+                    clearErrors(label as any)
                   }
                 }
+              }
 
-                const onClickApplyMax = () => {
-                  if (max !== undefined) {
-                    clearErrors(name as any)
-                    setValue(name as any, max, { shouldValidate: true })
-                  }
+              const onClickApplyMax = () => {
+                if (max !== undefined) {
+                  clearErrors(name as any)
+                  setValue(name as any, max, { shouldValidate: true })
                 }
+              }
 
-                if (haveMinAndMaxRules) {
-                  const isMaxButtonDisabled =
-                    name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
+              if (haveMinAndMaxRules) {
+                const isMaxButtonDisabled =
+                  name === 'percentage' ? watchPercentage == max : watchMaxSlippage == max
 
-                  return (
-                    <BoxWrapperColumn gap={2} key={index}>
-                      <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-                        <BoxWrapperRow gap={2}>
-                          <Label title={label} />
-                          {name === 'max_slippage' ? (
-                            <Tooltip
-                              title={
-                                <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
-                                  The max slippage field is capped in 10% to start
-                                </CustomTypography>
-                              }
-                              sx={{ ml: 1, cursor: 'pointer' }}
-                            >
-                              <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
-                            </Tooltip>
-                          ) : null}
-                        </BoxWrapperRow>
+                const isPercentageButton = name === 'percentage'
 
+                return (
+                  <BoxWrapperColumn gap={2} key={`${index}_${keyIndex}`}>
+                    <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+                      <BoxWrapperRow gap={2}>
+                        <Label title={label} />
+                        {name === 'max_slippage' ? (
+                          <Tooltip
+                            title={
+                              <CustomTypography variant="body2" sx={{ color: 'common.white' }}>
+                                Please enter a slippage from {min}% to {max}%
+                              </CustomTypography>
+                            }
+                            sx={{ ml: 1, cursor: 'pointer' }}
+                          >
+                            <InfoIcon sx={{ fontSize: 24, cursor: 'pointer' }} />
+                          </Tooltip>
+                        ) : null}
+                      </BoxWrapperRow>
+
+                      {isPercentageButton ? (
                         <Button
                           disabled={isMaxButtonDisabled}
                           onClick={onClickApplyMax}
@@ -212,58 +245,90 @@ const Form = (props: FormProps) => {
                         >
                           Max
                         </Button>
-                      </BoxWrapperRow>
-                      <PercentageText
-                        name={name}
-                        control={control}
-                        rules={{ required: `Please fill in the field ${label}` }}
-                        minValue={name === 'max_slippage' ? 0 : 1}
-                        maxValue={name === 'max_slippage' ? 10 : 100}
-                        placeholder={
-                          PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
-                        }
-                        errors={errors}
-                        onChange={onChange}
-                      />
-                    </BoxWrapperColumn>
-                  )
-                }
-
-                if (haveOptions) {
-                  return (
-                    <BoxWrapperColumn gap={2} key={index}>
-                      <Label title={label} />
-                      <InputRadio
-                        name={name}
-                        control={control}
-                        options={options?.map((item) => {
-                          return {
-                            name: item.label,
-                            value: item.value
+                      ) : null}
+                    </BoxWrapperRow>
+                    <PercentageText
+                      name={name}
+                      control={control}
+                      rules={{
+                        required: `Please enter a value between ${min}% and ${max}%`,
+                        validate: {
+                          required: (value: any) => {
+                            if (!value || value === 0)
+                              return `Please enter a value between ${min}% and ${max}%`
                           }
-                        })}
-                      />
-                    </BoxWrapperColumn>
-                  )
-                }
+                        }
+                      }}
+                      minValue={min || 0}
+                      maxValue={max || 100}
+                      placeholder={
+                        PARAMETERS_CONFIG[name as DEFAULT_VALUES_KEYS].placeholder as string
+                      }
+                      errors={errors}
+                      onChange={onChange}
+                    />
+                  </BoxWrapperColumn>
+                )
+              }
 
-                return null
-              })}
-            </BoxWrapperColumn>
+              if (haveOptions) {
+                return (
+                  <BoxWrapperColumn gap={2} key={index}>
+                    <Label title={label} />
+                    <InputRadio
+                      name={name}
+                      control={control}
+                      options={
+                        options?.map((item) => {
+                          return {
+                            name: item?.label ?? '',
+                            value: item?.value ?? ''
+                          }
+                        }) ?? []
+                      }
+                    />
+                  </BoxWrapperColumn>
+                )
+              }
+
+              return null
+            })}
           </BoxWrapperColumn>
-
-          <Button
-            onClick={handleClickOpen}
-            variant="contained"
-            size="large"
-            sx={{ height: '60px', marginTop: '30px' }}
-            disabled={isExecuteButtonDisabled}
-          >
-            Execute
-          </Button>
-          <button hidden={true} ref={refSubmitButton} type={'submit'} />
         </BoxWrapperColumn>
-      </form>
+
+        <Button
+          onClick={handleClickOpen}
+          variant="contained"
+          size="large"
+          sx={{ height: '60px', marginTop: '30px' }}
+          disabled={isExecuteButtonDisabled}
+          type={'submit'}
+        >
+          Submit
+        </Button>
+      </BoxWrapperColumn>
+    </form>
+  )
+}
+
+const CustomFormMemoized = React.memo(CustomForm)
+
+const Form = () => {
+  const [open, setOpen] = React.useState(false)
+
+  const handleClickOpen = React.useCallback(() => {
+    setOpen(true)
+    neutralizeBack(handleClose)
+  }, [])
+
+  const handleClose = React.useCallback(() => {
+    setOpen(false)
+    revivalBack()
+  }, [])
+
+  return (
+    <>
+      <CustomFormMemoized handleClickOpen={handleClickOpen} />
       <Modal open={open} handleClose={handleClose} />
     </>
   )

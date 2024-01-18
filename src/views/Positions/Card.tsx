@@ -4,33 +4,27 @@ import Title from 'src/views/Positions/Title'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
-import { PositionType } from 'src/contexts/types'
 import Link from 'next/link'
-import {
-  BLOCKCHAIN,
-  DAO,
-  getDAOFilePath,
-  getStrategyByPositionId
-} from 'src/config/strategies/manager'
+import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from 'src/config/strategies/manager'
+import { Position } from 'src/contexts/state'
+import { getStrategy } from 'src/utils/strategies'
 
 interface PositionProps {
   id: number
-  position: PositionType
+  position: Position
 }
 
 const Card = (props: PositionProps) => {
   const { position } = props
   const { position_id: positionId, protocol, blockchain, lptoken_name: positionName } = position
 
-  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN)
-
-  const config = getStrategyByPositionId(
+  const existDAOFilePath = !!getDAOFilePath(
     position.dao as DAO,
     blockchain as BLOCKCHAIN,
-    protocol,
-    positionId
+    'execute' as EXECUTION_TYPE
   )
-  const { positionConfig } = config
+
+  const { positionConfig } = getStrategy(position as Position)
   const areAnyStrategies = positionConfig?.length > 0
 
   const CardWrapper = () => {
