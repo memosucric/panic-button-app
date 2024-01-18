@@ -9,8 +9,10 @@ import Loading from 'src/components/Loading'
 import { TextField, IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { Position, Status } from 'src/contexts/state'
-import {HEADER_HEIGHT} from "src/components/Layout/Header"
-import {FOOTER_HEIGHT} from "src/components/Layout/Footer"
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
+import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from '../../config/strategies/manager'
+import { getStrategy } from '../../utils/strategies'
 
 interface SearchPositionProps {
   onChange: (value: string) => void
@@ -63,15 +65,48 @@ const WrapperPositions = () => {
     [positions]
   )
 
+  // const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN, 'execute' as EXECUTION_TYPE)
+  //
+  // const { positionConfig } = getStrategy(position as Position)
+  // const areAnyStrategies = positionConfig?.length > 0
+
+  const filteredPositionsActive = filteredPositions
+    .map((position: Position) => {
+      const existDAOFilePath = !!getDAOFilePath(
+        position.dao as DAO,
+        position.blockchain as BLOCKCHAIN,
+        'execute' as EXECUTION_TYPE
+      )
+      const { positionConfig } = getStrategy(position as Position)
+      const areAnyStrategies = positionConfig?.length > 0
+      const isActive = areAnyStrategies && existDAOFilePath
+      return {
+        ...position,
+        isActive
+      }
+    })
+    .sort((a: Position, b: Position) => {
+      // sort by lptoken_name and should be active
+      if (a.isActive && !b.isActive) return -1
+      if (!a.isActive && b.isActive) return 1
+      if (a.lptoken_name < b.lptoken_name) return -1
+      if (a.lptoken_name > b.lptoken_name) return 1
+      return 0
+    })
+
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === Status.Loading ? <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} /> : null}
+        {status === Status.Loading ? (
+          <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+        ) : null}
         {status === Status.Finished ? (
           <PaperSection title="Positions">
             <SearchPosition onChange={onChange} />
-            {filteredPositions?.length > 0 ? <List positions={filteredPositions} /> : null}
-            {(filteredPositions?.length === 0 && value !== '') || positions?.length === 0 ? (
+            {filteredPositionsActive?.length > 0 ? (
+              <List positions={filteredPositionsActive} />
+            ) : null}
+            {(filteredPositionsActive?.length === 0 && value !== '') || positions?.length === 0 ? (
               <EmptyData />
             ) : null}
           </PaperSection>

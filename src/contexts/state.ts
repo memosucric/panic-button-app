@@ -10,6 +10,7 @@ export type Position = {
   blockchain: string
   lptoken_address: string
   lptoken_name: string
+  isActive: boolean | undefined
 }
 
 export type Strategy = {
