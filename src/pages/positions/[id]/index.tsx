@@ -119,8 +119,6 @@ const getServerSideProps = async (context: {
     LOCAL_FORK_PORT_GNOSIS: process?.env?.LOCAL_FORK_PORT_GNOSIS ?? 8547
   }
 
-  console.log('reloading')
-
   return {
     props: {
       positionId: id,
