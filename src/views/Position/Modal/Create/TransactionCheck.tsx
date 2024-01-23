@@ -2,10 +2,10 @@ import CustomTypography from 'src/components/CustomTypography'
 import * as React from 'react'
 import { AccordionBoxWrapper } from 'src/components/Accordion/AccordionBoxWrapper'
 import { useApp } from 'src/contexts/app.context'
-import { SetupItemStatus } from '../../../../contexts/state'
+import { SetupItemStatus } from 'src/contexts/state'
 import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
-import BoxWrapperRow from '../../../../components/Wrappers/BoxWrapperRow'
+import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 
 export const TransactionCheck = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
