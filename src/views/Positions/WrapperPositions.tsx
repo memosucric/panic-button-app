@@ -8,9 +8,13 @@ import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
 import { TextField, IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
-import { Position, Status } from 'src/contexts/state'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
+import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
+import { DAOFilter } from 'src/components/DAOFilter'
+import { filter, setSearch } from 'src/contexts/reducers'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import { Position, Status } from 'src/contexts/state'
 import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from 'src/config/strategies/manager'
 import { getStrategy } from 'src/utils/strategies'
 
@@ -38,31 +42,15 @@ const SearchPosition = (props: SearchPositionProps) => {
 }
 
 const WrapperPositions = () => {
-  const { state } = useApp()
-  const { positions, status } = state
-
-  const [value, setValue] = React.useState('')
-  const [filteredPositions, setFilteredPositions] = React.useState(positions)
-
-  React.useEffect(() => {
-    setFilteredPositions(positions)
-  }, [positions])
+  const { dispatch, state } = useApp()
+  const { filteredPositions, positions, search, status } = state
 
   const onChange = React.useCallback(
     (value: string) => {
-      setValue(value)
-
-      const filtered = positions.filter((position: Position) => {
-        if (value === '') return true
-        return (
-          position.lptoken_name.toLowerCase().includes(value.toLowerCase()) ||
-          position.protocol.toLowerCase().includes(value.toLowerCase()) ||
-          position.lptoken_address.toLowerCase().includes(value.toLowerCase())
-        )
-      })
-      setFilteredPositions(filtered)
+      dispatch(setSearch(value))
+      dispatch(filter())
     },
-    [positions]
+    [dispatch]
   )
 
   const filteredPositionsActive = filteredPositions
@@ -95,19 +83,29 @@ const WrapperPositions = () => {
           <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
         ) : null}
         {status === Status.Finished ? (
-          <PaperSection title="Positions">
-            <SearchPosition onChange={onChange} />
-            {filteredPositionsActive?.length > 0 ? (
-              <List positions={filteredPositionsActive} />
-            ) : null}
-            {(filteredPositionsActive?.length === 0 && value !== '') || positions?.length === 0 ? (
-              <EmptyData />
-            ) : null}
-          </PaperSection>
+          <BoxWrapperColumn>
+            <BoxWrapperRow sx={{ justifyContent: 'flex-end' }}>
+              <DAOFilter />
+            </BoxWrapperRow>
+            <PaperSection title="Positions">
+              <BoxWrapperRow gap={2} sx={{ justifyContent: 'space-between' }}>
+                <SearchPosition onChange={onChange} />
+              </BoxWrapperRow>
+              {filteredPositionsActive?.length > 0 ? (
+                <List positions={filteredPositionsActive} />
+              ) : null}
+              {(filteredPositionsActive?.length === 0 && search !== '') ||
+              positions?.length === 0 ? (
+                <EmptyData />
+              ) : null}
+            </PaperSection>
+          </BoxWrapperColumn>
         ) : null}
       </BoxContainerWrapper>
     </ErrorBoundaryWrapper>
   )
 }
 
-export default WrapperPositions
+const WrapperPositionsMemoized = React.memo(WrapperPositions)
+
+export default WrapperPositionsMemoized

@@ -16,7 +16,13 @@ interface PositionProps {
 
 const Card = (props: PositionProps) => {
   const { position } = props
-  const { position_id: positionId, protocol, blockchain, lptoken_name: positionName } = position
+  const {
+    position_id: positionId,
+    protocol,
+    blockchain,
+    lptoken_name: positionName,
+    dao
+  } = position
 
   const existDAOFilePath = !!getDAOFilePath(
     position.dao as DAO,
@@ -41,7 +47,10 @@ const Card = (props: PositionProps) => {
         }}
       >
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <Title title={blockchain} />
+          <BoxWrapperColumn gap={1}>
+            <Title title={dao} />
+            <Title title={blockchain} />
+          </BoxWrapperColumn>
           <BoxWrapperRow gap={1}>
             <ProtocolIcon protocol={protocol} />
             <Title title={protocol} />

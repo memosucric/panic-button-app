@@ -24,7 +24,7 @@ const List = (props: ListProps) => {
           <Box
             key={index}
             sx={{
-              width: '280px',
+              width: '380px',
               minHeight: '140px',
               maxHeight: '200px',
               padding: '12px 12px',
