@@ -6,18 +6,15 @@ import List from 'src/views/Positions/List'
 import EmptyData from 'src/components/EmptyData'
 import BoxContainerWrapper from 'src/components/Wrappers/BoxContainerWrapper'
 import Loading from 'src/components/Loading'
-import {
-  TextField,
-  IconButton,
-} from '@mui/material'
+import { TextField, IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
-import { Position, Status } from 'src/contexts/state'
-import {HEADER_HEIGHT} from "src/components/Layout/Header"
-import {FOOTER_HEIGHT} from "src/components/Layout/Footer"
-import BoxWrapperRow from "src/components/Wrappers/BoxWrapperRow";
-import { DAOFilter } from "src/components/DAOFilter";
-import {setSearch} from "src/contexts/reducers";
-import BoxWrapperColumn from "src/components/Wrappers/BoxWrapperColumn";
+import { Status } from 'src/contexts/state'
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
+import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
+import { DAOFilter } from 'src/components/DAOFilter'
+import { filter, setSearch } from 'src/contexts/reducers'
+import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 
 interface SearchPositionProps {
   onChange: (value: string) => void
@@ -49,20 +46,24 @@ const WrapperPositions = () => {
   const onChange = React.useCallback(
     (value: string) => {
       dispatch(setSearch(value))
-    }, []
+      dispatch(filter())
+    },
+    [dispatch]
   )
 
   return (
     <ErrorBoundaryWrapper>
       <BoxContainerWrapper>
-        {status === Status.Loading ? <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} /> : null}
+        {status === Status.Loading ? (
+          <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+        ) : null}
         {status === Status.Finished ? (
           <BoxWrapperColumn>
-            <BoxWrapperRow sx={{justifyContent: 'flex-end'}}>
+            <BoxWrapperRow sx={{ justifyContent: 'flex-end' }}>
               <DAOFilter />
             </BoxWrapperRow>
             <PaperSection title="Positions">
-              <BoxWrapperRow gap={2} sx={{justifyContent: 'space-between'}}>
+              <BoxWrapperRow gap={2} sx={{ justifyContent: 'space-between' }}>
                 <SearchPosition onChange={onChange} />
               </BoxWrapperRow>
               {filteredPositions?.length > 0 ? <List positions={filteredPositions} /> : null}

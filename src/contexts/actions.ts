@@ -25,7 +25,8 @@ export enum ActionType {
   SetSetupStatus,
   ClearSetup,
   ClearSetupWithoutCreate,
-  UpdateEnvNetworkData
+  UpdateEnvNetworkData,
+  Filter
 }
 
 export interface UpdateStatus {
@@ -145,6 +146,10 @@ export interface UpdateEnvNetworkData {
   payload: any
 }
 
+export interface Filter {
+  type: ActionType.Filter
+}
+
 export type Actions =
   | UpdateStatus
   | AddPositions
@@ -171,3 +176,4 @@ export type Actions =
   | ClearSetup
   | ClearSetupWithoutCreate
   | UpdateEnvNetworkData
+  | Filter

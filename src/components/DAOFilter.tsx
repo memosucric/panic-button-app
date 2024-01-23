@@ -2,7 +2,7 @@ import * as React from 'react'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { useApp } from 'src/contexts/app.context'
-import { setSelectedDAO } from 'src/contexts/reducers'
+import { filter, setSelectedDAO } from 'src/contexts/reducers'
 
 export const DAOFilter = () => {
   const { dispatch, state } = useApp()
@@ -13,6 +13,7 @@ export const DAOFilter = () => {
       if (newDAO === null || newDAO === DAO) return
 
       dispatch(setSelectedDAO(newDAO))
+      dispatch(filter())
     },
     [dispatch, DAO]
   )

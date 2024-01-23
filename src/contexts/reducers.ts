@@ -34,7 +34,8 @@ import {
   SetSetupTransactionCheck,
   SetSetupTransactionCheckStatus,
   UpdateEnvNetworkData,
-  UpdateStatus
+  UpdateStatus,
+  Filter
 } from './actions'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
@@ -65,6 +66,14 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         selectedPosition: null
       }
     case ActionType.AddDAOs:
+      if (!action.payload.includes('ALL') && action.payload.length > 1) {
+        return {
+          ...state,
+          selectedDAO: 'ALL',
+          DAOs: ['ALL', ...action.payload]
+        }
+      }
+
       return {
         ...state,
         DAOs: action.payload
@@ -75,24 +84,10 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         DAOs: []
       }
     case ActionType.SetSelectedDAO:
-      // Filter positions by DAO
-      const filteredPositionsByDAO = state.positions.filter((position: Position) => {
-        return position?.dao?.toLowerCase() === action?.payload?.toLowerCase()
-      })
-
-      // Filter positions by search
-      const filteredPositionsByDAOAndSearch = filteredPositionsByDAO.filter((position: Position) => {
-        if(state?.search === null) return true
-        return position?.lptoken_name?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
-        position?.protocol?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
-        position?.lptoken_address?.toLowerCase()?.includes(state?.search?.toLowerCase())
-      })
-
       // Return state with selected DAO and filtered positions
       return {
         ...state,
-        selectedDAO: action.payload,
-        filteredPositions: filteredPositionsByDAOAndSearch
+        selectedDAO: action.payload
       }
 
     case ActionType.ClearSelectedDAO:
@@ -101,31 +96,9 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         selectedDAO: null
       }
     case ActionType.SetSearch:
-      // Filter positions by search
-      const filteredPositionsBySearch = state.positions.filter((position: Position) => {
-        if(action?.payload === null) return true
-        return position?.lptoken_name?.toLowerCase()?.includes(action?.payload?.toLowerCase()) ||
-        position?.protocol?.toLowerCase()?.includes(action?.payload?.toLowerCase()) ||
-        position?.lptoken_address?.toLowerCase()?.includes(action?.payload?.toLowerCase())
-      })
-
-      // If DAO is selected, filter positions by DAO
-      if(state?.selectedDAO !== null) {
-        const filteredPositionsByDAO = filteredPositionsBySearch.filter((position: Position) => {
-          return position?.dao?.toLowerCase() === state?.selectedDAO?.toLowerCase()
-        })
-        return {
-          ...state,
-          search: action.payload,
-          filteredPositions: filteredPositionsByDAO
-        }
-      }
-
-      // Return state with search and filtered positions
       return {
         ...state,
-        search: action.payload,
-        filteredPositions: filteredPositionsBySearch
+        search: action.payload
       }
     case ActionType.ClearSearch:
       return {
@@ -300,6 +273,29 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+    case ActionType.Filter:
+      // Filter positions by DAO
+      const filteredPositionsByDAO = state.positions.filter((position: Position) => {
+        if (state.selectedDAO === 'ALL') return true
+        return position?.dao?.toLowerCase() === state?.selectedDAO?.toLowerCase()
+      })
+
+      // Filter positions by search
+      const filteredPositionsByDAOAndSearch = filteredPositionsByDAO.filter(
+        (position: Position) => {
+          if (state?.search === null) return true
+          return (
+            position?.lptoken_name?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.protocol?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.lptoken_address?.toLowerCase()?.includes(state?.search?.toLowerCase())
+          )
+        }
+      )
+
+      return {
+        ...state,
+        filteredPositions: filteredPositionsByDAOAndSearch
+      }
     case ActionType.UpdateEnvNetworkData:
       return {
         ...state,
@@ -433,4 +429,8 @@ export const clearSetupWithoutCreate = (): ClearSetupWithoutCreate => ({
 export const updateEnvNetworkData = (data: any): UpdateEnvNetworkData => ({
   type: ActionType.UpdateEnvNetworkData,
   payload: data
+})
+
+export const filter = (): Filter => ({
+  type: ActionType.Filter
 })
