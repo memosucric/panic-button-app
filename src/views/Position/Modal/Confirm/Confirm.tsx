@@ -144,9 +144,11 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperColumn gap={2}>
           <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
-          <CustomTypography variant={'subtitle1'}>
-            You're about to create and confirm this transaction
-          </CustomTypography>
+          {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
+            <CustomTypography variant={'subtitle1'}>
+              You're about to create and confirm this transaction.
+            </CustomTypography>
+          )}
         </BoxWrapperColumn>
         <BoxWrapperColumn gap={'20px'}>
           <BoxWrapperRow gap={'20px'}>
@@ -161,7 +163,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
             {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
               <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
                 The transaction will most likely fail.Please double check the transaction details if
-                you still want to execute it
+                you still want to execute it.
               </CustomTypography>
             )}
           </BoxWrapperRow>

@@ -45,9 +45,7 @@ const Detail = () => {
           <Secondary title={`Position:`} subtitle={position?.lptoken_name} />
         </BoxWrapperColumn>
       </BoxWrapperColumn>
-      <BoxWrapperColumn gap={2}>
-        {areAnyStrategies ? <Form /> : <NoStrategies />}
-      </BoxWrapperColumn>
+      <BoxWrapperColumn gap={2}>{areAnyStrategies ? <Form /> : <NoStrategies />}</BoxWrapperColumn>
     </BoxWrapperColumn>
   )
 }
