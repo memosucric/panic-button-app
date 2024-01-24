@@ -66,11 +66,11 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         selectedPosition: null
       }
     case ActionType.AddDAOs:
-      if (!action.payload.includes('ALL') && action.payload.length > 1) {
+      if (!action.payload.includes('All') && action.payload.length > 1) {
         return {
           ...state,
-          selectedDAO: 'ALL',
-          DAOs: ['ALL', ...action.payload]
+          selectedDAO: 'All',
+          DAOs: ['All', ...action.payload]
         }
       }
 
@@ -276,7 +276,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
     case ActionType.Filter:
       // Filter positions by DAO
       const filteredPositionsByDAO = state.positions.filter((position: Position) => {
-        if (state.selectedDAO === 'ALL') return true
+        if (state.selectedDAO === 'All') return true
         return position?.dao?.toLowerCase() === state?.selectedDAO?.toLowerCase()
       })
 

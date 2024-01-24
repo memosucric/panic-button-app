@@ -38,12 +38,14 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
   const simulationStatus = state?.setup?.simulation?.status ?? null
   const confirmStatus = state?.setup?.confirm?.status ?? null
   const txHash = state?.setup?.confirm?.value?.txHash ?? null
+  const selectedDAO = state?.selectedPosition?.dao ?? null
 
   // Get env network data
   const ENV_NETWORK_DATA = state?.envNetworkData ?? {}
 
   const isDisabled = React.useMemo(
     () =>
+      !selectedDAO ||
       !blockchain ||
       !transaction ||
       !decodedTransaction ||
@@ -67,7 +69,8 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       const parameters = {
         execution_type: 'execute',
         transaction: transaction,
-        blockchain
+        blockchain,
+        dao: selectedDAO
       }
 
       const response = await fetch('/api/execute', {
@@ -131,7 +134,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     }
 
     setIsLoading(false)
-  }, [blockchain, transaction, dispatch, isDisabled])
+  }, [blockchain, selectedDAO, transaction, dispatch, isDisabled])
 
   return (
     <AccordionBoxWrapper
