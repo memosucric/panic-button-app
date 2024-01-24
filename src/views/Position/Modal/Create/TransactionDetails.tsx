@@ -83,6 +83,7 @@ export const TransactionDetails = () => {
   const transactionBuildValue = state?.setup?.transactionBuild?.value ?? null
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
   const formValue = state?.setup?.create?.value ?? null
+  const selectedDAO = state?.selectedPosition?.dao ?? null
 
   const [error, setError] = React.useState<Maybe<Error>>(null)
   const [expanded, setExpanded] = React.useState('panel1')
@@ -108,6 +109,7 @@ export const TransactionDetails = () => {
 
     const parameters = {
       execution_type: 'transaction_builder',
+      dao: selectedDAO,
       strategy,
       percentage,
       position_id,
