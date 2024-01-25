@@ -10,11 +10,17 @@ import {
 import {
   Actions,
   ActionType,
+  AddDAOs,
   AddPositions,
+  ClearDAOs,
   ClearPositions,
+  ClearSearch,
+  ClearSelectedDAO,
   ClearSelectedPosition,
   ClearSetup,
   ClearSetupWithoutCreate,
+  SetSearch,
+  SetSelectedDAO,
   SetSelectedPosition,
   SetSetupConfirm,
   SetSetupConfirmStatus,
@@ -28,7 +34,8 @@ import {
   SetSetupTransactionCheck,
   SetSetupTransactionCheckStatus,
   UpdateEnvNetworkData,
-  UpdateStatus
+  UpdateStatus,
+  Filter
 } from './actions'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
@@ -57,6 +64,46 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
       return {
         ...state,
         selectedPosition: null
+      }
+    case ActionType.AddDAOs:
+      if (!action.payload.includes('All') && action.payload.length > 1) {
+        return {
+          ...state,
+          selectedDAO: 'All',
+          DAOs: ['All', ...action.payload]
+        }
+      }
+
+      return {
+        ...state,
+        DAOs: action.payload
+      }
+    case ActionType.ClearDAOs:
+      return {
+        ...state,
+        DAOs: []
+      }
+    case ActionType.SetSelectedDAO:
+      // Return state with selected DAO and filtered positions
+      return {
+        ...state,
+        selectedDAO: action.payload
+      }
+
+    case ActionType.ClearSelectedDAO:
+      return {
+        ...state,
+        selectedDAO: null
+      }
+    case ActionType.SetSearch:
+      return {
+        ...state,
+        search: action.payload
+      }
+    case ActionType.ClearSearch:
+      return {
+        ...state,
+        search: null
       }
     case ActionType.SetSetupCreate:
       return {
@@ -226,6 +273,29 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+    case ActionType.Filter:
+      // Filter positions by DAO
+      const filteredPositionsByDAO = state.positions.filter((position: Position) => {
+        if (state.selectedDAO === 'All') return true
+        return position?.dao?.toLowerCase() === state?.selectedDAO?.toLowerCase()
+      })
+
+      // Filter positions by search
+      const filteredPositionsByDAOAndSearch = filteredPositionsByDAO.filter(
+        (position: Position) => {
+          if (state?.search === null) return true
+          return (
+            position?.lptoken_name?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.protocol?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.lptoken_address?.toLowerCase()?.includes(state?.search?.toLowerCase())
+          )
+        }
+      )
+
+      return {
+        ...state,
+        filteredPositions: filteredPositionsByDAOAndSearch
+      }
     case ActionType.UpdateEnvNetworkData:
       return {
         ...state,
@@ -258,6 +328,33 @@ export const setSelectedPosition = (position: Position): SetSelectedPosition => 
 
 export const clearSelectedPosition = (): ClearSelectedPosition => ({
   type: ActionType.ClearSelectedPosition
+})
+
+export const addDAOs = (DAOs: string[]): AddDAOs => ({
+  type: ActionType.AddDAOs,
+  payload: DAOs
+})
+
+export const clearDAOs = (): ClearDAOs => ({
+  type: ActionType.ClearDAOs
+})
+
+export const setSelectedDAO = (DAO: string): SetSelectedDAO => ({
+  type: ActionType.SetSelectedDAO,
+  payload: DAO
+})
+
+export const clearSelectedDAO = (): ClearSelectedDAO => ({
+  type: ActionType.ClearSelectedDAO
+})
+
+export const setSearch = (search: string): SetSearch => ({
+  type: ActionType.SetSearch,
+  payload: search
+})
+
+export const clearSearch = (): ClearSearch => ({
+  type: ActionType.ClearSearch
 })
 
 export const setSetupCreate = (strategy: Strategy): SetSetupCreate => ({
@@ -332,4 +429,8 @@ export const clearSetupWithoutCreate = (): ClearSetupWithoutCreate => ({
 export const updateEnvNetworkData = (data: any): UpdateEnvNetworkData => ({
   type: ActionType.UpdateEnvNetworkData,
   payload: data
+})
+
+export const filter = (): Filter => ({
+  type: ActionType.Filter
 })

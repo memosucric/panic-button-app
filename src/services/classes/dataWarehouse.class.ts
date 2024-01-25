@@ -31,10 +31,15 @@ export class DataWarehouse {
     return DataWarehouse.instance
   }
 
-  async getPositions() {
+  async getPositions(DAOs?: string[]) {
     const table =
       REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment]['getPositions']
-    const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
+
+    let viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\``
+
+    if (DAOs && DAOs.length > 0) {
+      viewQuery += ` WHERE dao IN UNNEST(${JSON.stringify(DAOs)})`
+    }
 
     return await this.executeCommonJobQuery(viewQuery)
   }

@@ -18,7 +18,8 @@ type Status = {
 // Create a mapper for DAOs
 const DAO_MAPPER: Record<string, string> = {
   'Gnosis DAO': 'GnosisDAO',
-  'Gnosis Ltd': 'GnosisLtd'
+  'Gnosis Ltd': 'GnosisLtd',
+  'karpatkey DAO': 'karpatkey'
 }
 
 export default withApiAuthRequired(async function handler(
@@ -39,22 +40,32 @@ export default withApiAuthRequired(async function handler(
     return
   }
 
+  // Get common parameters from the body
+  const {
+    execution_type,
+    blockchain,
+    dao = ''
+  } = req.body as {
+    execution_type: EXECUTION_TYPE
+    blockchain: Maybe<BLOCKCHAIN>
+    dao: Maybe<DAO>
+  }
+
   // Get User role, if not found, return an error
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
-    : ['']
-  const dao = roles?.[0] ?? ''
+    : []
 
-  if (!dao) {
+  const DAOs = roles
+  if (!DAOs) {
     res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
     return
   }
 
-  // Get common parameters from the body
-  const { execution_type, blockchain } = req.body as {
-    execution_type: EXECUTION_TYPE
-    blockchain: Maybe<BLOCKCHAIN>
+  if (dao && !DAOs.includes(dao)) {
+    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    return
   }
 
   const parameters: any[] = []

@@ -56,21 +56,19 @@ export const CommonExecutePromise = (
 
         const {
           status = 500,
-          tx_data = null,
-          tx_hash = null,
+          tx_data = null, // {"transaction"?: null, "decoded_transaction": null}}
           sim_data = null,
+          tx_hash = null,
           message = null
         } = response ?? {}
 
         const body = {
-          data: +status === 200 ? tx_data || sim_data || { tx_hash } : null,
-          error: +status !== 200 ? message : null
+          status,
+          data: tx_data || sim_data || { tx_hash } || null,
+          error: message || null
         }
 
-        resolve({
-          status: +status,
-          ...body
-        })
+        resolve(body)
       })
     } catch (error) {
       console.error('ERROR Reject: ', error)

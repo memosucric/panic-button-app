@@ -38,12 +38,14 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
   const simulationStatus = state?.setup?.simulation?.status ?? null
   const confirmStatus = state?.setup?.confirm?.status ?? null
   const txHash = state?.setup?.confirm?.value?.txHash ?? null
+  const selectedDAO = state?.selectedPosition?.dao ?? null
 
   // Get env network data
   const ENV_NETWORK_DATA = state?.envNetworkData ?? {}
 
   const isDisabled = React.useMemo(
     () =>
+      !selectedDAO ||
       !blockchain ||
       !transaction ||
       !decodedTransaction ||
@@ -67,7 +69,8 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       const parameters = {
         execution_type: 'execute',
         transaction: transaction,
-        blockchain
+        blockchain,
+        dao: selectedDAO
       }
 
       const response = await fetch('/api/execute', {
@@ -131,7 +134,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     }
 
     setIsLoading(false)
-  }, [blockchain, transaction, dispatch, isDisabled])
+  }, [blockchain, selectedDAO, transaction, dispatch, isDisabled])
 
   return (
     <AccordionBoxWrapper
@@ -144,9 +147,11 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperColumn gap={2}>
           <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
-          <CustomTypography variant={'subtitle1'}>
-            You're about to create and confirm this transaction
-          </CustomTypography>
+          {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
+            <CustomTypography variant={'subtitle1'}>
+              You're about to create and confirm this transaction.
+            </CustomTypography>
+          )}
         </BoxWrapperColumn>
         <BoxWrapperColumn gap={'20px'}>
           <BoxWrapperRow gap={'20px'}>
@@ -161,7 +166,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
             {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
               <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
                 The transaction will most likely fail.Please double check the transaction details if
-                you still want to execute it
+                you still want to execute it.
               </CustomTypography>
             )}
           </BoxWrapperRow>
