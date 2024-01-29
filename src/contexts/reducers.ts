@@ -72,12 +72,14 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           selectedDAO: 'All',
           DAOs: ['All', ...action.payload]
         }
+      } else if (action.payload.length === 1) {
+        return {
+          ...state,
+          selectedDAO: action.payload[0],
+          DAOs: action.payload
+        }
       }
 
-      return {
-        ...state,
-        DAOs: action.payload
-      }
     case ActionType.ClearDAOs:
       return {
         ...state,
