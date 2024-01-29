@@ -84,7 +84,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
 
       const body = await response.json()
 
-      const { status } = response
+      const { status } = body
 
       if (status === 500) {
         const errorMessage =
