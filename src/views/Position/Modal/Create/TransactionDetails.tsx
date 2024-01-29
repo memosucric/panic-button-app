@@ -149,7 +149,6 @@ export const TransactionDetails = () => {
             typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
           setError(new Error(errorMessage))
 
-          console.log('error', errorMessage, body)
           dispatch(setSetupTransactionCheck(false))
           dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
           dispatch(
