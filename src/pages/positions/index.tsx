@@ -15,20 +15,24 @@ interface PositionsPageProps {
   DAOs: string[]
 }
 
-const PositionsPage = (props: PositionsPageProps): ReactElement => {
+const PositionsPage = (props: PositionsPageProps) => {
   const { positions = [], DAOs } = props
 
   const { dispatch } = useApp()
 
   React.useEffect(() => {
-    dispatch(updateStatus('Loading' as Status))
+    const start = () => {
+      dispatch(updateStatus('Loading' as Status))
 
-    dispatch(addDAOs(DAOs))
-    dispatch(addPositions(positions))
-    dispatch(clearSearch())
-    dispatch(filter())
+      dispatch(addDAOs(DAOs))
+      dispatch(addPositions(positions))
+      dispatch(clearSearch())
+      dispatch(filter())
 
-    dispatch(updateStatus('Finished' as Status))
+      dispatch(updateStatus('Finished' as Status))
+    }
+
+    start()
   }, [dispatch, DAOs, positions])
 
   return <WrapperPositions />
@@ -63,7 +67,6 @@ export const getServerSideProps = async (context: {
   const DAOs = roles
 
   const dataWarehouse = DataWarehouse.getInstance()
-
   const positions: Position[] = await dataWarehouse.getPositions(DAOs)
 
   return { props: { positions, DAOs } }
