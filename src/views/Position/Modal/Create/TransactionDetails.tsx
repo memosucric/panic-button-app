@@ -138,7 +138,7 @@ export const TransactionDetails = () => {
 
         const body = await response.json()
 
-        const { status } = response
+        const { status } = body
 
         const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
 
@@ -147,6 +147,9 @@ export const TransactionDetails = () => {
           // Allow to simulate, but not execute transaction
           const errorMessage =
             typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          setError(new Error(errorMessage))
+
+          console.log('error', errorMessage, body)
           dispatch(setSetupTransactionCheck(false))
           dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
           dispatch(
@@ -154,20 +157,19 @@ export const TransactionDetails = () => {
           )
           dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
           dispatch(setSetupStatus('transaction_check' as SetupStatus))
-          setError(new Error(errorMessage))
         }
 
         if (status === 500) {
           // Don't allow to simulate or execute transaction
           const errorMessage =
             typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          setError(new Error(errorMessage))
           dispatch(setSetupTransactionCheck(false))
           dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
           dispatch(
             setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
           )
           dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
-          setError(new Error(errorMessage))
         }
 
         if (status === 200) {
@@ -348,7 +350,7 @@ export const TransactionDetails = () => {
               </BoxWrapperColumn>
             )}
 
-            {transactionBuildStatus === ('failed' as SetupItemStatus) && !isLoading && (
+            {error && !isLoading && (
               <BoxWrapperRow sx={{ justifyContent: 'flex-start' }}>
                 <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
                   {error?.message && typeof error?.message === 'string'

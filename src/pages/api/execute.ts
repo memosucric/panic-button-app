@@ -12,6 +12,7 @@ import { CommonExecutePromise } from 'src/utils/execute'
 
 type Status = {
   data?: Maybe<any>
+  status: Maybe<number>
   error?: Maybe<string>
 }
 
@@ -28,7 +29,7 @@ export default withApiAuthRequired(async function handler(
 ) {
   // Should be a post request
   if (req.method !== 'POST') {
-    res.status(405).json({ data: { status: false, error: new Error('Method not allowed') } })
+    res.status(405).json({ error: 'Method not allowed', status: 405, data: null })
     return
   }
 
@@ -36,7 +37,7 @@ export default withApiAuthRequired(async function handler(
 
   // Validate session here
   if (!session) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
     return
   }
 
@@ -59,12 +60,12 @@ export default withApiAuthRequired(async function handler(
 
   const DAOs = roles
   if (!DAOs) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
     return
   }
 
   if (dao && !DAOs.includes(dao)) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
     return
   }
 
@@ -165,17 +166,12 @@ export default withApiAuthRequired(async function handler(
       console.log('Parameters', parameters)
 
       // Execute the transaction builder
-      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+      const { status, data, error } = await CommonExecutePromise(filePath, parameters)
 
-      if (error && status !== 200) {
-        console.error('ERROR: ', error)
-        return res.status(status).json({ data, error })
-      }
-
-      return res.status(status).json({ data, error })
+      return res.status(200).json({ data, status, error })
     } catch (error) {
       console.error('ERROR Reject: ', error)
-      return res.status(500).json({ error: (error as Error)?.message })
+      return res.status(500).json({ error: (error as Error)?.message, status: 500 })
     }
   }
 
@@ -195,19 +191,14 @@ export default withApiAuthRequired(async function handler(
       }
 
       // Execute the transaction builder
-      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+      const { status, data, error } = await CommonExecutePromise(filePath, parameters)
 
-      if (error && status !== 200) {
-        console.error('ERROR: ', error)
-        return res.status(status).json({ data, error })
-      }
-
-      return res.status(status).json({ data, error })
+      return res.status(200).json({ data, error, status })
     } catch (error) {
       console.error('ERROR Reject: ', error)
-      return res.status(500).json({ error: (error as Error)?.message })
+      return res.status(500).json({ error: (error as Error)?.message, status: 500 })
     }
   }
 
-  return res.status(500).json({ error: 'Internal Server Error' })
+  return res.status(500).json({ error: 'Internal Server Error', status: 500 })
 })
