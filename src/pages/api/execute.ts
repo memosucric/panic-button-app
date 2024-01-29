@@ -12,7 +12,7 @@ import { CommonExecutePromise } from 'src/utils/execute'
 
 type Status = {
   data?: Maybe<any>
-  status: Maybe<number>
+  status?: Maybe<number>
   error?: Maybe<string>
 }
 
@@ -29,7 +29,7 @@ export default withApiAuthRequired(async function handler(
 ) {
   // Should be a post request
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed', status: 405, data: null })
+    res.status(405).json({ error: 'Method not allowed' })
     return
   }
 
@@ -37,7 +37,7 @@ export default withApiAuthRequired(async function handler(
 
   // Validate session here
   if (!session) {
-    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
+    res.status(401).json({ error: 'Unauthorized' })
     return
   }
 
@@ -60,12 +60,12 @@ export default withApiAuthRequired(async function handler(
 
   const DAOs = roles
   if (!DAOs) {
-    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
+    res.status(401).json({ error: 'Unauthorized' })
     return
   }
 
   if (dao && !DAOs.includes(dao)) {
-    res.status(401).json({ data: null, status: 401, error: 'Unauthorized' })
+    res.status(401).json({ error: 'Unauthorized' })
     return
   }
 
