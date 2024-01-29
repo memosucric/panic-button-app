@@ -41,7 +41,7 @@ export class DataWarehouse {
       viewQuery += ` WHERE dao IN UNNEST(${JSON.stringify(DAOs)})`
     }
 
-    return await this.executeCommonJobQuery(viewQuery)
+    return this.executeCommonJobQuery(viewQuery)
   }
 
   async getPositionById(id: string) {
@@ -49,7 +49,7 @@ export class DataWarehouse {
       REPORTS_DATASET[DATA_WAREHOUSE_ENV as unknown as DataWarehouseEnvironment]['getPositions']
     const viewQuery = `SELECT * FROM  \`karpatkey-data-warehouse.${table}\` where position_id = '${id}'`
 
-    return await this.executeCommonJobQuery(viewQuery)
+    return this.executeCommonJobQuery(viewQuery)
   }
 
   private async executeCommonJobQuery(viewQuery: string) {
