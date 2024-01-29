@@ -28,7 +28,7 @@ export const CommonExecutePromise = (
       })
 
       python.stderr.on('data', function (data) {
-        console.log(data.toString())
+        console.log('STD_ERR', data.toString())
       })
 
       python.on('error', function (data) {
