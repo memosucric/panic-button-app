@@ -47,8 +47,8 @@ export const CommonExecutePromise = (
         console.log('Buffer Before', buffer)
 
         try {
-          const regex = new RegExp('"value": ([0-9]+)', 'g')
-          buffer = buffer.replace(regex, '"value": "$1"')
+          //const regex = new RegExp('"value": ([0-9]+)', 'g')
+          //buffer = buffer.replace(regex, '"value": "$1"')
           response = JSON.parse(buffer)
         } catch (e) {
           console.log('Error with buffer, is not a valid json object', e, buffer)
