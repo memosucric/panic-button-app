@@ -29,48 +29,34 @@ export const Tenderly = () => {
   const { blockchain } = state?.setup?.create?.value ?? {}
   const { transaction, decodedTransaction } = state?.setup?.transactionBuild?.value ?? {}
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
-  const transactionCheckStatus = state?.setup?.transactionCheck?.status ?? null
   const simulationStatus = state?.setup?.simulation?.status ?? null
   const shareUrl = state?.setup?.simulation?.value?.shareUrl ?? null
+  const selectedDAO = state?.selectedPosition?.dao ?? null
 
   const isDisabled = React.useMemo(
     () =>
-      !blockchain ||
-      !transaction ||
-      !decodedTransaction ||
-      transactionBuildStatus !== 'success' ||
-      transactionCheckStatus !== 'success',
-    [blockchain, transaction, decodedTransaction, transactionBuildStatus, transactionCheckStatus]
+      !blockchain || !transaction || !decodedTransaction || transactionBuildStatus !== 'success',
+    [blockchain, transaction, decodedTransaction, transactionBuildStatus]
   )
 
   React.useEffect(() => {
-    if (
-      transactionBuildStatus === 'success' &&
-      transactionCheckStatus === 'success' &&
-      simulationStatus === 'not done' &&
-      !isLoading
-    ) {
+    if (!isDisabled && simulationStatus === 'not done' && !isLoading) {
       onSimulate().then(() => console.log('Simulation finished'))
     }
-  }, [transactionBuildStatus, transactionCheckStatus, simulationStatus])
+  }, [isDisabled, simulationStatus, isLoading])
 
   const onSimulate = React.useCallback(async () => {
     try {
-      if (isDisabled) {
-        throw new Error('Invalid transaction, please check the transaction and try again.')
-      }
-
       setIsLoading(true)
 
       dispatch(setSetupSimulation(null))
       dispatch(setSetupSimulationStatus('not done' as SetupItemStatus))
 
-      dispatch(setSetupStatus('transaction_check' as SetupStatus))
-
       const parameters = {
         execution_type: 'simulate',
         transaction: transaction,
-        blockchain
+        blockchain,
+        dao: selectedDAO
       }
 
       const response = await fetch('/api/execute', {
@@ -84,7 +70,7 @@ export const Tenderly = () => {
 
       const body = await response.json()
 
-      const { status } = response
+      const { status, data = {} } = body
 
       if (status === 500) {
         const errorMessage =
@@ -92,7 +78,7 @@ export const Tenderly = () => {
         throw new Error(errorMessage)
       }
 
-      const { share_url } = body?.data ?? {}
+      const { share_url } = data ?? {}
 
       if (share_url) {
         dispatch(setSetupSimulation({ shareUrl: share_url }))
@@ -109,7 +95,7 @@ export const Tenderly = () => {
     }
 
     setIsLoading(false)
-  }, [blockchain, transaction, dispatch, isDisabled])
+  }, [blockchain, transaction, dispatch, isDisabled, selectedDAO])
 
   const color =
     simulationStatus === ('success' as SetupItemStatus)

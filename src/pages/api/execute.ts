@@ -12,13 +12,15 @@ import { CommonExecutePromise } from 'src/utils/execute'
 
 type Status = {
   data?: Maybe<any>
+  status?: Maybe<number>
   error?: Maybe<string>
 }
 
 // Create a mapper for DAOs
 const DAO_MAPPER: Record<string, string> = {
   'Gnosis DAO': 'GnosisDAO',
-  'Gnosis Ltd': 'GnosisLtd'
+  'Gnosis Ltd': 'GnosisLtd',
+  'karpatkey DAO': 'karpatkey'
 }
 
 export default withApiAuthRequired(async function handler(
@@ -27,7 +29,7 @@ export default withApiAuthRequired(async function handler(
 ) {
   // Should be a post request
   if (req.method !== 'POST') {
-    res.status(405).json({ data: { status: false, error: new Error('Method not allowed') } })
+    res.status(405).json({ error: 'Method not allowed' })
     return
   }
 
@@ -35,26 +37,36 @@ export default withApiAuthRequired(async function handler(
 
   // Validate session here
   if (!session) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+    res.status(401).json({ error: 'Unauthorized' })
     return
+  }
+
+  // Get common parameters from the body
+  const {
+    execution_type,
+    blockchain,
+    dao = ''
+  } = req.body as {
+    execution_type: EXECUTION_TYPE
+    blockchain: Maybe<BLOCKCHAIN>
+    dao: Maybe<DAO>
   }
 
   // Get User role, if not found, return an error
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
-    : ['']
-  const dao = roles?.[0] ?? ''
+    : []
 
-  if (!dao) {
-    res.status(401).json({ data: { status: false, error: new Error('Unauthorized') } })
+  const DAOs = roles
+  if (!DAOs) {
+    res.status(401).json({ error: 'Unauthorized' })
     return
   }
 
-  // Get common parameters from the body
-  const { execution_type, blockchain } = req.body as {
-    execution_type: EXECUTION_TYPE
-    blockchain: Maybe<BLOCKCHAIN>
+  if (dao && !DAOs.includes(dao)) {
+    res.status(401).json({ error: 'Unauthorized' })
+    return
   }
 
   const parameters: any[] = []
@@ -74,8 +86,6 @@ export default withApiAuthRequired(async function handler(
     blockchain as BLOCKCHAIN,
     execution_type as EXECUTION_TYPE
   )
-
-  console.log('FilePath', filePath)
 
   if (execution_type === 'transaction_builder') {
     try {
@@ -154,17 +164,12 @@ export default withApiAuthRequired(async function handler(
       console.log('Parameters', parameters)
 
       // Execute the transaction builder
-      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+      const { status, data, error } = await CommonExecutePromise(filePath, parameters)
 
-      if (error && status !== 200) {
-        console.error('ERROR: ', error)
-        return res.status(status).json({ data, error })
-      }
-
-      return res.status(status).json({ data, error })
+      return res.status(200).json({ data, status, error })
     } catch (error) {
       console.error('ERROR Reject: ', error)
-      return res.status(500).json({ error: (error as Error)?.message })
+      return res.status(500).json({ error: (error as Error)?.message, status: 500 })
     }
   }
 
@@ -184,19 +189,14 @@ export default withApiAuthRequired(async function handler(
       }
 
       // Execute the transaction builder
-      const { status = 500, data, error } = await CommonExecutePromise(filePath, parameters)
+      const { status, data, error } = await CommonExecutePromise(filePath, parameters)
 
-      if (error && status !== 200) {
-        console.error('ERROR: ', error)
-        return res.status(status).json({ data, error })
-      }
-
-      return res.status(status).json({ data, error })
+      return res.status(200).json({ data, error, status })
     } catch (error) {
       console.error('ERROR Reject: ', error)
-      return res.status(500).json({ error: (error as Error)?.message })
+      return res.status(500).json({ error: (error as Error)?.message, status: 500 })
     }
   }
 
-  return res.status(500).json({ error: 'Internal Server Error' })
+  return res.status(500).json({ error: 'Internal Server Error', status: 500 })
 })

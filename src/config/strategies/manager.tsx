@@ -10,6 +10,9 @@ import GnosisLTD_ethereum from '../../../roles_royce/roles_royce/applications/pa
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GnosisLTD_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLTD-gnosis.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import karpatkeyDAO_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/Karpatkey-ethereum.json'
 
 export type DAO =
   | 'Gnosis DAO'
@@ -64,6 +67,15 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
     name: 'Gnosis Ltd',
     blockchain: 'Gnosis',
     config: GnosisLTD_gnosis,
+    executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
+    simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
+    transactionBuilderFilePath:
+      'roles_royce/roles_royce/applications/panic_button_app/transaction_builder.py'
+  },
+  {
+    name: 'karpatkey DAO',
+    blockchain: 'Ethereum',
+    config: karpatkeyDAO_ethereum,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
     transactionBuilderFilePath:

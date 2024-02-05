@@ -1,4 +1,12 @@
-import { Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild } from './state'
+import {
+  DBankInfo,
+  Position,
+  SetupItemStatus,
+  SetupStatus,
+  Status,
+  Strategy,
+  TransactionBuild
+} from './state'
 
 export enum ActionType {
   UpdateStatus,
@@ -6,6 +14,12 @@ export enum ActionType {
   ClearPositions,
   SetSelectedPosition,
   ClearSelectedPosition,
+  AddDAOs,
+  ClearDAOs,
+  SetSelectedDAO,
+  ClearSelectedDAO,
+  SetSearch,
+  ClearSearch,
   SetSetupCreate,
   SetSetupCreateStatus,
   SetSetupTransactionBuild,
@@ -19,7 +33,10 @@ export enum ActionType {
   SetSetupStatus,
   ClearSetup,
   ClearSetupWithoutCreate,
-  UpdateEnvNetworkData
+  UpdateEnvNetworkData,
+  Filter,
+  UpdatePositionsWithTokenBalances,
+  UpdateIsFetchingTokens
 }
 
 export interface UpdateStatus {
@@ -43,6 +60,33 @@ export interface SetSelectedPosition {
 
 export interface ClearSelectedPosition {
   type: ActionType.ClearSelectedPosition
+}
+
+export interface AddDAOs {
+  type: ActionType.AddDAOs
+  payload: string[]
+}
+
+export interface ClearDAOs {
+  type: ActionType.ClearDAOs
+}
+
+export interface SetSelectedDAO {
+  type: ActionType.SetSelectedDAO
+  payload: string
+}
+
+export interface ClearSelectedDAO {
+  type: ActionType.ClearSelectedDAO
+}
+
+export interface SetSearch {
+  type: ActionType.SetSearch
+  payload: string
+}
+
+export interface ClearSearch {
+  type: ActionType.ClearSearch
 }
 
 export interface SetSetupCreate {
@@ -112,12 +156,32 @@ export interface UpdateEnvNetworkData {
   payload: any
 }
 
+export interface Filter {
+  type: ActionType.Filter
+}
+
+export interface UpdatePositionsWithTokenBalances {
+  type: ActionType.UpdatePositionsWithTokenBalances
+  payload: DBankInfo[]
+}
+
+export interface UpdateIsFetchingTokens {
+  type: ActionType.UpdateIsFetchingTokens
+  payload: boolean
+}
+
 export type Actions =
   | UpdateStatus
   | AddPositions
   | ClearPositions
   | SetSelectedPosition
   | ClearSelectedPosition
+  | AddDAOs
+  | ClearDAOs
+  | SetSelectedDAO
+  | ClearSelectedDAO
+  | SetSearch
+  | ClearSearch
   | SetSetupCreate
   | SetSetupCreateStatus
   | SetSetupTransactionBuild
@@ -132,3 +196,6 @@ export type Actions =
   | ClearSetup
   | ClearSetupWithoutCreate
   | UpdateEnvNetworkData
+  | Filter
+  | UpdatePositionsWithTokenBalances
+  | UpdateIsFetchingTokens

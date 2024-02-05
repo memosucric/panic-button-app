@@ -1,13 +1,12 @@
 import PositionName from 'src/views/Positions/PositionName'
 import ProtocolIcon from 'src/views/Positions/ProtocolIcon'
-import Title from 'src/views/Positions/Title'
+import { Title } from 'src/views/Positions/Title'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import * as React from 'react'
 import Link from 'next/link'
-import {BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath} from 'src/config/strategies/manager'
 import { Position } from 'src/contexts/state'
-import { getStrategy } from 'src/utils/strategies'
+import { Balances } from './Balances'
 
 interface PositionProps {
   id: number
@@ -16,12 +15,15 @@ interface PositionProps {
 
 const Card = (props: PositionProps) => {
   const { position } = props
-  const { position_id: positionId, protocol, blockchain, lptoken_name: positionName } = position
-
-  const existDAOFilePath = !!getDAOFilePath(position.dao as DAO, blockchain as BLOCKCHAIN, 'execute' as EXECUTION_TYPE)
-
-  const { positionConfig } = getStrategy(position as Position)
-  const areAnyStrategies = positionConfig?.length > 0
+  const {
+    position_id: positionId,
+    protocol,
+    blockchain,
+    lptoken_name: positionName,
+    dao,
+    isActive,
+    tokens
+  } = position
 
   const CardWrapper = () => {
     return (
@@ -32,12 +34,15 @@ const Card = (props: PositionProps) => {
           width: '100%',
           height: '100%',
           justifyContent: 'space-between',
-          ...(areAnyStrategies && existDAOFilePath ? { cursor: 'pointer' } : {}),
-          ...(!areAnyStrategies || !existDAOFilePath ? { opacity: '0.2 !important' } : {})
+          ...(isActive ? { cursor: 'pointer' } : {}),
+          ...(!isActive ? { opacity: '0.2 !important' } : {})
         }}
       >
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <Title title={blockchain} />
+          <BoxWrapperColumn gap={1}>
+            <Title title={dao} />
+            <Title title={blockchain} />
+          </BoxWrapperColumn>
           <BoxWrapperRow gap={1}>
             <ProtocolIcon protocol={protocol} />
             <Title title={protocol} />
@@ -46,11 +51,12 @@ const Card = (props: PositionProps) => {
         <BoxWrapperColumn gap={1}>
           <PositionName position={positionName} />
         </BoxWrapperColumn>
+        <Balances tokens={tokens} />
       </BoxWrapperColumn>
     )
   }
 
-  return areAnyStrategies ? (
+  return isActive ? (
     <Link href={`/positions/${positionId}`} style={{ textDecoration: 'none' }}>
       <CardWrapper />
     </Link>

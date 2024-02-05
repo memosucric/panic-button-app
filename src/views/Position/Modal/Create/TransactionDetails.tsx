@@ -83,6 +83,7 @@ export const TransactionDetails = () => {
   const transactionBuildValue = state?.setup?.transactionBuild?.value ?? null
   const transactionBuildStatus = state?.setup?.transactionBuild?.status ?? null
   const formValue = state?.setup?.create?.value ?? null
+  const selectedDAO = state?.selectedPosition?.dao ?? null
 
   const [error, setError] = React.useState<Maybe<Error>>(null)
   const [expanded, setExpanded] = React.useState('panel1')
@@ -108,6 +109,7 @@ export const TransactionDetails = () => {
 
     const parameters = {
       execution_type: 'transaction_builder',
+      dao: selectedDAO,
       strategy,
       percentage,
       position_id,
@@ -136,42 +138,53 @@ export const TransactionDetails = () => {
 
         const body = await response.json()
 
-        const { status } = response
-
-        // check if response is 422
-        if (status === 422) {
-          const errorMessage =
-            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
-          dispatch(setSetupTransactionCheck(false))
-          dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
-
-          throw new Error(errorMessage)
-        }
-
-        if (status === 500) {
-          const errorMessage =
-            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
-          throw new Error(errorMessage)
-        }
+        const { status } = body
 
         const { transaction, decoded_transaction: decodedTransaction } = body?.data ?? {}
 
-        // Here we check for the code 200
-        const isTransactionChecked = !!transaction && !!decodedTransaction && status === 200
-        if (isTransactionChecked) {
+        // check if response is 422
+        if (status === 422) {
+          // Allow to simulate, but not execute transaction
+          const errorMessage =
+            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          setError(new Error(errorMessage))
+
+          dispatch(setSetupTransactionCheck(false))
+          dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
           dispatch(
             setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
           )
           dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
+          dispatch(setSetupStatus('transaction_check' as SetupStatus))
+        }
 
-          dispatch(setSetupTransactionCheck(isTransactionChecked))
+        if (status === 500) {
+          // Don't allow to simulate or execute transaction
+          const errorMessage =
+            typeof body?.error === 'string' ? body?.error : 'Error decoding transaction'
+          setError(new Error(errorMessage))
+          dispatch(setSetupTransactionCheck(false))
+          dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
+          dispatch(
+            setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
+          )
+          dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
+        }
+
+        if (status === 200) {
+          // Allow to simulate and execute transaction
+          dispatch(setSetupTransactionCheck(true))
           dispatch(setSetupTransactionCheckStatus('success' as SetupItemStatus))
-
+          dispatch(
+            setSetupTransactionBuild({ transaction, decodedTransaction } as TransactionBuild)
+          )
+          dispatch(setSetupTransactionBuildStatus('success' as SetupItemStatus))
           dispatch(setSetupStatus('transaction_check' as SetupStatus))
         }
       } catch (error) {
         console.error('Error fetching data:', error)
         setError(error as Error)
+        dispatch(setSetupTransactionCheckStatus('failed' as SetupItemStatus))
         dispatch(setSetupTransactionBuildStatus('failed' as SetupItemStatus))
       }
       setIsLoading(false)
@@ -183,6 +196,8 @@ export const TransactionDetails = () => {
   const parameters = React.useMemo(() => {
     if (!transactionBuildValue) return []
     const { transaction } = transactionBuildValue
+
+    if (!transaction) return []
 
     return Object.keys(transaction)
       .filter((key) => LABEL_MAPPER[key as keyof typeof LABEL_MAPPER])
@@ -334,7 +349,7 @@ export const TransactionDetails = () => {
               </BoxWrapperColumn>
             )}
 
-            {transactionBuildStatus === ('failed' as SetupItemStatus) && !isLoading && (
+            {error && !isLoading && (
               <BoxWrapperRow sx={{ justifyContent: 'flex-start' }}>
                 <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
                   {error?.message && typeof error?.message === 'string'

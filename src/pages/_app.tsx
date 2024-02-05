@@ -13,8 +13,8 @@ import Router from 'next/router'
 import * as React from 'react'
 import { AppProvider } from 'src/contexts/app.context'
 import Loading from 'src/components/Loading'
-import {HEADER_HEIGHT} from "src/components/Layout/Header"
-import {FOOTER_HEIGHT} from "src/components/Layout/Footer"
+import { HEADER_HEIGHT } from 'src/components/Layout/Header'
+import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -60,11 +60,11 @@ export default function MyApp(props: MyAppProps) {
             <NoSsr>
               <CssBaseline />
               <Layout>
-                {
-                  isLoading ?
-                  <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} /> :
+                {isLoading ? (
+                  <Loading minHeight={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`} />
+                ) : (
                   <Component {...pageProps} />
-                }
+                )}
               </Layout>
             </NoSsr>
           </AppProvider>

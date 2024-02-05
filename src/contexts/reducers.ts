@@ -1,8 +1,10 @@
 import {
+  DBankInfo,
   InitialState,
   Position,
   SetupItemStatus,
   SetupStatus,
+  State,
   Status,
   Strategy,
   TransactionBuild
@@ -10,11 +12,17 @@ import {
 import {
   Actions,
   ActionType,
+  AddDAOs,
   AddPositions,
+  ClearDAOs,
   ClearPositions,
+  ClearSearch,
+  ClearSelectedDAO,
   ClearSelectedPosition,
   ClearSetup,
   ClearSetupWithoutCreate,
+  SetSearch,
+  SetSelectedDAO,
   SetSelectedPosition,
   SetSetupConfirm,
   SetSetupConfirmStatus,
@@ -28,8 +36,13 @@ import {
   SetSetupTransactionCheck,
   SetSetupTransactionCheckStatus,
   UpdateEnvNetworkData,
-  UpdateStatus
+  UpdateStatus,
+  Filter,
+  UpdatePositionsWithTokenBalances,
+  UpdateIsFetchingTokens
 } from './actions'
+import { BLOCKCHAIN, DAO, EXECUTION_TYPE, getDAOFilePath } from '../config/strategies/manager'
+import { getStrategy } from '../utils/strategies'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
   switch (action.type) {
@@ -38,26 +51,75 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
         ...state,
         status: action.payload
       }
+
     case ActionType.AddPositions:
       return {
         ...state,
         positions: action.payload
       }
+
     case ActionType.ClearPositions:
       return {
         ...state,
         positions: []
       }
+
     case ActionType.SetSelectedPosition:
       return {
         ...state,
         selectedPosition: action.payload
       }
+
     case ActionType.ClearSelectedPosition:
       return {
         ...state,
         selectedPosition: null
       }
+
+    case ActionType.AddDAOs:
+      if (!action.payload.includes('All') && action.payload.length > 1) {
+        return {
+          ...state,
+          selectedDAO: 'All',
+          DAOs: ['All', ...action.payload]
+        }
+      } else if (action.payload.length === 1) {
+        return {
+          ...state,
+          selectedDAO: action.payload[0],
+          DAOs: action.payload
+        }
+      }
+
+    case ActionType.ClearDAOs:
+      return {
+        ...state,
+        DAOs: []
+      }
+    case ActionType.SetSelectedDAO:
+      return {
+        ...state,
+        selectedDAO: action.payload
+      }
+
+    case ActionType.ClearSelectedDAO:
+      return {
+        ...state,
+        selectedDAO: null
+      }
+
+    case ActionType.SetSearch:
+      return {
+        ...state,
+        search: action.payload
+      }
+
+    case ActionType.ClearSearch:
+      return {
+        ...state,
+        search: null
+      }
+
     case ActionType.SetSetupCreate:
       return {
         ...state,
@@ -69,6 +131,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupCreateStatus:
       return {
         ...state,
@@ -80,6 +143,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupTransactionBuild:
       return {
         ...state,
@@ -91,6 +155,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupTransactionBuildStatus:
       return {
         ...state,
@@ -102,6 +167,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupTransactionCheck:
       return {
         ...state,
@@ -113,6 +179,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupTransactionCheckStatus:
       return {
         ...state,
@@ -124,6 +191,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupSimulation:
       return {
         ...state,
@@ -135,6 +203,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupSimulationStatus:
       return {
         ...state,
@@ -146,6 +215,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupConfirm:
       return {
         ...state,
@@ -157,6 +227,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupConfirmStatus:
       return {
         ...state,
@@ -168,6 +239,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.SetSetupStatus:
       return {
         ...state,
@@ -176,6 +248,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           status: action.payload
         }
       }
+
     case ActionType.ClearSetup:
       return {
         ...state,
@@ -203,6 +276,7 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
     case ActionType.ClearSetupWithoutCreate:
       return {
         ...state,
@@ -226,11 +300,133 @@ export const mainReducer = (state: InitialState, action: Actions): InitialState 
           }
         }
       }
+
+    case ActionType.Filter:
+      // Filter positions by DAO
+      const filteredPositionsByDAO =
+        state?.positions?.filter((position: Position) => {
+          if (state.selectedDAO === 'All') return true
+          return position?.dao?.toLowerCase() === state?.selectedDAO?.toLowerCase()
+        }) ?? []
+
+      // Filter positions by search
+      const filteredPositionsByDAOAndSearch =
+        filteredPositionsByDAO?.filter((position: Position) => {
+          if (state?.search === null) return true
+          return (
+            position?.lptoken_name?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.protocol?.toLowerCase()?.includes(state?.search?.toLowerCase()) ||
+            position?.lptoken_address?.toLowerCase()?.includes(state?.search?.toLowerCase())
+          )
+        }) ?? []
+
+      // Order by state
+      const filteredPositionsByDAOAndSearchAndOrdered =
+        filteredPositionsByDAOAndSearch
+          ?.map((position: Position) => {
+            const existDAOFilePath = !!getDAOFilePath(
+              position.dao as DAO,
+              position.blockchain as BLOCKCHAIN,
+              'execute' as EXECUTION_TYPE
+            )
+            const { positionConfig } = getStrategy(position as Position)
+            const areAnyStrategies = positionConfig?.length > 0
+            const isActive = areAnyStrategies && existDAOFilePath
+            return {
+              ...position,
+              isActive
+            }
+          })
+          .sort((a: Position, b: Position) => {
+            // check state.selectedState 'Active' to order
+            if (state.selectedState === State.Active) {
+              if (a.isActive && !b.isActive) return -1
+              if (!a.isActive && b.isActive) return 1
+            }
+            // check state.selectedState 'Inactive' to order
+            if (state.selectedState === State.Inactive) {
+              if (!a.isActive && b.isActive) return -1
+              if (a.isActive && !b.isActive) return 1
+            }
+            // sort by lptoken_name
+            if (a.lptoken_name < b.lptoken_name) return -1
+            if (a.lptoken_name > b.lptoken_name) return 1
+
+            // if state.selectedState is null, don't order
+            return 0
+          }) ?? []
+
+      return {
+        ...state,
+        filteredPositions: filteredPositionsByDAOAndSearchAndOrdered
+      }
+
     case ActionType.UpdateEnvNetworkData:
       return {
         ...state,
         envNetworkData: action.payload
       }
+
+    case ActionType.UpdatePositionsWithTokenBalances:
+      const dBankData = action.payload
+      const positionsWithTokens = state?.positions?.map((position: Position) => {
+        const dBankTokens: DBankInfo[] =
+          dBankData?.filter((dbankInfo: DBankInfo) => {
+            // should match by dBandk properties chain, protocol_name, position
+            return (
+              dbankInfo?.chain?.toLowerCase() === position.blockchain.toLowerCase() &&
+              dbankInfo?.protocol_name?.toLowerCase() === position.protocol.toLowerCase() &&
+              dbankInfo?.position?.toLowerCase() === position.lptoken_name.toLowerCase() &&
+              (dbankInfo?.token_type === 'supply' || dbankInfo?.token_type === 'borrow')
+            )
+          }) ?? []
+
+        const tokens =
+          dBankTokens
+            ?.map((token: DBankInfo) => {
+              const updateAt = new Date().getTime()
+              return {
+                symbol: token.symbol,
+                supply: token.token_type === 'supply' ? token.amount : 0,
+                borrow: token.token_type === 'borrow' ? token.amount : 0,
+                price: token.price,
+                updatedAt: updateAt
+              }
+            })
+            ?.reduce((acc: any, token: any) => {
+              // reduce tokens by supply or borrow with the biggest amount,
+              // the problem is the json file in the dBank script have multiple entries for the same token
+              const tokenIndex = acc.findIndex((accToken: any) => accToken.symbol === token.symbol)
+              if (tokenIndex === -1) {
+                acc.push(token)
+              } else {
+                if (acc[tokenIndex].supply < token.supply) {
+                  acc[tokenIndex].supply = token.supply
+                }
+                if (acc[tokenIndex].borrow < token.borrow) {
+                  acc[tokenIndex].borrow = token.borrow
+                }
+              }
+              return acc
+            }, []) ?? []
+
+        return {
+          ...position,
+          tokens
+        }
+      })
+
+      return {
+        ...state,
+        positions: positionsWithTokens
+      }
+
+    case ActionType.UpdateIsFetchingTokens:
+      return {
+        ...state,
+        isFetchingTokens: action.payload
+      }
+
     default:
       return state
   }
@@ -258,6 +454,33 @@ export const setSelectedPosition = (position: Position): SetSelectedPosition => 
 
 export const clearSelectedPosition = (): ClearSelectedPosition => ({
   type: ActionType.ClearSelectedPosition
+})
+
+export const addDAOs = (DAOs: string[]): AddDAOs => ({
+  type: ActionType.AddDAOs,
+  payload: DAOs
+})
+
+export const clearDAOs = (): ClearDAOs => ({
+  type: ActionType.ClearDAOs
+})
+
+export const setSelectedDAO = (DAO: string): SetSelectedDAO => ({
+  type: ActionType.SetSelectedDAO,
+  payload: DAO
+})
+
+export const clearSelectedDAO = (): ClearSelectedDAO => ({
+  type: ActionType.ClearSelectedDAO
+})
+
+export const setSearch = (search: string): SetSearch => ({
+  type: ActionType.SetSearch,
+  payload: search
+})
+
+export const clearSearch = (): ClearSearch => ({
+  type: ActionType.ClearSearch
 })
 
 export const setSetupCreate = (strategy: Strategy): SetSetupCreate => ({
@@ -332,4 +555,20 @@ export const clearSetupWithoutCreate = (): ClearSetupWithoutCreate => ({
 export const updateEnvNetworkData = (data: any): UpdateEnvNetworkData => ({
   type: ActionType.UpdateEnvNetworkData,
   payload: data
+})
+
+export const filter = (): Filter => ({
+  type: ActionType.Filter
+})
+
+export const updatePositionsWithTokenBalances = (
+  data: DBankInfo[]
+): UpdatePositionsWithTokenBalances => ({
+  type: ActionType.UpdatePositionsWithTokenBalances,
+  payload: data
+})
+
+export const updateIsFetchingTokens = (isFetching: boolean): UpdateIsFetchingTokens => ({
+  type: ActionType.UpdateIsFetchingTokens,
+  payload: isFetching
 })

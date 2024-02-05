@@ -101,13 +101,14 @@ const getServerSideProps = async (context: {
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
-    : ['']
-  const dao = roles?.[0] ?? ''
+    : []
+
+  const DAOs = roles
 
   const dataWarehouse = DataWarehouse.getInstance()
   const positionDW = (await dataWarehouse.getPositionById(id))?.[0]
 
-  const position = positionDW && positionDW.dao === dao ? positionDW : null
+  const position = positionDW && DAOs.includes(positionDW.dao) ? positionDW : null
 
   const ENV_NETWORK_DATA = {
     MODE: process?.env?.MODE ?? 'development',
@@ -118,8 +119,6 @@ const getServerSideProps = async (context: {
     LOCAL_FORK_HOST_GNOSIS: process?.env?.LOCAL_FORK_HOST_GNOSIS ?? 'anvil_gnosis',
     LOCAL_FORK_PORT_GNOSIS: process?.env?.LOCAL_FORK_PORT_GNOSIS ?? 8547
   }
-
-  console.log('reloading')
 
   return {
     props: {

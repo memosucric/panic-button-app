@@ -7,27 +7,63 @@ import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { updateStatus, addPositions } from 'src/contexts/reducers'
+import {
+  updateStatus,
+  addPositions,
+  addDAOs,
+  clearSearch,
+  filter,
+  updatePositionsWithTokenBalances,
+  updateIsFetchingTokens
+} from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 
 interface PositionsPageProps {
   positions: Position[]
+  DAOs: string[]
 }
 
-const PositionsPage = (props: PositionsPageProps): ReactElement => {
-  const { positions = [] } = props
+const PositionsPage = (props: PositionsPageProps) => {
+  const { positions = [], DAOs } = props
+
   const { dispatch, state } = useApp()
-  const values = state.positions.values
+  const { status, isFetchingTokens } = state
 
   React.useEffect(() => {
-    if (values.length > 0) return
+    const start = () => {
+      dispatch(updateStatus('Loading' as Status))
 
-    dispatch(updateStatus('Loading' as Status))
+      dispatch(addDAOs(DAOs))
+      dispatch(addPositions(positions))
+      dispatch(clearSearch())
+      dispatch(filter())
 
-    dispatch(addPositions(positions))
+      dispatch(updateStatus('Finished' as Status))
+    }
 
-    dispatch(updateStatus('Finished' as Status))
-  }, [dispatch, positions, values])
+    start()
+  }, [dispatch, DAOs, positions])
+
+  React.useEffect(() => {
+    const start = async () => {
+      try {
+        if (status !== 'Finished') return
+
+        console.log('fetching tokens', isFetchingTokens, status)
+
+        dispatch(updateIsFetchingTokens(true))
+        const response = await fetch('/api/dbank')
+        const { data = [] } = await response.json()
+        dispatch(updatePositionsWithTokenBalances(data))
+        dispatch(filter())
+        dispatch(updateIsFetchingTokens(false))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    start()
+  }, [dispatch, status])
 
   return <WrapperPositions />
 }
@@ -56,16 +92,12 @@ export const getServerSideProps = async (context: {
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
-    : ['']
-  const dao = roles?.[0] ?? ''
+    : []
+
+  const DAOs = roles
 
   const dataWarehouse = DataWarehouse.getInstance()
+  const positions: Position[] = await dataWarehouse.getPositions(DAOs)
 
-  const allPositions: Position[] = await dataWarehouse.getPositions()
-
-  const positions = allPositions
-    .filter((position) => dao && position.dao === dao)
-    .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
-
-  return { props: { positions } }
+  return { props: { positions, DAOs } }
 }
