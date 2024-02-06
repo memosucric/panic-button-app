@@ -6,13 +6,13 @@ import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/pa
 import GnosisDao_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-gnosis.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisLTD_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLTD-ethereum.json'
+import GnosisLtd_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-ethereum.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisLTD_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLTD-gnosis.json'
+import GnosisLtd_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-gnosis.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import karpatkeyDAO_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/Karpatkey-ethereum.json'
+import karpatkeyDAO_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/karpatkey-ethereum.json'
 
 export type DAO =
   | 'Gnosis DAO'
@@ -48,7 +48,7 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
   {
     name: 'Gnosis Ltd',
     blockchain: 'Ethereum',
-    config: GnosisLTD_ethereum,
+    config: GnosisLtd_ethereum,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
     transactionBuilderFilePath:
@@ -66,7 +66,7 @@ export const DAO_MAPPER: DAO_MAPPER_TYPE[] = [
   {
     name: 'Gnosis Ltd',
     blockchain: 'Gnosis',
-    config: GnosisLTD_gnosis,
+    config: GnosisLtd_gnosis,
     executeFilePath: 'roles_royce/roles_royce/applications/panic_button_app/execute.py',
     simulateFilePath: 'roles_royce/roles_royce/applications/panic_button_app/simulate.py',
     transactionBuilderFilePath:
