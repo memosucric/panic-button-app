@@ -15,7 +15,7 @@ on:
 jobs:
   docker_main:
     if: github.ref == 'refs/heads/main' # Run only for the main branch
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
 
   docker_develop:
     if: github.ref == 'refs/heads/develop' # Run only for the develop branch
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
   update_main_deployment:
     if: github.ref == 'refs/heads/main' # Run only for the main branch
     needs: docker_main
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: tale/kubectl-action@v1
@@ -101,7 +101,7 @@ jobs:
   update_develop_deployment:
     if: github.ref == 'refs/heads/develop' # Run only for the develop branch
     needs: docker_develop
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: tale/kubectl-action@v1
