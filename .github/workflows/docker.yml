@@ -46,6 +46,7 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           file: ./Dockerfile.main
+          context: .
           # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:main
           # cache-to: type=inline
           build-args: |
@@ -85,6 +86,7 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           file: ./Dockerfile.dev
+          context: .
           # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:develop
           # cache-to: type=inline
           build-args: |
