@@ -48,6 +48,8 @@ jobs:
           file: ./Dockerfile.main
           # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:main
           # cache-to: type=inline
+          build-args: |
+            BUILDKIT_CONTEXT_KEEP_GIT_DIR=true
           
 
   docker_develop:
@@ -85,6 +87,8 @@ jobs:
           file: ./Dockerfile.dev
           # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:develop
           # cache-to: type=inline
+          build-args: |
+            BUILDKIT_CONTEXT_KEEP_GIT_DIR=true
           
 
   update_main_deployment:
