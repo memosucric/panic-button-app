@@ -20,6 +20,7 @@ RUN apk --no-cache add \
     rm -r /usr/lib/python*/ensurepip && \
     pip3 install --no-cache --upgrade pip hatch && \
     pip3 install -e ./roles_royce && \
+    pip3 install hatch-vcs && \
     apk del python3-dev musl-dev gcc g++
 
 # Install Node.js dependencies in the builder stage
