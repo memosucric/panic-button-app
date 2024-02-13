@@ -46,10 +46,11 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           file: ./Dockerfile.main
-          # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:main
-          # cache-to: type=inline
           build-args: |
             BUILDKIT_CONTEXT_KEEP_GIT_DIR=true
+          # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:main
+          # cache-to: type=inline
+
           
 
   docker_develop:
@@ -85,10 +86,11 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           file: ./Dockerfile.dev
-          # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:develop
-          # cache-to: type=inline
           build-args: |
             BUILDKIT_CONTEXT_KEEP_GIT_DIR=true
+          # cache-from: type=registry,ref=registry.digitalocean.com/karpatkey/panic-button-app:develop
+          # cache-to: type=inline
+
           
 
   update_main_deployment:
