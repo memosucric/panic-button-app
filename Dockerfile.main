@@ -14,12 +14,12 @@ RUN apk --no-cache add \
     musl-dev \
     gcc \
     git \
-    g++ && \
+    g++ \
+    libffi-dev && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --no-cache --upgrade pip setuptools && \
+    pip3 install --no-cache --upgrade pip hatch && \
     pip3 install -e ./roles_royce && \
-    pip3 install -r requirements.txt && \
     apk del python3-dev musl-dev gcc g++
 
 # Install Node.js dependencies in the builder stage
@@ -38,7 +38,6 @@ COPY --from=builder /app/yarn.lock ./yarn.lock
 COPY --from=builder /app/roles_royce ./roles_royce
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/src ./src
-COPY --from=builder /app/requirements.txt ./requirements.txt
 COPY --from=builder /usr/lib/python3.10/site-packages/ /usr/lib/python3.10/site-packages/
 COPY --from=builder /app/*.js ./
 COPY --from=builder /app/*.json ./
