@@ -8,10 +8,13 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install Node.js dependencies in the builder stage
-RUN yarn install
+#RUN yarn install
 
 # Copy the rest of the app files into the builder stage
 COPY . .
+
+RUN apk --no-cache add git && ls roles_royce/ && git submodule update --no-recommend-shallow roles_royce/ && ls roles_royce/ && git submodule status
+
 
 # Install Python dependencies and build Python packages in the builder stage
 RUN apk --no-cache add \
