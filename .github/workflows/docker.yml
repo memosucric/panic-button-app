@@ -52,7 +52,7 @@ jobs:
         with:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
-          file: ./Dockerfile.dev
+          file: ./Dockerfile
           build-args: |
             BUILDKIT_CONTEXT_KEEP_GIT_DIR=true
 
