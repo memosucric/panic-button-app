@@ -4,6 +4,12 @@ FROM node:20.0.0-alpine as builder
 # Set working directory in the builder stage
 WORKDIR /app
 
+# Copy package.json and yarn.lock for Yarn installation
+COPY package.json yarn.lock ./
+
+# Install Node.js dependencies in the builder stage
+RUN yarn install
+
 # Copy the rest of the app files into the builder stage
 COPY . .
 
@@ -21,9 +27,6 @@ RUN apk --no-cache add \
     pip3 install -e ./roles_royce && \
     pip3 install -r requirements.txt && \
     apk del python3-dev musl-dev gcc g++
-
-# Install Node.js dependencies in the builder stage
-RUN yarn install
 
 # Runner stage
 FROM node:20.0.0-alpine
@@ -56,4 +59,4 @@ EXPOSE 3000
 RUN yarn build
 
 # Start the app
-CMD ["yarn", "start"]
+CMD ["/app/src/run.sh"]
