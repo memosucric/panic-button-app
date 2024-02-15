@@ -1,54 +1,65 @@
-# karpatkey panic button app
+# The Panic Button App
 
-This repository contains the source code for the karpatkey panic button app.
+This app enables karpatkey’s asset managers to safely and rapidly deploy, adjust or exit any position with carefully tailored and predesigned strategies.
 
-[![Linter](https://github.com/KarpatkeyDAO/panic-button-app/workflows/linter/badge.svg)](https://github.com/KarpatkeyDAO/panic-button-app/actions?query=workflow%3Alinter)
-[![Styled With Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
-![Next JS](https://img.shields.io/badge/Next%20JS-13.4.13-blue)
-![Typescript](https://img.shields.io/badge/Typescript-5.1.6-blue)
+## Key Objectives / Benefits
 
-### This repository is a work in progress, please be patient, we still have a lot to do.
+### Independence from Vulnerable User Interfaces (UIs):
 
-![Work in progress](https://media.giphy.com/media/JomVilU47wifhL9FSQ/giphy.gif)
+By shifting operations to our Agile Execution App, AM can mitigate the risks associated with UI vulnerabilities, hacks, or malfunctioning interfaces, such as in the case of Safe's UI outage.
 
-## Getting Started
+### Enhanced Clarity and Preparedness during Emergencies
 
-TODO: Complete
+The app provides a centralized platform for operations, allowing team members to access a comprehensive list of available actions, even in critical situations. This clarity fosters a level-headed approach in handling emergencies, ensuring swift decision-making.
 
-## About
+### Minimized Human Error
 
-This project exists to make it easier for the treasury management team to manage positions.  
-Contributions to improve this project are welcome.
+Utilizing the app minimizes the likelihood of human error in executing tasks, particularly in complex strategies. With various strategies readily available within the app's menu, operational mishaps are significantly reduced both in routine tasks and during crisis scenarios.
 
-## How to use
+### Time Savings and Operational Efficiency
 
-To get started, just clone the repository and run `yarn install && yarn dev`:
+The app streamlines repetitive tasks, improving the overall operational efficiency of various processes. The app helps AMs save time and opportunity costs by allowing them to focus on tasks that require human judgment and creativity, thus maximizing the value of their time and expertise.
+
+### Dual-Layer Security Measures
+
+The app ensures a high level of security by implementing dual-layer security measures. Firstly, preset filters act as an initial security check, followed by the execution of predesigned strategies within the app. This layered approach significantly reduces the risk of critical errors occurring due to faulty executions.
+
+## Key Assumptions
+
+Protocols’ interfaces may not be available or may be malfunctioning during an emergency.
+Asset managers that need to design the right strategy during the pressure of a risk scenario may not come up with the optimum course of action, or could even execute flawed transactions.
+The design and execution of the proper strategy takes valuable time and this can generate losses in the DAO’s funds.
+AMs carry out repetitive tasks in order to execute a batch of transactions.
+
+## Roadmap perspective
+
+This app enables the manual execution of predesigned strategies (batch of tx carefully designed and tailored to our AM needs). However, some of those predesigned strategies are to be automatically executed given specific triggers. For example, an exploit suspected or a collateral ratio rapidly decreasing. This strategies menu is also part of our guardians modules under development. Guardians are bots that will automatically execute strategies.
+Today, the app enables only positions exits in order to avoid potential losses, but it will broaden its scope towards enabling yield-chasing opportunities.
+
+## How to use:
+
+To get started, clone the repository and run `yarn install && yarn dev`:
 
     git clone git@github.com:KarpatkeyDAO/panic-button-app.git
     yarn install
     yarn dev
 
-## Building and deploying in production
+### Building and deploying in production
 
-If you wanted to run this site in production, you should install modules then build the site with `yarn build` and run it with `yarn start`:
+To run this site in production, install modules `yarn install`, build the site with `yarn build` and run it with `yarn start`:
 
     yarn install
     yarn build
     yarn start
 
-You should run `yarn build` again any time you make changes to the site.
+Run `yarn build` again any time you make changes to the site.
 
-Note: If you are already running a webserver on port 80 (e.g. Macs usually have the Apache webserver running on port 80) you can still start the example in production mode by passing a different port as an Environment Variable when starting (e.g. `PORT=3000 yarn start`).
+Note: When running a webserver on port 80 (e.g. Macs usually have the Apache webserver running on port 80) start the example in production mode by passing a different port as an Environment Variable (e.g. `PORT=3000 yarn start`).
 
-## Configuring
+### Configuring
 
-If you configure a .env file (just copy [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) over to '.env' and fill in the options) you can configure a range of options.
-We also have to configure the file of the strategies to be used.
+Configure the .env file by copying [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) This gives a range of options. To have the app run any strategies, the strategies need to be updated.
 
-## Docker
-
-TODO: Complete
-
-## Contribution
+### Contribution
 
 Any and every contribution is welcomed and appreciated.
