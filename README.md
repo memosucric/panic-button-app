@@ -58,7 +58,7 @@ Note: When running a webserver on port 80 (e.g. Macs usually have the Apache web
 
 ### Configuring
 
-Configure the .env file by copying [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) This gives a range of options. To have the app run any strategies, the strategies need to be updated.
+Configure the .env file by copying [.env.example](https://github.com/KarpatkeyDAO/panic-button-app/blob/develop/.env.example) This gives a range of options. To have the app run any strategies, the strategies need to be updated with positions that have funds and are whitelisted. These files are in the strategies folder of the roles_royce.
 
 ### Contribution
 
