@@ -28,6 +28,10 @@ const StatusLabel = (props: StatusLabelProps) => {
     failed: 'red'
   }[status]
 
+  if (status == 'not done') {
+    return null
+  }
+
   if (status == 'loading') {
     return <StatusIcon status={status} />
   }
