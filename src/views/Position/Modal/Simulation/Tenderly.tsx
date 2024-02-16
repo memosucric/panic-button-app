@@ -134,7 +134,7 @@ export const Tenderly = () => {
               size="small"
               onClick={() => window.open(shareUrl, '_blank')}
             >
-              Open simulation
+              View simulation report
             </Button>
           )}
 

@@ -5,7 +5,7 @@ import { AccordionBoxWrapper } from 'src/components/Accordion/AccordionBoxWrappe
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import { SetupItemStatus, SetupStatus } from 'src/contexts/state'
 import { useApp } from 'src/contexts/app.context'
-import { Box } from '@mui/material'
+import { Box, Link } from '@mui/material'
 import { setSetupConfirm, setSetupConfirmStatus, setSetupStatus } from 'src/contexts/reducers'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import { ethers, TransactionReceipt } from 'ethers'
@@ -198,7 +198,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
               </Button>
             )}
             {confirmStatus === ('success' as SetupItemStatus) && !isLoading && (
-              <Button variant="contained" size="small" onClick={() => handleClose()}>
+              <Button variant="contained" size="small" component={Link} href={`/positions`}>
                 Finish
               </Button>
             )}
