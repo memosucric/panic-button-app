@@ -67,7 +67,7 @@ export const Stepper = () => {
     [status]
   )
 
-  const stepIsLoading = (step: Step) => {
+  const isStepLoading = (step: Step) => {
     switch (step.key) {
       case 'transaction_build':
         return state?.setup?.transactionBuild?.status == 'loading'
@@ -99,27 +99,23 @@ export const Stepper = () => {
         </CustomTypography>
       </BoxWrapperRow>
       <StepperMUI activeStep={activeStep} orientation="vertical" sx={{ m: 3 }}>
-        {steps.map((step) => {
-          const icon = stepIsLoading(step) ? <LoadingStepIcon /> : null
-
-          return (
-            <Step key={step.label}>
-              <StepLabel icon={icon}>
-                <CustomTypography
-                  variant="body2"
-                  sx={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    width: '90%'
-                  }}
-                >
-                  {step.label}
-                </CustomTypography>
-              </StepLabel>
-            </Step>
-          )
-        })}
+        {steps.map((step) => (
+          <Step key={step.label}>
+            <StepLabel icon={isStepLoading(step) && <LoadingStepIcon />}>
+              <CustomTypography
+                variant="body2"
+                sx={{
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  width: '90%'
+                }}
+              >
+                {step.label}
+              </CustomTypography>
+            </StepLabel>
+          </Step>
+        ))}
       </StepperMUI>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
