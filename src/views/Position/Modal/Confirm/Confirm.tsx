@@ -64,8 +64,8 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       }
 
       dispatch(setSetupConfirm(null))
-      dispatch(setSetupConfirmStatus('not done' as SetupItemStatus))
-      dispatch(setSetupStatus('simulation' as SetupStatus))
+      dispatch(setSetupConfirmStatus('loading' as SetupItemStatus))
+      dispatch(setSetupStatus('confirm' as SetupStatus))
 
       setIsLoading(true)
 
