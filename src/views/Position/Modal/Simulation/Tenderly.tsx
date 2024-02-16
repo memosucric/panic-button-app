@@ -99,6 +99,7 @@ export const Tenderly = () => {
     setIsLoading(false)
   }, [blockchain, transaction, dispatch, isDisabled, selectedDAO])
 
+  const showSimulateButton = !isLoading && !shareUrl && !isDisabled
   return (
     <AccordionBoxWrapper
       gap={2}
@@ -131,9 +132,9 @@ export const Tenderly = () => {
             </Button>
           )}
 
-          {!isLoading && (
-            <Button variant="contained" disabled={isDisabled} size="small" onClick={onSimulate}>
-              Simulate
+          {showSimulateButton && (
+            <Button variant="contained" size="small" onClick={onSimulate}>
+              Try again
             </Button>
           )}
         </BoxWrapperRow>
