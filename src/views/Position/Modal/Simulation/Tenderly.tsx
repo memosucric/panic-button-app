@@ -7,6 +7,7 @@ import { setSetupSimulation, setSetupSimulationStatus, setSetupStatus } from 'sr
 import { SetupItemStatus, SetupStatus } from 'src/contexts/state'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import StatusLabel from 'src/components/StatusLabel'
 import { Box } from '@mui/material'
 
 const WaitingSimulatingTransaction = () => {
@@ -50,7 +51,8 @@ export const Tenderly = () => {
       setIsLoading(true)
 
       dispatch(setSetupSimulation(null))
-      dispatch(setSetupSimulationStatus('not done' as SetupItemStatus))
+      dispatch(setSetupStatus('simulation' as SetupStatus))
+      dispatch(setSetupSimulationStatus('loading' as SetupItemStatus))
 
       const parameters = {
         execution_type: 'simulate',
@@ -97,13 +99,6 @@ export const Tenderly = () => {
     setIsLoading(false)
   }, [blockchain, transaction, dispatch, isDisabled, selectedDAO])
 
-  const color =
-    simulationStatus === ('success' as SetupItemStatus)
-      ? 'green'
-      : simulationStatus === ('failed' as SetupItemStatus)
-        ? 'red'
-        : 'black'
-
   return (
     <AccordionBoxWrapper
       gap={2}
@@ -114,15 +109,13 @@ export const Tenderly = () => {
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
-          <CustomTypography variant={'body2'}>Simulation</CustomTypography>
-          <CustomTypography variant={'body2'} sx={{ color, textTransform: 'capitalize' }}>
-            {simulationStatus}
-          </CustomTypography>
+          <CustomTypography variant="body2">Simulation</CustomTypography>
+          <StatusLabel status={simulationStatus} />
         </BoxWrapperRow>
-        <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap={'20px'}>
+        <BoxWrapperRow sx={{ justifyContent: 'flex-end' }} gap="20px">
           {isLoading && <WaitingSimulatingTransaction />}
           {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
-            <CustomTypography variant={'body2'} sx={{ color: 'red', overflow: 'auto' }}>
+            <CustomTypography variant="body2" sx={{ color: 'red', overflow: 'auto' }}>
               {error?.message && typeof error?.message === 'string'
                 ? error?.message
                 : 'Error trying to simulate transaction'}

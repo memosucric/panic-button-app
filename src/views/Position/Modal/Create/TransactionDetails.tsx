@@ -127,6 +127,7 @@ export const TransactionDetails = () => {
     const postData = async (data: any) => {
       try {
         setIsLoading(true)
+        dispatch(setSetupTransactionBuildStatus('loading' as SetupItemStatus))
         const response = await fetch('/api/execute', {
           method: 'POST',
           headers: {
