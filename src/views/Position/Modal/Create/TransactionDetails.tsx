@@ -16,6 +16,7 @@ import * as React from 'react'
 import { AccordionWrapper } from 'src/components/Accordion/AccordionWrapper'
 import { useApp } from 'src/contexts/app.context'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import TextLoadingDots from 'src/components/TextLoadingDots'
 import {
   setSetupStatus,
   setSetupTransactionBuild,
@@ -69,7 +70,8 @@ const WaitingDecodingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
-        Waiting for decoding transaction process...
+        Waiting for decoding transaction process
+        <TextLoadingDots />
       </CustomTypography>
     </Box>
   )

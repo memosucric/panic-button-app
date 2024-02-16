@@ -10,12 +10,14 @@ import { setSetupConfirm, setSetupConfirmStatus, setSetupStatus } from 'src/cont
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import { ethers, TransactionReceipt } from 'ethers'
 import StatusLabel from 'src/components/StatusLabel'
+import TextLoadingDots from 'src/components/TextLoadingDots'
 
 const WaitingExecutingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
-        Executing transaction...
+        Executing transaction
+        <TextLoadingDots />
       </CustomTypography>
     </Box>
   )

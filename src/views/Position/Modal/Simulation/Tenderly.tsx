@@ -7,6 +7,7 @@ import { setSetupSimulation, setSetupSimulationStatus, setSetupStatus } from 'sr
 import { SetupItemStatus, SetupStatus } from 'src/contexts/state'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
+import TextLoadingDots from 'src/components/TextLoadingDots'
 import StatusLabel from 'src/components/StatusLabel'
 import { Box } from '@mui/material'
 
@@ -14,7 +15,8 @@ const WaitingSimulatingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
-        Simulating transaction...
+        Simulating transaction
+        <TextLoadingDots />
       </CustomTypography>
     </Box>
   )
