@@ -22,6 +22,14 @@ const WaitingSimulatingTransaction = () => {
   )
 }
 
+function translateErrorMessage(error: Error | null) {
+  if (error?.message && typeof error?.message === 'string' && error?.message != 'Failed to fetch') {
+    return error.message
+  } else {
+    return 'Error trying to simulate transaction'
+  }
+}
+
 export const Tenderly = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
@@ -119,9 +127,7 @@ export const Tenderly = () => {
           {isLoading && <WaitingSimulatingTransaction />}
           {simulationStatus === ('failed' as SetupItemStatus) && !isLoading && (
             <CustomTypography variant="body2" sx={{ color: 'red', overflow: 'auto' }}>
-              {error?.message && typeof error?.message === 'string'
-                ? error?.message
-                : 'Error trying to simulate transaction'}
+              {translateErrorMessage(error)}
             </CustomTypography>
           )}
           {shareUrl && !isLoading && (
