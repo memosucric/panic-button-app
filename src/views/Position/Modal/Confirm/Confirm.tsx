@@ -9,6 +9,7 @@ import { Box, Link } from '@mui/material'
 import { setSetupConfirm, setSetupConfirmStatus, setSetupStatus } from 'src/contexts/reducers'
 import BoxWrapperColumn from 'src/components/Wrappers/BoxWrapperColumn'
 import { ethers, TransactionReceipt } from 'ethers'
+import StatusLabel from 'src/components/StatusLabel'
 
 const WaitingExecutingTransaction = () => {
   return (
@@ -146,7 +147,10 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
     >
       <BoxWrapperColumn gap={4} sx={{ width: '100%', marginY: '14px', justifyContent: 'center' }}>
         <BoxWrapperColumn gap={2}>
-          <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
+          <BoxWrapperRow sx={{ justifyContent: 'space-between' }}>
+            <CustomTypography variant={'body2'}>Confirmation</CustomTypography>
+            {isLoading && <StatusLabel status={'loading' as SetupItemStatus} />}
+          </BoxWrapperRow>
           {confirmStatus !== ('success' as SetupItemStatus) && !isLoading && (
             <CustomTypography variant={'subtitle1'}>
               You're about to create and confirm this transaction.

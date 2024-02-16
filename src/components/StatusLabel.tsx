@@ -1,8 +1,8 @@
 import * as React from 'react'
-import Loading from 'src/components/Loading'
 import CustomTypography from 'src/components/CustomTypography'
 import { Check } from '@mui/icons-material'
 import { SetupItemStatus } from 'src/contexts/state'
+import { CircularProgress } from '@mui/material'
 
 interface StatusLabelProps {
   status: SetupItemStatus
@@ -11,7 +11,7 @@ interface StatusLabelProps {
 const StatusIcon = ({ status }: { status: SetupItemStatus }) => {
   switch (status) {
     case 'loading':
-      return <Loading />
+      return <CircularProgress color="primary" size={20} />
     case 'success':
       return <Check />
   }

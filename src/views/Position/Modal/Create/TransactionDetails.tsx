@@ -28,6 +28,7 @@ import { shortenAddress } from 'src/utils/string'
 import { formatUnits } from 'ethers'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import StatusLabel from 'src/components/StatusLabel'
 
 const LABEL_MAPPER = {
   value: {
@@ -230,7 +231,13 @@ export const TransactionDetails = () => {
         sx={{ width: '100%' }}
       >
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={
+            transactionBuildStatus == 'loading' ? (
+              <StatusLabel status={transactionBuildStatus} />
+            ) : (
+              <ExpandMoreIcon />
+            )
+          }
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
