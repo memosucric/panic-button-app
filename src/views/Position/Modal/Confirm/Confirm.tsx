@@ -28,10 +28,8 @@ interface ConfirmProps {
 }
 
 export const Confirm = ({ handleClose }: ConfirmProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
-  const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<Error | null>(null)
 
   const { blockchain } = state?.setup?.create?.value ?? {}
@@ -42,6 +40,8 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
   const confirmStatus = state?.setup?.confirm?.status ?? null
   const txHash = state?.setup?.confirm?.value?.txHash ?? null
   const selectedDAO = state?.selectedPosition?.dao ?? null
+
+  const isLoading = confirmStatus == 'loading'
 
   // Get env network data
   const ENV_NETWORK_DATA = state?.envNetworkData ?? {}
@@ -54,7 +54,14 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       !decodedTransaction ||
       transactionBuildStatus !== 'success' ||
       transactionCheckStatus !== 'success',
-    [blockchain, transaction, decodedTransaction, transactionBuildStatus, transactionCheckStatus]
+    [
+      selectedDAO,
+      blockchain,
+      transaction,
+      decodedTransaction,
+      transactionBuildStatus,
+      transactionCheckStatus
+    ]
   )
 
   const onExecute = React.useCallback(async () => {
@@ -66,8 +73,6 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       dispatch(setSetupConfirm(null))
       dispatch(setSetupConfirmStatus('loading' as SetupItemStatus))
       dispatch(setSetupStatus('confirm' as SetupStatus))
-
-      setIsLoading(true)
 
       const parameters = {
         execution_type: 'execute',
@@ -135,9 +140,7 @@ export const Confirm = ({ handleClose }: ConfirmProps) => {
       setError(err as Error)
       dispatch(setSetupConfirmStatus('failed' as SetupItemStatus))
     }
-
-    setIsLoading(false)
-  }, [blockchain, selectedDAO, transaction, dispatch, isDisabled])
+  }, [isDisabled, dispatch, transaction, blockchain, selectedDAO, ENV_NETWORK_DATA])
 
   return (
     <AccordionBoxWrapper

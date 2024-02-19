@@ -34,7 +34,6 @@ export const Tenderly = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dispatch, state } = useApp()
 
-  const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<Error | null>(null)
 
   const { blockchain } = state?.setup?.create?.value ?? {}
@@ -44,22 +43,16 @@ export const Tenderly = () => {
   const shareUrl = state?.setup?.simulation?.value?.shareUrl ?? null
   const selectedDAO = state?.selectedPosition?.dao ?? null
 
+  const isLoading = simulationStatus == 'loading'
+
   const isDisabled = React.useMemo(
     () =>
       !blockchain || !transaction || !decodedTransaction || transactionBuildStatus !== 'success',
     [blockchain, transaction, decodedTransaction, transactionBuildStatus]
   )
 
-  React.useEffect(() => {
-    if (!isDisabled && simulationStatus === 'not done' && !isLoading) {
-      onSimulate().then(() => console.log('Simulation finished'))
-    }
-  }, [isDisabled, simulationStatus, isLoading])
-
   const onSimulate = React.useCallback(async () => {
     try {
-      setIsLoading(true)
-
       dispatch(setSetupSimulation(null))
       dispatch(setSetupStatus('simulation' as SetupStatus))
       dispatch(setSetupSimulationStatus('loading' as SetupItemStatus))
@@ -105,9 +98,13 @@ export const Tenderly = () => {
       setError(err as Error)
       dispatch(setSetupSimulationStatus('failed' as SetupItemStatus))
     }
+  }, [blockchain, transaction, dispatch, selectedDAO])
 
-    setIsLoading(false)
-  }, [blockchain, transaction, dispatch, isDisabled, selectedDAO])
+  React.useEffect(() => {
+    if (!isDisabled && simulationStatus === 'not done') {
+      onSimulate().then(() => console.log('Simulation finished'))
+    }
+  }, [isDisabled, onSimulate, simulationStatus])
 
   const showSimulateButton = !isLoading && !shareUrl && !isDisabled
   return (

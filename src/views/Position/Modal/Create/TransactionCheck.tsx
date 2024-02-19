@@ -8,8 +8,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import BoxWrapperRow from 'src/components/Wrappers/BoxWrapperRow'
 
 export const TransactionCheck = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { dispatch, state } = useApp()
+  const { state } = useApp()
 
   const transactionCheckStatus = state?.setup?.transactionCheck?.status || null
 
