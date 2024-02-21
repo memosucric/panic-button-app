@@ -19,6 +19,16 @@ export const enum DAO_NAME_KEY {
   'Gnosis Guild' = 6
 }
 
+export const ALL_DAOS = [
+  'Gnosis DAO',
+  'Gnosis LTD',
+  'Balancer DAO',
+  'ENS DAO',
+  'CoW DAO',
+  'karpatkey DAO',
+  'Gnosis Guild'
+]
+
 export interface DAO {
   id: DAO_NAME_KEY
   name: string

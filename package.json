@@ -1,50 +1,30 @@
 {
-  "name": "panic-button-app",
-  "version": "0.1.0",
+  "name": "AxA",
   "private": true,
+  "repository": "https://github.com/karpatkey/panic-button-app.git",
+  "author": "karpatkey",
+  "license": "LGPL-3.0",
+  "workspaces": [
+    "app",
+    "docs"
+  ],
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start",
+    "start": "yarn workspace foreach -A -pi run start",
+    "build": "yarn workspaces foreach -A -pt run build",
+    "dev": "yarn workspaces foreach -A -pi run dev",
     "lint:staged": "lint-staged",
-    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "lint": "yarn lint:eslint && yarn lint:tsc",
-    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
-    "lint:eslint:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
-    "lint:tsc": "tsc -p tsconfig.json",
+    "lint:eslint": "eslint 'app/src/**/*.{ts,tsx}'",
+    "lint:eslint:fix": "eslint --fix 'app/src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc -p app/tsconfig.json",
     "prepare": "husky install",
     "commit": "git-cz",
-    "bulk:positions": "NODE_PATH=./src ts-node --project ./tsconfig.json ./src/scripts/dump/positions.ts",
+    "bulk:positions": "NODE_PATH=./app/src ts-node --project ./app/tsconfig.json ./app/src/scripts/dump/positions.ts",
     "submodule:sync": "git submodule update --remote"
-  },
-  "dependencies": {
-    "@auth0/nextjs-auth0": "^3.5.0",
-    "@emotion/cache": "^11.11.0",
-    "@emotion/react": "^11.11.3",
-    "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "@google-cloud/bigquery": "^7.3.0",
-    "@mui/icons-material": "5.14.8",
-    "@mui/material": "5.14.8",
-    "clsx": "^2.1.0",
-    "dotenv": "^16.3.1",
-    "ethers": "^6.9.0",
-    "framer-motion": "^10.18.0",
-    "next": "13.4.12",
-    "numbro": "^2.4.0",
-    "react": "^18.2.0",
-    "react-dom": "18.2.0",
-    "react-error-boundary": "^4.0.12",
-    "react-hook-form": "^7.49.3",
-    "react-intersection-observer": "^9.5.3",
-    "react-number-format": "^5.3.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
-    "@types/node": "20.11.5",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "commitizen": "^4.3.0",
@@ -60,11 +40,11 @@
     "typescript": "5.3.3"
   },
   "lint-staged": {
-    "src/**/*.+(js,ts,tsx)": [
-      "eslint -c ./dapps/panic-button/.eslintrc.json -cache --fix",
-      "tsc-files --noEmit"
+    "app/src/**/*.+(js,ts,tsx)": [
+      "eslint -c ./.eslintrc.json -cache --fix",
+      "tsc-files -c ./app/tsconfig.json --noEmit"
     ],
-    "src/**/*.{js,ts,tsx,css,md,json}": [
+    "app/src/**/*.{js,ts,tsx,css,md,json}": [
       "prettier --config ./.prettierrc --write"
     ]
   },
@@ -72,5 +52,6 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  }
+  },
+  "packageManager": "yarn@4.1.0"
 }

@@ -50,8 +50,8 @@ const CustomPopover = (props: CustomPopoverProps) => {
                 position === 'left'
                   ? 'calc(25% - 6px)'
                   : position === 'middle'
-                  ? 'calc(50% - 6px)'
-                  : 'calc(75% - 6px)'
+                    ? 'calc(50% - 6px)'
+                    : 'calc(75% - 6px)'
             }
           }}
         >

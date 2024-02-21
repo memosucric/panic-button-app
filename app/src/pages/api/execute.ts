@@ -81,11 +81,8 @@ export default withApiAuthRequired(async function handler(
     parameters.push(`${blockchain.toUpperCase()}`)
   }
 
-  const filePath = getDAOFilePath(
-    dao as DAO,
-    blockchain as BLOCKCHAIN,
-    execution_type as EXECUTION_TYPE
-  )
+  const filePath =
+    '../' + getDAOFilePath(dao as DAO, blockchain as BLOCKCHAIN, execution_type as EXECUTION_TYPE)
 
   console.log('FilePath', filePath)
 

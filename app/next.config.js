@@ -6,6 +6,15 @@ const nextConfig = {
   },
   experimental: {
     externalDir: true
+  },
+  // next.config.js
+  async rewrites() {
+    return [
+      {
+        source: '/docs/:path*',
+        destination: 'http://localhost:3002/docs/:path*'
+      }
+    ]
   }
 }
 

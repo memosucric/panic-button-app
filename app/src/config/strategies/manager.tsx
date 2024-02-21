@@ -1,18 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisDao_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-ethereum.json'
+import GnosisDao_ethereum from '../../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-ethereum.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisDao_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-gnosis.json'
+import GnosisDao_gnosis from '../../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisDAO-gnosis.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisLtd_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-ethereum.json'
+import GnosisLtd_ethereum from '../../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-ethereum.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GnosisLtd_gnosis from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-gnosis.json'
+import GnosisLtd_gnosis from '../../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/GnosisLtd-gnosis.json'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import karpatkeyDAO_ethereum from '../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/karpatkey-ethereum.json'
+import karpatkeyDAO_ethereum from '../../../../roles_royce/roles_royce/applications/panic_button_app/config/strategies/karpatkey-ethereum.json'
 
 export type DAO =
   | 'Gnosis DAO'

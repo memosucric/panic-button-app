@@ -1,0 +1,18 @@
+{
+  "index": "Overview",
+  "architecture": "Architecture",
+  "roles": "Roles",
+  "strategies": "Strategies",
+  "app": {
+    "type": "page",
+    "title": "App",
+    "href": "/",
+    "newWindow": true
+  },
+  "contribute": {
+    "type": "page",
+    "title": "Contribute",
+    "href": "https://github.com/karpatkey/panic-button-app",
+    "newWindow": true
+  }
+}

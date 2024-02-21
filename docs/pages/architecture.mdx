@@ -1,0 +1,17 @@
+# Architecture
+
+1. Data on positions for each treasury is retrieved from the data warehouse, using cronjobs that adjust the information to show it in the app.
+    1. ETL - We have our own ETL fetching data related to positions
+    DWH: Data on positions for each treasury (protocols, blockchains, tokens, volume).
+    2. Cronjob runs scripts to modify information in the DWH to fill this data into json files
+
+2. There’s a list of preset exit strategies for each position using Roles Royce in a json file
+
+  https://github.com/karpatkey/roles_royce/tree/main/roles_royce/applications/panic_button_app/config
+
+3. Front end shows active positions, available exit strategies in the json, and tx info in the PBA UI
+
+  https://github.com/karpatkey/panic-button-app
+
+4. Tests
+    1. All exit strategies in the json file for all positions in the DWH are tested through the stress tests in Roles Royce https://github.com/karpatkey/roles_royce/blob/main/tests/applications/panic_button_app/test_stresstest.py
