@@ -8,16 +8,23 @@ import PositionDetail from 'src/views/Position/WrappedPosition'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { clearSelectedPosition, setSelectedPosition, updateStatus } from 'src/contexts/reducers'
+import {
+  addDaosConfigs,
+  clearSelectedPosition,
+  setSelectedPosition,
+  updateStatus
+} from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
 import CustomTypography from 'src/components/CustomTypography'
+import { getDaosConfigs } from 'src/utils/jsonsFetcher'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
   position: Maybe<Position>
+  daosConfigs: any[]
 }
 
 const PositionDoesntExist = () => {
@@ -31,13 +38,14 @@ const PositionDoesntExist = () => {
 }
 
 const PositionIndex = (props: PositionIndexProps): ReactElement => {
-  const { position } = props
+  const { position, daosConfigs } = props
 
   const { dispatch, state } = useApp()
   const { status } = state
 
   React.useEffect(() => {
     dispatch(updateStatus('Loading' as Status))
+    dispatch(addDaosConfigs(daosConfigs))
     if (!position) {
       dispatch(clearSelectedPosition())
     } else {
@@ -45,7 +53,7 @@ const PositionIndex = (props: PositionIndexProps): ReactElement => {
     }
 
     dispatch(updateStatus('Finished' as Status))
-  }, [position, dispatch])
+  }, [position, dispatch, daosConfigs])
 
   return (
     <>
@@ -95,11 +103,13 @@ const getServerSideProps = async (context: {
   const positionDW = (await dataWarehouse.getPositionById(id))?.[0]
 
   const position = positionDW && positionDW.dao === dao ? positionDW : null
+  const daosConfigs = await getDaosConfigs(roles)
 
   return {
     props: {
       positionId: id,
-      position
+      position,
+      daosConfigs
     }
   }
 }
