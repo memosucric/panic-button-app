@@ -52,6 +52,7 @@ export enum SetupStatus {
 export const initialState: InitialState = {
   status: Status.Loading,
   positions: [],
+  daosConfigs: [],
   selectedPosition: null,
   setup: {
     status: SetupStatus.Loading,
@@ -81,25 +82,26 @@ export const initialState: InitialState = {
 export type InitialState = {
   status: Status
   positions: Position[]
+  daosConfigs: any[]
   selectedPosition: Maybe<Position>
   setup: {
     status: SetupStatus
     create: {
       value: Maybe<Strategy>
       status: SetupItemStatus
-    },
+    }
     transactionBuild: {
       value: Maybe<TransactionBuild>
       status: SetupItemStatus
-    },
+    }
     transactionCheck: {
       value: Maybe<boolean>
       status: SetupItemStatus
-    },
+    }
     simulation: {
       value: Maybe<boolean>
       status: SetupItemStatus
-    },
+    }
     confirm: {
       value: Maybe<boolean>
       status: SetupItemStatus

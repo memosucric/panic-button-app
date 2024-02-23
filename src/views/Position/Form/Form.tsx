@@ -30,7 +30,7 @@ const Form = () => {
   const { dispatch, state } = useApp()
   const { selectedPosition: position } = state
 
-  const { positionConfig, commonConfig } = getStrategy(position as Position)
+  const { positionConfig, commonConfig } = getStrategy(state.daosConfigs, position as Position)
 
   const [open, setOpen] = React.useState(false)
 

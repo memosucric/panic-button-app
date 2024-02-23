@@ -10,6 +10,7 @@ import {
 } from 'src/config/strategies/manager'
 import * as path from 'path'
 import { EXECUTION_TYPE } from 'src/config/strategies/manager'
+import { getDaosConfigs } from 'src/utils/jsonsFetcher'
 
 type Status = {
   data?: Maybe<any>
@@ -45,6 +46,7 @@ export default withApiAuthRequired(async function handler(
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
     : ['']
+
   const dao = roles?.[0] ?? ''
 
   if (!dao) {
@@ -108,7 +110,10 @@ export default withApiAuthRequired(async function handler(
 
   // Add CONSTANTS from the strategy
   if (protocol) {
+    const daosConfigs = await getDaosConfigs(roles)
+
     const { positionConfig } = getStrategyByPositionId(
+      daosConfigs,
       dao as DAO,
       blockchain as unknown as BLOCKCHAIN,
       protocol,

@@ -7,16 +7,17 @@ import { DataWarehouse } from 'src/services/classes/dataWarehouse.class'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { getSession, Session } from '@auth0/nextjs-auth0'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { updateStatus, addPositions } from 'src/contexts/reducers'
+import { updateStatus, addPositions, addDaosConfigs } from 'src/contexts/reducers'
 import { Position, Status } from 'src/contexts/state'
-import * as Minio from 'minio';
+import { getDaosConfigs } from 'src/utils/jsonsFetcher'
 
 interface PositionsPageProps {
   positions: Position[]
+  daosConfigs: any[]
 }
 
 const PositionsPage = (props: PositionsPageProps): ReactElement => {
-  const { positions = [] } = props
+  const { positions = [], daosConfigs = [] } = props
   const { dispatch, state } = useApp()
   const values = state.positions.values
 
@@ -26,9 +27,10 @@ const PositionsPage = (props: PositionsPageProps): ReactElement => {
     dispatch(updateStatus('Loading' as Status))
 
     dispatch(addPositions(positions))
+    dispatch(addDaosConfigs(daosConfigs))
 
     dispatch(updateStatus('Finished' as Status))
-  }, [dispatch, positions, values])
+  }, [dispatch, positions, daosConfigs, values])
 
   return <WrapperPositions />
 }
@@ -54,66 +56,20 @@ export const getServerSideProps = async (context: {
     }
   }
 
-
-  const endpoint = ''
-  const accessKey = ''
-  const secretKey = ''
-  const useSSL = false; // Change to true if your MinIO server uses SSL
-
-// Initialize MinIO client object
-  const minioClient = new Minio.Client({
-    endPoint: endpoint,
-    port: 80,
-    accessKey: accessKey,
-    secretKey: secretKey,
-    useSSL: useSSL,
-  });
-
-// Specify the bucket name and JSON file path
-  const bucketName = 'panic-button-app-jsons';
-  const jsonFilePath = 'GnosisDAO-ethereum.json';
-
-
-  try {
-    console.log('AAAAA1')
-    const buckets = await minioClient.listBuckets()
-    console.log('BBBBB1')
-    console.log('Success', buckets)
-  } catch (err) {
-    console.log('CCCCC1', err)
-    console.log(err.message)
-  }
-//   let size = 0
-// // Get a full object.
-//   minioClient.getObject(bucketName, jsonFilePath, function (e, dataStream) {
-//     if (e) {
-//       return console.log(e)
-//     }
-//     dataStream.on('data', function (chunk) {
-//       size += chunk.length
-//     })
-//     dataStream.on('end', function () {
-//       console.log('End. Total size = ' + size)
-//     })
-//     dataStream.on('error', function (e) {
-//       console.log(e)
-//     })
-//   })
-//
-//
   const user = (session as Session).user
   const roles = user?.['http://localhost:3000/roles']
     ? (user?.['http://localhost:3000/roles'] as unknown as string[])
     : ['']
-  const dao = roles?.[0] ?? ''
 
   const dataWarehouse = DataWarehouse.getInstance()
 
   const allPositions: Position[] = await dataWarehouse.getPositions()
 
   const positions = allPositions
-    .filter((position) => dao && position.dao === dao)
+    .filter((position) => roles.includes(position.dao))
     .sort((a, b) => a.lptoken_name.localeCompare(b.lptoken_name))
 
-  return { props: { positions } }
+  const daosConfigs = await getDaosConfigs(roles)
+
+  return { props: { positions, daosConfigs } }
 }

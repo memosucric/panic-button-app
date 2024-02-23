@@ -1,5 +1,5 @@
-import path from "path";
-import {spawn} from "child_process";
+import path from 'path'
+import { spawn } from 'child_process'
 
 export const TransactionBuilderPromise = (filePath: string, parameters: any) => {
   return new Promise((resolve, reject) => {
@@ -20,13 +20,13 @@ export const TransactionBuilderPromise = (filePath: string, parameters: any) => 
 
       python.stderr.on('data', function (data) {
         console.log(data.toString())
-        reject({ status: 500, error: new Error(data.toString())})
+        reject({ status: 500, error: new Error(data.toString()) })
       })
 
       python.on('error', function (data) {
         console.log('DEBUG PROGRAM ERROR:')
         console.error('ERROR: ', data.toString())
-        reject({ status: 500, error: new Error('Internal Server Error') } )
+        reject({ status: 500, error: new Error('Internal Server Error') })
       })
 
       python.on('exit', function (code) {
@@ -46,11 +46,11 @@ export const TransactionBuilderPromise = (filePath: string, parameters: any) => 
         const status = response?.status ?? 500
         const data = response?.tx_data ?? {}
 
-        resolve({ status, data})
+        resolve({ status, data })
       })
     } catch (error) {
       console.error('ERROR: ', error)
-      reject({ status: 500, error: error as Error})
+      reject({ status: 500, error: error as Error })
     }
   })
 }

@@ -1,22 +1,44 @@
-import {InitialState, Position, SetupItemStatus, SetupStatus, Status, Strategy, TransactionBuild} from './state'
+import {
+  InitialState,
+  Position,
+  SetupItemStatus,
+  SetupStatus,
+  Status,
+  Strategy,
+  TransactionBuild
+} from './state'
 import {
   Actions,
   ActionType,
   AddPositions,
   ClearPositions,
   ClearSelectedPosition,
-  ClearSetup, ClearSetupWithoutCreate,
-  SetSelectedPosition, SetSetupConfirm,
+  ClearSetup,
+  ClearSetupWithoutCreate,
+  SetSelectedPosition,
+  SetSetupConfirm,
   SetSetupConfirmStatus,
   SetSetupCreate,
-  SetSetupCreateStatus, SetSetupSimulation, SetSetupSimulationStatus,
+  SetSetupCreateStatus,
+  SetSetupSimulation,
+  SetSetupSimulationStatus,
   SetSetupStatus,
-  SetSetupTransactionBuild, SetSetupTransactionBuildStatus, SetSetupTransactionCheck, SetSetupTransactionCheckStatus,
-  UpdateStatus
+  SetSetupTransactionBuild,
+  SetSetupTransactionBuildStatus,
+  SetSetupTransactionCheck,
+  SetSetupTransactionCheckStatus,
+  UpdateStatus,
+  AddDaosConfigs
 } from './actions'
 
 export const mainReducer = (state: InitialState, action: Actions): InitialState => {
   switch (action.type) {
+    case ActionType.AddDaosConfigs:
+      console.log(action)
+      return {
+        ...state,
+        daosConfigs: action.payload
+      }
     case ActionType.UpdateStatus:
       return {
         ...state,
@@ -230,6 +252,11 @@ export const clearPositions = (): ClearPositions => ({
   type: ActionType.ClearPositions
 })
 
+export const addDaosConfigs = (configs: any[]): AddDaosConfigs => ({
+  type: ActionType.AddDaosConfigs,
+  payload: configs
+})
+
 export const setSelectedPosition = (position: Position): SetSelectedPosition => ({
   type: ActionType.SetSelectedPosition,
   payload: position
@@ -249,12 +276,16 @@ export const setSetupCreateStatus = (status: SetupItemStatus): SetSetupCreateSta
   payload: status
 })
 
-export const setSetupTransactionBuild = (transactionBuild: TransactionBuild): SetSetupTransactionBuild => ({
+export const setSetupTransactionBuild = (
+  transactionBuild: TransactionBuild
+): SetSetupTransactionBuild => ({
   type: ActionType.SetSetupTransactionBuild,
   payload: transactionBuild
 })
 
-export const setSetupTransactionBuildStatus = (status: SetupItemStatus): SetSetupTransactionBuildStatus => ({
+export const setSetupTransactionBuildStatus = (
+  status: SetupItemStatus
+): SetSetupTransactionBuildStatus => ({
   type: ActionType.SetSetupTransactionBuildStatus,
   payload: status
 })
@@ -264,7 +295,9 @@ export const setSetupTransactionCheck = (transactionCheck: boolean): SetSetupTra
   payload: transactionCheck
 })
 
-export const setSetupTransactionCheckStatus = (status: SetupItemStatus): SetSetupTransactionCheckStatus => ({
+export const setSetupTransactionCheckStatus = (
+  status: SetupItemStatus
+): SetSetupTransactionCheckStatus => ({
   type: ActionType.SetSetupTransactionCheckStatus,
   payload: status
 })

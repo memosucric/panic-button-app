@@ -13,7 +13,7 @@ import { Position, Status } from 'src/contexts/state'
 import Loading from 'src/components/Loading'
 import { HEADER_HEIGHT } from 'src/components/Layout/Header'
 import { FOOTER_HEIGHT } from 'src/components/Layout/Footer'
-import CustomTypography from '../../../components/CustomTypography'
+import CustomTypography from 'src/components/CustomTypography'
 
 interface PositionIndexProps {
   positionId: Maybe<string>
