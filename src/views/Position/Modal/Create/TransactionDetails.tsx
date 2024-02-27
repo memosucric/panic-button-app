@@ -70,7 +70,7 @@ const WaitingDecodingTransaction = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: '16px', paddingBottom: '16px' }}>
       <CustomTypography variant={'subtitle1'} sx={{ color: 'black' }}>
-        Waiting for decoding transaction process
+        Waiting for transaction building process
         <TextLoadingDots />
       </CustomTypography>
     </Box>
