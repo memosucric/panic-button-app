@@ -33,8 +33,7 @@ AMs carry out repetitive tasks in order to execute a batch of transactions.
 
 ## Roadmap perspective
 
-This app enables the manual execution of predesigned strategies (batch of tx carefully designed and tailored to our AM needs). However, some of those predesigned strategies are to be automatically executed given specific triggers. For example, an exploit suspected or a collateral ratio rapidly decreasing. This strategies menu is also part of our guardians modules under development. Guardians are bots that will automatically execute strategies.
-Today, the app enables only positions exits in order to avoid potential losses, but it will broaden its scope towards enabling yield-chasing opportunities.
+This app enables the manual execution of predesigned strategies (batch of tx carefully designed and tailored to asset managers needs). However, some of those predesigned strategies are to be automatically executed given specific triggers. For example, a disassembling strategy in the case of an exploit suspected or a collateral ratio rapidly decreasing. In that case, the Guardians will take care of such execution.
 
 ## How to use:
 
@@ -62,4 +61,4 @@ Configure the .env file by copying [.env.example](https://github.com/KarpatkeyDA
 
 ### Contribution
 
-Any and every contribution is welcomed and appreciated.
+Any every contribution is welcomed and appreciated.
